@@ -73,9 +73,7 @@ namespace ITSWebMgmt
             }
             //builder.Append("Found UPN:" +  upn);
             var dc = upn.Split('@')[1];
-            DirectoryEntry de = new DirectoryEntry("LDAP://"+dc);
-            
-            
+            DirectoryEntry de = new DirectoryEntry("LDAP://"+dc);         
 
             var elements = "cn,userAccountControl,sAMAccountName,userPrincipalName,aauStudentID,aauStaffID,aauUserClassification,aauUserStatus,displayName,department,proxyAddresses,badPwdCount,badPasswordTime,lockoutTime,departmentNumber,homeDirectory,homeDrive,lastLogon,memberOf,profilePath,msDS-UserPasswordExpiryTimeComputed,msDS-User-Account-Control-Computed";
             //var elements = "sAMAccountName,userPrincipalName,aauStaffID";
