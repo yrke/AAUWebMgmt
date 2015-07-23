@@ -12,6 +12,7 @@
         
         <h2><asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
         <asp:Label ID="ResultLabel" runat="server"></asp:Label>
+        <asp:Button ID="ResultGetPassword" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click"/>
         <!--<asp:TextBox ID="ResultBox" TextMode="MultiLine" Width="700" Height="200" runat="server"></asp:TextBox>-->
         
     </div>

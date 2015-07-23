@@ -49,8 +49,11 @@ namespace ITSWebMgmt
             SearchResult r = search.FindOne();
 
 
-
-            return r.Properties["userPrincipalName"][0].ToString(); //XXX handle if result is 0 (null exception)
+            if (r != null){ 
+                return r.Properties["userPrincipalName"][0].ToString(); //XXX handle if result is 0 (null exception)
+            } else {
+                return null;
+            }
         }
 
         protected void lookupUser(object sender, EventArgs e)
@@ -60,11 +63,14 @@ namespace ITSWebMgmt
             UserName = UserNameBox.Text;
             UserNameLabel.Text = UserName;
 
-           
-
-            
 
             var upn = globalSearch(UserName);
+            if (upn == null)
+            {
+                builder.Append("User Not found");
+                ResultLabel.Text = builder.ToString();
+                return;
+            }
             //builder.Append("Found UPN:" +  upn);
             var dc = upn.Split('@')[1];
             DirectoryEntry de = new DirectoryEntry("LDAP://"+dc);

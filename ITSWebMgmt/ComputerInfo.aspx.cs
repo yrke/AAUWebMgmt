@@ -14,6 +14,28 @@ namespace ITSWebMgmt
         protected void Page_Load(object sender, EventArgs e)
         {
 
+            if (Session["adpath"] == null)
+            {
+               // ResultGetPassword.Enabled = false;
+            }
+
+        }
+
+
+        protected String getLocalAdminPassword(String adobject)
+        {
+            DirectoryEntry de = new DirectoryEntry(adobject);
+            DirectorySearcher search = new DirectorySearcher(de);
+            search.PropertiesToLoad.Add("ms-Mcs-AdmPwd");
+            SearchResult r = search.FindOne();
+
+            if (r != null)
+            {
+                return r.Properties["ms-Mcs-AdmPwd"][0].ToString();
+            }
+            else { 
+                return null;
+            }
         }
 
         protected void lookupComputer(object sender, EventArgs e)
@@ -47,7 +69,7 @@ namespace ITSWebMgmt
             search.PropertiesToLoad.Add("cn");
 
             search = new DirectorySearcher(de);
-            search.PropertiesToLoad.Add("ms-Mcs-AdmPwd");
+            //search.PropertiesToLoad.Add("ms-Mcs-AdmPwd");
             search.PropertiesToLoad.Add("ms-Mcs-AdmPwdExpirationTime");
             search.PropertiesToLoad.Add("memberOf");
 
@@ -76,7 +98,31 @@ namespace ITSWebMgmt
                 }
 
             }
+
+            long rawDate = (long)r.Properties["ms-Mcs-AdmPwdExpirationTime"][0];
+            DateTime expireDate = DateTime.FromFileTime(rawDate);
+            builder.Append(expireDate);
+
+
+            String adpath = r.Properties["ADsPath"][0].ToString();
+
+            Session["adpath"] = adpath;
+
+            builder.Append((string)Session["adpath"]);
+
             ResultLabel.Text = builder.ToString();
         }
+
+        protected void ResultGetPassword_Click(object sender, EventArgs e)
+        {
+            String adpath = (string)Session["adpath"];
+
+            var passwordRetuned = this.getLocalAdminPassword(adpath);
+
+            ResultLabel.Text = "Fisk" + passwordRetuned;
+        
+        }
+
+        
     }
 }
