@@ -24,23 +24,54 @@ namespace ITSWebMgmt
 
         protected String getLocalAdminPassword(String adobject)
         {
-            DirectoryEntry de = new DirectoryEntry(adobject);
-            DirectorySearcher search = new DirectorySearcher(de);
-            search.PropertiesToLoad.Add("ms-Mcs-AdmPwd");
-            SearchResult r = search.FindOne();
 
-            if (r != null)
-            {
-                return r.Properties["ms-Mcs-AdmPwd"][0].ToString();
-            }
-            else { 
+            if (String.IsNullOrEmpty(adobject)){ //Error no session
                 return null;
             }
+
+            DirectoryEntry de = new DirectoryEntry(adobject);
+
+            //XXX if expire time i smaller than 4 hours, you can use this to add time to the password (eg 3h to expire will become 4), never allow a password expire to be larger than the old value
+
+            if (de.Properties.Contains("ms-Mcs-AdmPwd"))
+            {
+                var f = (de.Properties["ms-Mcs-AdmPwd"][0]).ToString();
+
+                DateTime expiredate = (DateTime.Now).AddHours(4);
+                String value = expiredate.ToFileTime().ToString();
+                de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value = value;
+                de.CommitChanges();
+             
+                return f;
+
+            }
+            else
+            {
+                return null;
+            }
+
+            
+            //DirectorySearcher search = new DirectorySearcher(de);
+            //search.PropertiesToLoad.Add("ms-Mcs-AdmPwd");
+            //SearchResult r = search.FindOne();
+
+            //if (r != null && r.Properties.Contains("ms-Mcs-AdmPwd"))
+            //{
+            //    return r.Properties["ms-Mcs-AdmPwd"][0].ToString();
+
+                //DirectoryEntry  = r.GetDirectoryEntry();
+                //de
+
+
+            //}
+            //else { 
+            //    return null;
+            //}
         }
 
         protected void lookupComputer(object sender, EventArgs e)
         {
-
+            Session["adpath"] = null;
             var computerName = ComputerNameInput.Text;
 
             DirectoryEntry de = new DirectoryEntry("GC://aau.dk");
@@ -56,6 +87,11 @@ namespace ITSWebMgmt
 
             SearchResult r = search.FindOne();
 
+            if (r == null){ //Computer not found
+
+                ResultLabel.Text = "Computer Not Found";
+                return;
+            }
             var distinguishedName = r.Properties["distinguishedName"][0].ToString();
             var split = distinguishedName.Split(',');
 
@@ -99,9 +135,9 @@ namespace ITSWebMgmt
 
             }
 
-            long rawDate = (long)r.Properties["ms-Mcs-AdmPwdExpirationTime"][0];
-            DateTime expireDate = DateTime.FromFileTime(rawDate);
-            builder.Append(expireDate);
+            //long rawDate = (long)r.Properties["ms-Mcs-AdmPwdExpirationTime"][0];
+            //DateTime expireDate = DateTime.FromFileTime(rawDate);
+            //builder.Append(expireDate);
 
 
             String adpath = r.Properties["ADsPath"][0].ToString();
@@ -116,10 +152,15 @@ namespace ITSWebMgmt
         protected void ResultGetPassword_Click(object sender, EventArgs e)
         {
             String adpath = (string)Session["adpath"];
-
             var passwordRetuned = this.getLocalAdminPassword(adpath);
 
-            ResultLabel.Text = "Fisk" + passwordRetuned;
+            if (String.IsNullOrEmpty(passwordRetuned)) { 
+                ResultLabel.Text = "Not found";
+            }
+            else
+            {
+                ResultLabel.Text = passwordRetuned + "<br /> Password will expire in 4 hours";
+            }
         
         }
 
