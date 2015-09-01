@@ -31,6 +31,9 @@
                 </div>
             </div>
             <div class="twelve wide stretched column">
+                <div class="ui tab segment">
+                    none<!-- spacer as the fist elemen else is placed differencet -->
+                </div>
                 <div class="ui active tab segment" data-tab="basicinfo">
                     basis
                 </div>
