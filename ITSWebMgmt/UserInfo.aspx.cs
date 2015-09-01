@@ -1,4 +1,5 @@
-﻿using SimpleImpersonation;
+﻿using NLog;
+using SimpleImpersonation;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
@@ -12,6 +13,8 @@ namespace ITSWebMgmt
 {
     public partial class WebForm1 : System.Web.UI.Page
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+        
         string username = "USERNAME";
         public string UserName
         {
@@ -62,7 +65,9 @@ namespace ITSWebMgmt
             
             UserName = UserNameBox.Text;
             UserNameLabel.Text = UserName;
-
+            
+            //XXX, this is a use input, might not be save us use in log 
+            logger.Info("User {0} lookedup user {1}", System.Web.HttpContext.Current.User.Identity.Name, UserName);
 
             var upn = globalSearch(UserName);
             if (upn == null)
