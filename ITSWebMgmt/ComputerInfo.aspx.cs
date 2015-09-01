@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
@@ -11,6 +12,9 @@ namespace ITSWebMgmt
 {
     public partial class ComputerInfo : System.Web.UI.Page
     {
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -71,6 +75,8 @@ namespace ITSWebMgmt
 
         protected void lookupComputer(object sender, EventArgs e)
         {
+            logger.Info("User XXX requesed info about computer YYY");
+            
             Session["adpath"] = null;
             var computerName = ComputerNameInput.Text;
 
@@ -151,6 +157,9 @@ namespace ITSWebMgmt
 
         protected void ResultGetPassword_Click(object sender, EventArgs e)
         {
+
+            logger.Info("User XXX requesed password for computer YYY");
+
             String adpath = (string)Session["adpath"];
             var passwordRetuned = this.getLocalAdminPassword(adpath);
 
