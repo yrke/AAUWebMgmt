@@ -61,6 +61,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CallManager.aspx" />
     <Content Include="ComputerInfo.aspx" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
@@ -84,6 +85,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CallManager.aspx.cs">
+      <DependentUpon>CallManager.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CallManager.aspx.designer.cs">
+      <DependentUpon>CallManager.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ComputerInfo.aspx.cs">
       <DependentUpon>ComputerInfo.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -120,6 +128,9 @@
     <Compile Include="UserInfo.aspx.designer.cs">
       <DependentUpon>UserInfo.aspx</DependentUpon>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
