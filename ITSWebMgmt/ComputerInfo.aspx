@@ -5,14 +5,20 @@
 
     <h1> Computer Info</h1>
     <div>
-        ComputerName <asp:TextBox ID="ComputerNameInput" runat="server"  Text="AAU804396" CssClass="ui input focus" /> 
-        <asp:Button runat="server" ID="sumbit" OnClick="lookupComputer" Text="Søg" CssClass="ui button"/>
+        ComputerName: 
+        
+        <div class="ui action input">
+            <asp:TextBox ID="ComputerNameInput" runat="server"  Text="AAU804396" CssClass="ui input focus" /> 
+            <asp:Button runat="server" ID="sumbit" OnClick="lookupComputer" Text="Søg" CssClass="ui button"/>
+        </div>
+        
             <asp:RequiredFieldValidator runat="server" id="reqName" controltovalidate="ComputerNameInput" errormessage="Please enter a value" />
 
         <br />
         
         <h2><asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
         <asp:Label ID="ResultLabel" runat="server"></asp:Label>
+        <br />
         <asp:Button ID="ResultGetPassword" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click" CssClass="ui button"/>
         
         

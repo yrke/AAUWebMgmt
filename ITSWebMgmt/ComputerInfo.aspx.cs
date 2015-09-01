@@ -22,7 +22,7 @@ namespace ITSWebMgmt
             {
                // ResultGetPassword.Enabled = false;
             }
-
+            ResultGetPassword.Visible = false;
         }
 
 
@@ -75,7 +75,7 @@ namespace ITSWebMgmt
 
         protected void lookupComputer(object sender, EventArgs e)
         {
-            logger.Info("User XXX requesed info about computer YYY");
+            
             
             Session["adpath"] = null;
             var computerName = ComputerNameInput.Text;
@@ -104,6 +104,8 @@ namespace ITSWebMgmt
             var len = split.GetLength(0);
             var domain = (split[len-3] + "." + split[len-2] + "." + split[len-1]).Replace("DC=","");
 
+            //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
+            logger.Info("User {0} requesed info about computer {1}", System.Web.HttpContext.Current.User.Identity.Name, (split[len - 3]).Replace("DC=", "") + "\\" + computerName);
 
             de = new DirectoryEntry("LDAP://"+domain);
             //de.Username = "its\\kyrke";
@@ -150,17 +152,22 @@ namespace ITSWebMgmt
 
             Session["adpath"] = adpath;
 
-            builder.Append((string)Session["adpath"]);
+            //builder.Append((string)Session["adpath"]);
 
             ResultLabel.Text = builder.ToString();
+            ResultGetPassword.Visible = true;
         }
 
         protected void ResultGetPassword_Click(object sender, EventArgs e)
         {
 
-            logger.Info("User XXX requesed password for computer YYY");
+
+            
 
             String adpath = (string)Session["adpath"];
+
+            logger.Info("User {0} requesed localadmin password for computer {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
+
             var passwordRetuned = this.getLocalAdminPassword(adpath);
 
             if (String.IsNullOrEmpty(passwordRetuned)) { 
@@ -170,6 +177,8 @@ namespace ITSWebMgmt
             {
                 ResultLabel.Text = passwordRetuned + "<br /> Password will expire in 4 hours";
             }
+
+            ResultGetPassword.Visible = false;
         
         }
 
