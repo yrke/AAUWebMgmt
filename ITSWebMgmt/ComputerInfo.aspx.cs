@@ -17,11 +17,6 @@ namespace ITSWebMgmt
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
-            if (Session["adpath"] == null)
-            {
-               // ResultGetPassword.Enabled = false;
-            }
             ResultGetPassword.Visible = false;
         }
 
@@ -155,7 +150,11 @@ namespace ITSWebMgmt
             //builder.Append((string)Session["adpath"]);
 
             ResultLabel.Text = builder.ToString();
-            ResultGetPassword.Visible = true;
+
+            if (r.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
+            { 
+                ResultGetPassword.Visible = true;
+            }
         }
 
         protected void ResultGetPassword_Click(object sender, EventArgs e)
