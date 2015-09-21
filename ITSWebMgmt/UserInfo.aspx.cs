@@ -22,19 +22,47 @@ namespace ITSWebMgmt
             set {username = value;}
         }
 
-        protected void toggle_userprofile(object sender, EventArgs e)
-        {
 
-            DirectorySearcher search = new DirectorySearcher();
-            search.Filter = String.Format("(cn={0})", "KYRKE"); //XXX This need to be unique!!
-            search.PropertiesToLoad.Add("userPrincipalName");
-            search.PropertiesToLoad.Add("profilePath");
-            SearchResult result = search.FindOne();
+        protected void toggle_userprofile(String adpath)
+        {
+            
+            DirectoryEntry de = new DirectoryEntry(adpath);
+
+            //String profilepath = (string)(de.Properties["profilePath"])[0];
+
+            
+            if (de.Properties.Contains("profilepath"))
+            {
+                de.Properties["profilePath"].Clear();
+                de.CommitChanges();
+            }
+            else
+            {
+                String upn = ((string)de.Properties["userPrincipalName"][0]);
+                var tmp = upn.Split('@');
+
+                string path = String.Format("\\\\{0}\\profiles\\{1}", tmp[1], tmp[0]);
+
+                de.Properties["profilePath"].Add(path);
+                de.CommitChanges();
+            }
+        }
+
+        protected void button_toggle_userprofile(object sender, EventArgs e)
+        {
+            String adpath = (String)Session["adpath"];
+
+            
+            //XXX log what the new value of profile is :)
+            logger.Info("User {0} toggled romaing profile for user  {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
+
+            
+            toggle_userprofile(adpath);
 
 
             //Set value
-            DirectoryEntry de = result.GetDirectoryEntry();
-            de.Properties["TelephoneNumber"].Clear();
+            //DirectoryEntry de = result.GetDirectoryEntry();
+            //de.Properties["TelephoneNumber"].Clear();
             //de.Properties["employeeNumber"].Value = "123456789";
             //de.CommitChanges();
         }
@@ -115,12 +143,20 @@ namespace ITSWebMgmt
                     }
                 }
 
+                displayName.Text = result.Properties["displayName"][0].ToString();
+
             }
             else
             {
                 builder.Append("No user found");
             }
             ResultLabel.Text = builder.ToString();
+
+            //Save user in session
+            String adpath = result.Properties["ADsPath"][0].ToString();
+            Session["adpath"] = adpath;
+
+            
 
         }
 

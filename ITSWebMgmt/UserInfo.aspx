@@ -28,6 +28,8 @@
                     <a class="item" data-tab="networkdrives">Networkdrives</a>
                     <a class="item" data-tab="rawdata">Raw Data</a>
                     <a class="item" data-tab="tasks">Tasks</a>
+                    <a class="item" data-tab="statustest">Statustest</a>
+
                 </div>
             </div>
             <div class="twelve wide stretched column">
@@ -35,7 +37,18 @@
                     none<!-- spacer as the fist elemen else is placed differencet -->
                 </div>
                 <div class="ui active tab segment" data-tab="basicinfo">
-                    basis
+                    <table class="ui definition table">
+                        <tbody>
+                            <tr>
+                                <td>Navn</td>
+                                <td><asp:Label runat="server" id="displayName"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td>Email:</td>
+                                <td>rating (integer)</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="ui tab segment" data-tab="advancedinfo">
                     advanced
@@ -50,17 +63,52 @@
                     networkdrives
                 </div>
                 <div class="ui tab segment" data-tab="rawdata">
-                    raw
+                    <asp:Label ID="ResultLabel" runat="server"></asp:Label>
                 </div>
                 <div class="ui tab segment" data-tab="tasks">
                     Tasks
+                    <asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" />
+
+                </div>
+                <div class="ui tab segment" data-tab="statustest">
+                    <table class="ui celled table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>No Name Specified</td>
+                                <td>Unknown</td>
+                                <td class="negative">None</td>
+                            </tr>
+                            <tr class="positive">
+                                <td>Jimmy</td>
+                                <td><i class="icon checkmark"></i>Approved</td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <td>Jamie</td>
+                                <td>Unknown</td>
+                                <td class="positive"><i class="icon close"></i>Requires call</td>
+                            </tr>
+                            <tr class="negative">
+                                <td>Jill</td>
+                                <td>Unknown</td>
+                                <td>None</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
         <h2>
-            <asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
-        <asp:Label ID="ResultLabel" runat="server"></asp:Label>
+        <asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
+        
         <!--<asp:TextBox ID="ResultBox" TextMode="MultiLine" Width="700" Height="200" runat="server"></asp:TextBox>-->
 
     </div>
