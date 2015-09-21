@@ -18,6 +18,12 @@ namespace ITSWebMgmt
         protected void Page_Load(object sender, EventArgs e)
         {
             ResultGetPassword.Visible = false;
+            String computername = Request.QueryString["computername"];
+            if (computername != null)
+            {
+                ComputerNameInput.Text = computername;
+            }
+            
         }
 
 
