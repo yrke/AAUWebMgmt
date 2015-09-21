@@ -18,6 +18,10 @@
                 $('.menu .item').tab({ history: false });
             });
         </script>
+
+        <h2><asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
+
+
         <div class="ui grid">
             <div class="four wide column">
                 <div class="ui vertical fluid tabular menu">
@@ -106,8 +110,6 @@
             </div>
         </div>
 
-        <h2>
-        <asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
         
         <!--<asp:TextBox ID="ResultBox" TextMode="MultiLine" Width="700" Height="200" runat="server"></asp:TextBox>-->
 

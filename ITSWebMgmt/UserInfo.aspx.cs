@@ -124,24 +124,37 @@ namespace ITSWebMgmt
                 
                 //builder.Append((result.Properties["aauStaffID"][0])).ToString();
 
+                builder.Append("<table><tr><th>k</th><th>v</th></tr>");
+                
                 foreach (string k in listElements)
                 {
-                    builder.Append(k);
+                    builder.Append("<tr>");
+                    builder.Append("<td>"+k+"</td>");
 
                     var a = result.Properties[k];
                     if (a != null && a.Count > 0)
                     {
-                        foreach (var j in a)
-                        {
-                            var value = (j.ToString());
-                            builder.Append("  &nbsp;    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;             : " + value);
-                            builder.Append("<br />");
+                        if (a.Count == 1) {
+                            var v = a[0];
+                            builder.Append("<td>"+v+"</td></tr>");
+                        } else {
+
+                            var v = a[0];
+                            builder.Append("<td>"+v+"</td>");
+                            for (int i = 1; i < a.Count; i++ ){
+                                v = a[i];
+                                builder.Append("<tr><td></td><td>"+v+"</td></tr>");
+                            }
+
                         }
+
+                    } else {
+                        builder.Append("<td></td></tr>");
                     }
-                    else { 
-                        builder.Append("<br />");
-                    }
+
                 }
+                
+                builder.Append("</table>");
 
                 displayName.Text = result.Properties["displayName"][0].ToString();
 

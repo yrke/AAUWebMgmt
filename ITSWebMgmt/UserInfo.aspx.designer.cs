@@ -49,6 +49,15 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator reqName;
         
         /// <summary>
+        /// UserNameLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label UserNameLabel;
+        
+        /// <summary>
         /// displayName control.
         /// </summary>
         /// <remarks>
@@ -74,15 +83,6 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ToggleRoaming;
-        
-        /// <summary>
-        /// UserNameLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label UserNameLabel;
         
         /// <summary>
         /// ResultBox control.
