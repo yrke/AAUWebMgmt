@@ -22,6 +22,19 @@ namespace ITSWebMgmt
             set {username = value;}
         }
 
+         protected void Page_Load(object sender, EventArgs e)
+        {
+            String username = Request.QueryString["username"];
+            if (username != null)
+            {
+                UserNameBox.Text = username;
+            }
+            ResultDiv.Visible = false;
+            
+        }
+
+        
+
 
         protected void toggle_userprofile(String adpath)
         {
@@ -169,15 +182,10 @@ namespace ITSWebMgmt
             String adpath = result.Properties["ADsPath"][0].ToString();
             Session["adpath"] = adpath;
 
-            
+            ResultDiv.Visible = true;
 
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-
-
-        }
+        
     }
 }

@@ -19,6 +19,7 @@
             });
         </script>
 
+        <div runat="server" id="ResultDiv">
         <h2><asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
 
 
@@ -26,13 +27,13 @@
             <div class="four wide column">
                 <div class="ui vertical fluid tabular menu">
                     <a class="active item" data-tab="basicinfo">Basic Info</a>
-                    <a class="item" data-tab="advancedinfo">Advanced Info</a>
+                    <!--<a class="item" data-tab="advancedinfo">Advanced Info</a>
                     <a class="item" data-tab="groups">Groups</a>
                     <a class="item" data-tab="fileshares">Fileshares</a>
-                    <a class="item" data-tab="networkdrives">Networkdrives</a>
+                    <a class="item" data-tab="networkdrives">Networkdrives</a>-->
                     <a class="item" data-tab="rawdata">Raw Data</a>
                     <a class="item" data-tab="tasks">Tasks</a>
-                    <a class="item" data-tab="statustest">Statustest</a>
+<!--                    <a class="item" data-tab="statustest">Statustest</a> -->
 
                 </div>
             </div>
@@ -110,6 +111,7 @@
                     </table>
                 </div>
             </div>
+        </div>
         </div>
 
         
