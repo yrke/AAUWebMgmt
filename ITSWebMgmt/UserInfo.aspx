@@ -49,7 +49,7 @@
                             </tr>
                             <tr>
                                 <td>Email:</td>
-                                <td>rating (integer)</td>
+                                <td></td>
                             </tr>
                         </tbody>
                     </table>
@@ -70,7 +70,9 @@
                     <asp:Label ID="ResultLabel" runat="server"></asp:Label>
                 </div>
                 <div class="ui tab segment" data-tab="tasks">
-                    Tasks
+                    Tasks<br />
+
+                    Roaming Profile (enable/disable): 
                     <asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" />
 
                 </div>
