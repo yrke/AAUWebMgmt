@@ -74,8 +74,10 @@
                     Tasks<br />
 
                     Roaming Profile (enable/disable): 
-                    <asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" />
-
+                    <asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" /><br />
+                    
+                    Fix user OUT (only do this if you know what you are doing): 
+                    <asp:Button runat="server" CssClass="ui button" ID="FixUserOUButton" Text="Fix User OU" OnClick="fixUserOUButton" /><br />
                 </div>
                 <div class="ui tab segment" data-tab="statustest">
                     <table class="ui celled table">

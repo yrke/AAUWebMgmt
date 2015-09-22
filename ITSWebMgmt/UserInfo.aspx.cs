@@ -33,7 +33,61 @@ namespace ITSWebMgmt
             
         }
 
-        
+         protected bool fixUserOu(String adpath)
+         {
+             
+             DirectoryEntry de = new DirectoryEntry(adpath);
+
+             String dn = (string)de.Properties["distinguishedName"][0];
+             String[] dnarray = dn.Split(',');
+
+             String[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
+             
+             int count = ou.Count();
+
+             if (count < 2)
+             {
+                 //This cant be in people/{staff,student,guest}
+             }
+             //Check root is people
+             if (!(ou[count - 1]).Equals("ou=people", StringComparison.CurrentCultureIgnoreCase))
+             {
+                 //Error user is not placed in people!!!!! Cant move the user (might not be a real user or admin or computer)
+                 return false;
+             }  
+             String[] okplaces = new String[3]{"ou=staff","ou=guests","ou=students"};
+             if (!okplaces.Contains(ou[count - 2], StringComparer.OrdinalIgnoreCase))
+             {
+                 //Error user is not in out staff, people or student, what is gowing on here?
+                 return false;
+             }
+             if (count > 2)
+             {
+                 //User is not placed in people/{staff,student,guest}, but in a sub ou, we need to do somthing!
+                 //from above check we know the path is people/{staff,student,guest}, lets generate new OU
+
+                 //Format ldap://DOMAIN/pathtoOU
+                 //return false; //XX Return false here?
+
+                 String[] adpathsplit = adpath.ToLower().Replace("ldap://", "").Split('/');
+                 String protocol = "LDAP://";
+                 String domain = adpathsplit[0];
+                 String[] dcpath = (adpathsplit[1].Split(',')).Where<string>(s => s.StartsWith("DC=", StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
+
+                 String newOU = String.Format("{0},{1}", ou[count - 2], ou[count - 1]);
+                 String newPath = String.Format("{0}{1}/{2},{3}", protocol, domain, newOU, String.Join(",", dcpath));
+
+                 logger.Info("user " +System.Web.HttpContext.Current.User.Identity.Name+" changed OU on user to: "+newPath + " from "+adpath+".");
+
+                 var newLocaltion = new DirectoryEntry(newPath);
+                 de.MoveTo(newLocaltion);
+
+                 return true;
+             }
+             //We don't need to do anything, user is placed in the right ou! (we think, can still be in wrong ou fx a guest changed to staff, we cant check that here) 
+             logger.Debug("no need to change user {0} out, all is good", adpath);    
+             return true;
+         }
 
 
         protected void toggle_userprofile(String adpath)
@@ -99,7 +153,10 @@ namespace ITSWebMgmt
                 return null;
             }
         }
-
+        protected void fixUserOUButton(object sender, EventArgs e)
+        {
+            fixUserOu((string)Session["adpath"]);
+        }
         protected void lookupUser(object sender, EventArgs e)
         {
             var builder = new StringBuilder();
