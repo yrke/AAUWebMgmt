@@ -20,7 +20,10 @@
         <asp:Label ID="ResultLabel" runat="server"></asp:Label>
         <br />
         <asp:Button ID="ResultGetPassword" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click" CssClass="ui button"/>
-        
+        <br />
+        <div id="MoveComputerOUdiv" runat="server">
+        <asp:Button ID="MoveComputerOU" runat="server" value="" Text="Move computer to OU Clients" OnClick="MoveOU_Click" CssClass="ui button"/> Only do this if you know what you are doing!
+        </div>
         
     </div>
 

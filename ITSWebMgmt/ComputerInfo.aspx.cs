@@ -18,6 +18,7 @@ namespace ITSWebMgmt
         protected void Page_Load(object sender, EventArgs e)
         {
             ResultGetPassword.Visible = false;
+            MoveComputerOUdiv.Visible = false;
             String computername = Request.QueryString["computername"];
             if (computername != null)
             {
@@ -25,7 +26,57 @@ namespace ITSWebMgmt
             }
             
         }
+        protected void moveComputerToOU(String adpath, String newOUpath)
+        {
+            //Important that LDAP:// is in upper case ! 
+            DirectoryEntry de = new DirectoryEntry(adpath);
+            var newLocaltion = new DirectoryEntry(newOUpath);
+            de.MoveTo(newLocaltion);
+            de.Close();
+            newLocaltion.Close();
 
+        }
+        protected bool checkComputerOU(String adpath)
+        {
+            //Check OU and fix it if wrong (only for clients sub folders or new clients)
+            //Return true if in right ou (or we think its the right ou, or dont know)
+            //Return false if we need to move the ou.
+
+
+            DirectoryEntry de = new DirectoryEntry(adpath);
+
+            String dn = (string)de.Properties["distinguishedName"][0];
+            String[] dnarray = dn.Split(',');
+
+            String[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
+            int count = ou.Count();
+
+            //Check if topou is clients (where is should be)
+            if (ou[count -1].Equals("OU=Clients", StringComparison.CurrentCultureIgnoreCase)) {
+                //XXX why not do this :p return count ==1
+                if (count == 1)  {
+                    return true;
+                }else {
+                    //Is in a sub ou for clients, we need to move it
+                    return false;
+                }
+            }
+            else
+            {
+                //Is now in Clients, is it in new computere => move to clients else we don't know where to place it (it might be a server)
+                if (ou[count - 1].Equals("OU=New Computers", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+            //return true;
+
+        }
 
         protected String getLocalAdminPassword(String adobject)
         {
@@ -161,6 +212,38 @@ namespace ITSWebMgmt
             { 
                 ResultGetPassword.Visible = true;
             }
+            if (!checkComputerOU(adpath))
+            {
+                MoveComputerOUdiv.Visible = true;
+            }
+        }
+
+        protected void MoveOU_Click(object sender, EventArgs e)
+        {
+            String adpath = (string)Session["adpath"];
+
+
+            if (!checkComputerOU(adpath)) {
+                //OU is wrong lets calulate the right one
+                String[] adpathsplit = adpath.ToLower().Replace("ldap://", "").Split('/');
+                String protocol = "LDAP://";
+                String domain = adpathsplit[0];
+                String[] dcpath = (adpathsplit[1].Split(',')).Where<string>(s => s.StartsWith("DC=", StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
+
+                String newOU = String.Format("OU=Clients");
+                String newPath = String.Format("{0}{1}/{2},{3}", protocol, domain, newOU, String.Join(",", dcpath));
+
+                logger.Info("user " + System.Web.HttpContext.Current.User.Identity.Name + " changed OU on user to: " + newPath + " from " + adpath + ".");
+                moveComputerToOU(adpath, newPath);
+
+            }
+            else
+            {
+                logger.Debug("computer " + adpath + " is in the right ou"); 
+            }
+
+            
+
         }
 
         protected void ResultGetPassword_Click(object sender, EventArgs e)
