@@ -27,9 +27,9 @@
             <div class="four wide column">
                 <div class="ui vertical fluid tabular menu">
                     <a class="active item" data-tab="basicinfo">Basic Info</a>
-                    <!--<a class="item" data-tab="advancedinfo">Advanced Info</a>
+                    <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
                     <a class="item" data-tab="groups">Groups</a>
-                    <a class="item" data-tab="fileshares">Fileshares</a>
+                    <a class="item" data-tab="fileshares">Fileshares</a><!--
                     <a class="item" data-tab="networkdrives">Networkdrives</a>-->
                     <a class="item" data-tab="rawdata">Raw Data</a>
                     <a class="item" data-tab="tasks">Tasks</a>
@@ -59,10 +59,13 @@
                     advanced
                 </div>
                 <div class="ui tab segment" data-tab="groups">
-                    groups
+                    <h2>groups</h2>
+                    <asp:Label ID="groupssegmentLabel" runat="server"></asp:Label>
                 </div>
                 <div class="ui tab segment" data-tab="fileshares">
-                    fileshares
+                    <h2>fileshares</h2>
+                    <asp:Label ID="filesharessegmentLabel" runat="server"></asp:Label>
+                    
                 </div>
                 <div class="ui tab segment" data-tab="networkdrives">
                     networkdrives

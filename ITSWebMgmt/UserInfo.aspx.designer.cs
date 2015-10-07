@@ -76,6 +76,24 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label displayName;
         
         /// <summary>
+        /// groupssegmentLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label groupssegmentLabel;
+        
+        /// <summary>
+        /// filesharessegmentLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label filesharessegmentLabel;
+        
+        /// <summary>
         /// ResultLabel control.
         /// </summary>
         /// <remarks>

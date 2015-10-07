@@ -33,6 +33,51 @@ namespace ITSWebMgmt
             
         }
 
+         protected void buildgroupssegmentLabel(String[] groupsList)
+         {
+             StringBuilder sb = new StringBuilder();
+
+             foreach (string adpath in groupsList) {
+                 //DirectoryEntry de = new DirectoryEntry("LDAP://"+adpath);
+                 
+                 //string groupname = de.Properties["cn"][0].ToString();
+                 //TODO:
+                 //UserPrincipal user = UserPrincipal.FindByIdentity(new PrincipalContext (ContextType.Domain, "mydomain.com"), IdentityType.SamAccountName, "username");
+                 //foreach (GroupPrincipal group in user.GetGroups())
+
+                 var split = adpath.Split(',');
+                 var groupname = split[0].Replace("CN=","");
+
+                 sb.Append(groupname + "<br/>");
+                 
+             }
+
+
+             groupssegmentLabel.Text = sb.ToString();
+         
+         }
+
+         protected void buildFilesharessegmentLabel(String[] groupsList)
+         {
+             StringBuilder sb = new StringBuilder();
+             foreach (string group in groupsList)
+             {
+                 
+                 var split = group.Split(',');
+                 var oupath = split.Where<string>(s => s.StartsWith("OU=")).ToArray<string>() ;
+                 int count = oupath.Count();
+
+                 if (count == 3 && oupath[count-1].Equals("OU=Groups") && oupath[count - 2].Equals("OU=Resource Access"))
+                 {
+                     //This is a group access group
+                     var groupname = split[0].Replace("CN=", "");
+                     sb.Append(groupname + "<br/>"); 
+                 }
+             }
+             filesharessegmentLabel.Text = sb.ToString();
+
+         }
+
          protected bool fixUserOu(String adpath)
          {
              
@@ -227,6 +272,12 @@ namespace ITSWebMgmt
                 builder.Append("</table>");
 
                 displayName.Text = result.Properties["displayName"][0].ToString();
+
+                var groupsList = result.Properties["memberOf"];
+                var b = groupsList.Cast<string>();
+                var groupListConvert = b.ToArray<string>();
+                buildgroupssegmentLabel(groupListConvert);
+                buildFilesharessegmentLabel(groupListConvert);
 
             }
             else
