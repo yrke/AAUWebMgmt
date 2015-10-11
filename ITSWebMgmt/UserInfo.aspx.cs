@@ -24,12 +24,15 @@ namespace ITSWebMgmt
 
          protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack) {
+            ResultDiv.Visible = false;
+            
             String username = Request.QueryString["username"];
             if (username != null)
             {
                 UserNameBox.Text = username;
+                buildUserLookup(username);
             }
-            ResultDiv.Visible = false;
             
             String phoneNr = Request.QueryString["phone"];
             if (phoneNr != null) {
@@ -47,6 +50,7 @@ namespace ITSWebMgmt
 
             }
 
+            }
         }
 
         //Searhces on a phone numer (internal or external), and returns a upn (later ADsPath) to a use or null if not found
@@ -261,17 +265,24 @@ namespace ITSWebMgmt
         {
             fixUserOu((string)Session["adpath"]);
         }
+
         protected void lookupUser(object sender, EventArgs e)
+        {
+            UserName = UserNameBox.Text;
+            UserNameLabel.Text = UserName;
+            buildUserLookup(UserName);
+        }
+    
+        protected void buildUserLookup(string username)
         {
             var builder = new StringBuilder();
             
-            UserName = UserNameBox.Text;
-            UserNameLabel.Text = UserName;
+
             
             //XXX, this is a use input, might not be save us use in log 
-            logger.Info("User {0} lookedup user {1}", System.Web.HttpContext.Current.User.Identity.Name, UserName);
+            logger.Info("User {0} lookedup user {1}", System.Web.HttpContext.Current.User.Identity.Name, username);
 
-            var upn = globalSearch(UserName);
+            var upn = globalSearch(username);
             if (upn == null)
             {
                 builder.Append("User Not found");
