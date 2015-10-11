@@ -349,6 +349,10 @@ namespace ITSWebMgmt
                 buildgroupssegmentLabel(groupListConvert);
                 buildFilesharessegmentLabel(groupListConvert);
 
+                String adpath = result.Properties["ADsPath"][0].ToString();
+                Session["adpath"] = adpath;
+
+
             }
             else
             {
@@ -357,9 +361,7 @@ namespace ITSWebMgmt
             ResultLabel.Text = builder.ToString();
 
             //Save user in session
-            String adpath = result.Properties["ADsPath"][0].ToString();
-            Session["adpath"] = adpath;
-
+            
             ResultDiv.Visible = true;
 
         }
