@@ -31,7 +31,66 @@ namespace ITSWebMgmt
             }
             ResultDiv.Visible = false;
             
+            String phoneNr = Request.QueryString["phone"];
+            if (phoneNr != null) {
+                //Got a phonenumber to lookup
+                string res = doPhoneSearch(phoneNr);
+                if (res != null) { 
+
+                    string url = Request.Url.AbsolutePath;
+                    string updatedQueryString = "?" + "username=" + res;
+                    Response.Redirect(url + updatedQueryString);
+                } else
+                {
+                    //TODO: No user show error
+                }
+
+            }
+
         }
+
+        //Searhces on a phone numer (internal or external), and returns a upn (later ADsPath) to a use or null if not found
+         protected string doPhoneSearch(string numberIn)
+         {
+             string number = numberIn;
+             //If number is a shot internal number, expand it :)
+             if (number.Length == 4)
+             {
+                 // format is 3452
+                 number = String.Format("+459940{0}", number);
+
+             }
+             else if (number.Length == 6)
+             {
+                 //format is +453452 
+                 number = String.Format("+459940{0}", number.Replace("+45",""));
+
+             }
+             else if (number.Length == 8)
+             {
+                 //format is 99403442
+                 number = String.Format("+45{0}", number);
+
+             } // else format is ok
+
+            DirectoryEntry de = new DirectoryEntry("GC://aau.dk");
+            string filter = string.Format("(&(objectCategory=person)(telephoneNumber={0}))", number);
+
+            //logger.Debug(filter);
+
+            DirectorySearcher search = new DirectorySearcher(de, filter);
+            search.PropertiesToLoad.Add("userPrincipalName");
+            SearchResult r = search.FindOne();
+
+
+            if (r != null){
+                //return r.Properties["ADsPath"][0].ToString(); //XXX handle if result is 0 (null exception)
+                return r.Properties["userPrincipalName"][0].ToString(); 
+            } else {
+                return null;
+            }
+
+         }
 
          protected void buildgroupssegmentLabel(String[] groupsList)
          {
