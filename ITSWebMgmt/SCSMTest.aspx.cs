@@ -40,39 +40,48 @@ namespace ITSWebMgmt
             return responseText.Replace("\"","");
         }
 
-        protected void doAction(string authkey)
+        protected void doAction(string userjson)
         {
-            //string authkey = "YIP7Av2/OPNVVvKudsS0WMNcQaOa9GJowu9pUdTuhiQVwy7zHJ/9AoK+A21mU0yzpHdAq1gbxARoajONDuETf3CTW77QAMh5xGJ14RXAXWvCHTZDhIrf0NF5+CGhYI+ZQAxvytq+MxoHqVxHnPojvQ8yxvCpGDCHpJq8jz31ktLYW8ldhN1uLLVT974J2Uc9Lmh4bW5axWGf4laCvMX9gqat3ikRocuYIbNXY4j0kGCxGOmxHdXy71eU7HjFueUnuC0BugfvCRhCqx9d0FQGWIUAii3KOWOO7MSZmG+2dEIq5q0J6zOUb6fdxf4k91aytyI0VcPHBwgeU7AHkR65NMlerTGQN/I4U0vW/ANEZS8/l82hFQRJMAdDkQgZ0tMpybO45fmN0oESW8dHGC7638PJlgD5bohljf4f7llZGQzP7j1NaKNEysf2ZO7zl6CkYFzbDeuYyi4575WpPQj0FwfCvRe2I9tiw+oHJVj+p2WOV0EoBU1HdnFLrJ89/nPXBTrWiCLTs7ppzO7f5HZMjgxzEEQXfBVuYq5wDyhNUGg=";
-            WebRequest request = WebRequest.Create("https://service.aau.dk/api/V3/User/GetUserList?userFilter=kyrke");
-            request.Method = "Get";
-            request.ContentType = "text/json";
-            request.ContentType = "application/json; charset=utf-8";
+            //Print the user info! 
+            var sb = new StringBuilder();
 
-            
-            request.Headers.Add("Authorization", "Token "+authkey);
-
-            var response = request.GetResponse();
-            var responseSteam = response.GetResponseStream();
-
-            var streamReader = new StreamReader(responseSteam);
-
-            var responseText = streamReader.ReadToEnd();
-            
             JavaScriptSerializer js = new JavaScriptSerializer();
-            dynamic json = js.Deserialize<dynamic>(responseText);
+            dynamic json = js.Deserialize<dynamic>(userjson);
 
-            StringBuilder sb = new StringBuilder();
-            foreach (dynamic obj in json)
+            
+            
+            sb.Append("Open Requests<br />");
+
+            for (int i = 0; i < json["MyRequest"].Length; i++)
             {
-                //sb.Append((string)obj["Id"]);
-                sb.Append(lookupUserByUUID((string)obj["Id"], authkey));
+                if (!"Closed".Equals(json["MyRequest"][i]["Status"]["Name"])) {
+                    string id = json["MyRequest"][i]["Id"];
+                    string link;
+                    if (id.StartsWith("IR"))
+                    {
+                        link = "https://service.aau.dk/Incident/Edit/" + id;
+                    }
+                    else //if (id.StartsWith("SR"))
+                    {
+                        link = "https://service.aau.dk/ServiceRequest/Edit/" + id;
+                    }
+                    
+                    sb.Append("<a href=\""+link+"\">" + json["MyRequest"][i]["DisplayName"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
+                }
             }
-
+            
+            //sb.Append("<br /><br/>IsAssignedToUser<br />");
+            //foreach (dynamic s in json["IsAssignedToUser"])
+            //for (int i = 0; i < json["IsAssignedToUser"].Length; i++)
+            //{
+            //    sb.Append(json["IsAssignedToUser"][i]["Id"] + " -" + json["IsAssignedToUser"][i]["DisplayName"] + " - " + json["IsAssignedToUser"][i]["Status"]["Name"] + "<br/>");
+            //}
 
             responseLbl.Text = sb.ToString();
 
         }
 
+        //returns json string for uuid
         protected string lookupUserByUUID(string uuid,string authkey) {
         
             //WebRequest request = WebRequest.Create("https://service.aau.dk/api/V3/User/GetUserRelatedInfoByUserId/?userid=352b43f6-9ff4-a36f-0342-6ce1ae283e37");
@@ -94,9 +103,51 @@ namespace ITSWebMgmt
             JavaScriptSerializer js = new JavaScriptSerializer();
             dynamic jsonString = js.Deserialize<dynamic>(responseText);
 
-            dynamic json = js.Deserialize<dynamic>((string)jsonString);
-            return json["UPN"];
+            //dynamic json = js.Deserialize<dynamic>((string)jsonString);
+            return jsonString;
             
+        }
+
+        //Takes a upn and retuns the users uuid
+        protected string getUserUUIDByUPN(string upn, string authkey)
+        {
+            //Get username from UPN
+            var userName = upn.Split('@')[0];
+
+            WebRequest request = WebRequest.Create("https://service.aau.dk/api/V3/User/GetUserList?userFilter="+userName);
+            request.Method = "Get";
+            request.ContentType = "text/json";
+            request.ContentType = "application/json; charset=utf-8";
+
+
+            request.Headers.Add("Authorization", "Token " + authkey);
+
+            var response = request.GetResponse();
+            var responseSteam = response.GetResponseStream();
+
+            var streamReader = new StreamReader(responseSteam);
+
+            var responseText = streamReader.ReadToEnd();
+
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            dynamic json = js.Deserialize<dynamic>(responseText);
+
+            StringBuilder sb = new StringBuilder();
+            string userjson = null;
+            foreach (dynamic obj in json)
+            {
+                //sb.Append((string)obj["Id"]);
+                userjson = lookupUserByUUID((string)obj["Id"], authkey);
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                dynamic jsonString = jss.Deserialize<dynamic>(userjson);
+
+                if (upn.Equals((string)jsonString["UPN"], StringComparison.CurrentCultureIgnoreCase)) {
+                    break;
+                }
+            }
+
+            return userjson;
+
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -110,7 +161,8 @@ namespace ITSWebMgmt
         protected void button_Click(object sender, EventArgs e)
         {
             string authkey = getAuthKey();
-            doAction(authkey);
+            string uuid = getUserUUIDByUPN("kyrke@its.aau.dk", authkey);
+            doAction(uuid);
         }
     }
 }
