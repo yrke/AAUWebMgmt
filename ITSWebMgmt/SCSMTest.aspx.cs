@@ -50,7 +50,7 @@ namespace ITSWebMgmt
 
             
             
-            sb.Append("Open Requests<br />");
+            sb.Append("<h1>Open Requests</h1><br />");
 
             for (int i = 0; i < json["MyRequest"].Length; i++)
             {
