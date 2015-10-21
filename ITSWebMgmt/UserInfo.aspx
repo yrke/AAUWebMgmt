@@ -2,10 +2,11 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-  <div class="ui active dimmer" style="display:none">
+<div id="loader">
+<div class="ui active dimmer" style="display:none">
     <div class="ui text loader">Loading</div>
 </div>
-
+</div>
 
     <h1>User Info</h1>
     <div>
