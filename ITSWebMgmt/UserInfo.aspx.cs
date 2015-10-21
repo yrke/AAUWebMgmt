@@ -25,6 +25,7 @@ namespace ITSWebMgmt
          protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack) {
+
             ResultDiv.Visible = false;
             
             String username = Request.QueryString["username"];
@@ -348,6 +349,11 @@ namespace ITSWebMgmt
                 var groupListConvert = b.ToArray<string>();
                 buildgroupssegmentLabel(groupListConvert);
                 buildFilesharessegmentLabel(groupListConvert);
+                
+                //Build SCSM
+                var scsmtest = new SCSMTest();
+                divServiceManager.Text = scsmtest.getActiveIncidents((string)result.Properties["userPrincipalName"][0], (string)result.Properties["displayName"][0]);
+
 
                 String adpath = result.Properties["ADsPath"][0].ToString();
                 Session["adpath"] = adpath;

@@ -2,12 +2,17 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
+  <div class="ui active dimmer" style="display:none">
+    <div class="ui text loader">Loading</div>
+</div>
+
+
     <h1>User Info</h1>
     <div>
         Username
         <div class="ui action input">
             <asp:TextBox ID="UserNameBox" runat="server" Text="kyrke@its.aau.dk" CssClass="ui input focus" placeholder="Search..." />
-            <asp:Button runat="server" CssClass="ui button" ID="sumbit" OnClick="lookupUser" Text="Søg" />
+            <asp:Button runat="server" CssClass="ui button" ID="sumbit" OnClick="lookupUser" Text="Søg"  OnClientClick='$("#loader > div").show("fast");'/>
         </div>
         <asp:RegularExpressionValidator ID="regexEmailValid" runat="server" ValidationExpression="\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ControlToValidate="UserNameBox" ErrorMessage="Invalid format"></asp:RegularExpressionValidator>
         <asp:RequiredFieldValidator runat="server" ID="reqName" ControlToValidate="UserNameBox" ErrorMessage="Please enter a value" />
@@ -27,6 +32,7 @@
             <div class="four wide column">
                 <div class="ui vertical fluid tabular menu">
                     <a class="active item" data-tab="basicinfo">Basic Info</a>
+                    <a class="item" data-tab="servicemanager">Service Manager</a>
                     <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
                     <a class="item" data-tab="groups">Groups</a>
                     <a class="item" data-tab="fileshares">Fileshares</a><!--
@@ -70,6 +76,10 @@
                 <div class="ui tab segment" data-tab="networkdrives">
                     networkdrives
                 </div>
+                <div class="ui tab segment" data-tab="servicemanager">
+                    <asp:Label ID="divServiceManager" runat="server"></asp:Label>
+                </div>
+                
                 <div class="ui tab segment" data-tab="rawdata">
                     <asp:Label ID="ResultLabel" runat="server"></asp:Label>
                 </div>
@@ -123,5 +133,4 @@
         <!--<asp:TextBox ID="ResultBox" TextMode="MultiLine" Width="700" Height="200" runat="server"></asp:TextBox>-->
 
     </div>
-
 </asp:Content>

@@ -22,7 +22,11 @@ namespace ITSWebMgmt
             request.Method = "POST";
             request.ContentType = "text/json";
 
-            string json = "{\"Username\": \"its\\\\kyrke\",\"Password\": \"" + passwordTextBx.Text + "\",\"LanguageCode\": \"ENU\"}";
+
+            string secret = File.ReadAllText(@"C:\webmgmtlog\webmgmtsecret.txt");
+            //string json = "{\"Username\": \"srv\\\\svc_webmgmt-scsm\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
+            string json = "{\"Username\": \"its\\\\kyrke\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
+
 
             var requestSteam = new StreamWriter(request.GetRequestStream());
             requestSteam.Write(json);
@@ -40,12 +44,13 @@ namespace ITSWebMgmt
             return responseText.Replace("\"","");
         }
 
-        protected void doAction(string userjson)
+        protected string doAction(string userjson)
         {
             //Print the user info! 
             var sb = new StringBuilder();
 
             JavaScriptSerializer js = new JavaScriptSerializer();
+            js.MaxJsonLength = Int32.MaxValue;
             dynamic json = js.Deserialize<dynamic>(userjson);
 
             
@@ -77,12 +82,12 @@ namespace ITSWebMgmt
             //    sb.Append(json["IsAssignedToUser"][i]["Id"] + " -" + json["IsAssignedToUser"][i]["DisplayName"] + " - " + json["IsAssignedToUser"][i]["Status"]["Name"] + "<br/>");
             //}
 
-            responseLbl.Text = sb.ToString();
-
+            return sb.ToString();
         }
 
+
         //returns json string for uuid
-        protected string lookupUserByUUID(string uuid,string authkey) {
+        protected string lookupUserByUUID(string uuid, string authkey) {
         
             //WebRequest request = WebRequest.Create("https://service.aau.dk/api/V3/User/GetUserRelatedInfoByUserId/?userid=352b43f6-9ff4-a36f-0342-6ce1ae283e37");
             WebRequest request = WebRequest.Create("https://service.aau.dk/api/V3/User/GetUserRelatedInfoByUserId/?userid="+uuid);
@@ -99,8 +104,9 @@ namespace ITSWebMgmt
             var responseText = streamReader.ReadToEnd();
 
             //string sMatchUPN = ",\\\"UPN\\\":\\\"(.)*\\\",";
-
+            
             JavaScriptSerializer js = new JavaScriptSerializer();
+            js.MaxJsonLength = Int32.MaxValue;
             dynamic jsonString = js.Deserialize<dynamic>(responseText);
 
             //dynamic json = js.Deserialize<dynamic>((string)jsonString);
@@ -108,13 +114,19 @@ namespace ITSWebMgmt
             
         }
 
+        
+        protected string getUserUUIDByUPN(string upn, string authkey) {
+            var userName = upn.Split('@')[0];
+            return getUserUUIDByUPN(upn, userName, authkey);
+        }
+
         //Takes a upn and retuns the users uuid
-        protected string getUserUUIDByUPN(string upn, string authkey)
+        protected string getUserUUIDByUPN(string upn, string displayName, string authkey)
         {
             //Get username from UPN
-            var userName = upn.Split('@')[0];
+            
 
-            WebRequest request = WebRequest.Create("https://service.aau.dk/api/V3/User/GetUserList?userFilter="+userName);
+            WebRequest request = WebRequest.Create("https://service.aau.dk/api/V3/User/GetUserList?userFilter="+displayName);
             request.Method = "Get";
             request.ContentType = "text/json";
             request.ContentType = "application/json; charset=utf-8";
@@ -139,6 +151,7 @@ namespace ITSWebMgmt
                 //sb.Append((string)obj["Id"]);
                 userjson = lookupUserByUUID((string)obj["Id"], authkey);
                 JavaScriptSerializer jss = new JavaScriptSerializer();
+                jss.MaxJsonLength = Int32.MaxValue;
                 dynamic jsonString = jss.Deserialize<dynamic>(userjson);
 
                 if (upn.Equals((string)jsonString["UPN"], StringComparison.CurrentCultureIgnoreCase)) {
@@ -162,7 +175,15 @@ namespace ITSWebMgmt
         {
             string authkey = getAuthKey();
             string uuid = getUserUUIDByUPN("kyrke@its.aau.dk", authkey);
-            doAction(uuid);
+            string s = doAction(uuid);
+            responseLbl.Text = s;
+
+        }
+
+        public string getActiveIncidents(string upn, string displayName){
+            string authkey = getAuthKey();
+            string uuid = getUserUUIDByUPN(upn, displayName, authkey);
+            return doAction(uuid);
         }
     }
 }
