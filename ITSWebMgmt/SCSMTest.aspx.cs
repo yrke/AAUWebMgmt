@@ -14,18 +14,21 @@ namespace ITSWebMgmt
 {
     public partial class SCSMTest : System.Web.UI.Page
     {
+        string webserviceURL = "https://service.aau.dk";
+        //string webserviceURL = "http://scsm-tms1.srv.aau.dk";
 
         protected string getAuthKey()
         {
 
-            WebRequest request = WebRequest.Create("https://service.aau.dk/api/V3/Authorization/GetToken");
+            WebRequest request = WebRequest.Create(webserviceURL+"/api/V3/Authorization/GetToken");
             request.Method = "POST";
             request.ContentType = "text/json";
 
 
             string secret = File.ReadAllText(@"C:\webmgmtlog\webmgmtsecret.txt");
-            string json = "{\"Username\": \"srv\\\\svc_webmgmt-scsm\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
+            //string json = "{\"Username\": \"srv\\\\svc_webmgmt-scsm\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
             //string json = "{\"Username\": \"its\\\\kyrke\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
+            string json = "{\"Username\": \"its\\\\svc_webmgmt-scsm\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
 
 
             var requestSteam = new StreamWriter(request.GetRequestStream());
@@ -71,7 +74,7 @@ namespace ITSWebMgmt
                         link = "https://service.aau.dk/ServiceRequest/Edit/" + id;
                     }
                     
-                    sb.Append("<a href=\""+link+"\">" + json["MyRequest"][i]["DisplayName"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
+                    sb.Append("<a href=\""+link+"\" target=\"_blank\">" + json["MyRequest"][i]["DisplayName"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
                 }
             }
             
@@ -88,11 +91,11 @@ namespace ITSWebMgmt
 
         //returns json string for uuid
         protected string lookupUserByUUID(string uuid, string authkey) {
-        
-            //WebRequest request = WebRequest.Create("https://service.aau.dk/api/V3/User/GetUserRelatedInfoByUserId/?userid=352b43f6-9ff4-a36f-0342-6ce1ae283e37");
-            WebRequest request = WebRequest.Create("https://service.aau.dk/api/V3/User/GetUserRelatedInfoByUserId/?userid="+uuid);
+
+            //WebRequest request = WebRequest.Create(webserviceURL+"api/V3/User/GetUserRelatedInfoByUserId/?userid=352b43f6-9ff4-a36f-0342-6ce1ae283e37");
+            WebRequest request = WebRequest.Create(webserviceURL+"/api/V3/User/GetUserRelatedInfoByUserId/?userid="+uuid);
             request.Method = "Get";
-            request.ContentType = "text/json";
+            //request.ContentType = "text/json";
             request.Headers.Add("Authorization", "Token " + authkey);
             request.ContentType = "application/json; text/json";
 
@@ -126,7 +129,7 @@ namespace ITSWebMgmt
             //Get username from UPN
             
 
-            WebRequest request = WebRequest.Create("https://service.aau.dk/api/V3/User/GetUserList?userFilter="+displayName);
+            WebRequest request = WebRequest.Create(webserviceURL+"/api/V3/User/GetUserList?userFilter="+displayName);
             request.Method = "Get";
             request.ContentType = "text/json";
             request.ContentType = "application/json; charset=utf-8";
@@ -174,8 +177,10 @@ namespace ITSWebMgmt
         protected void button_Click(object sender, EventArgs e)
         {
             string authkey = getAuthKey();
-            string uuid = getUserUUIDByUPN("kyrke@its.aau.dk", authkey);
-            string s = doAction(uuid);
+            //string uuid = getUserUUIDByUPN("kyrke@its.aau.dk", authkey);
+            //string s = doAction(uuid);
+            string s = lookupUserByUUID("008f492b-df58-6e9c-47c5-bd4ae81028af", authkey);
+            
             responseLbl.Text = s;
 
         }
