@@ -74,10 +74,12 @@
         </div>
     </div>
 
+
     <div class="ui main text container">
         <asp:ContentPlaceHolder ID="MainContent" runat="server">
         </asp:ContentPlaceHolder>
     </div>
+
 
 
      <div class="ui inverted vertical footer segment">
