@@ -294,77 +294,50 @@ namespace ITSWebMgmt
             var dc = upn.Split('@')[1];
             DirectoryEntry de = new DirectoryEntry("LDAP://"+dc);         
 
-            var elements = "cn,userAccountControl,sAMAccountName,userPrincipalName,aauStudentID,aauStaffID,aauUserClassification,aauUserStatus,displayName,department,proxyAddresses,badPwdCount,badPasswordTime,lockoutTime,departmentNumber,homeDirectory,homeDrive,lastLogon,memberOf,profilePath,msDS-UserPasswordExpiryTimeComputed,msDS-User-Account-Control-Computed";
+            //var elements = "cn,userAccountControl,sAMAccountName,userPrincipalName,aauStudentID,aauStaffID,aauUserClassification,aauUserStatus,displayName,department,proxyAddresses,badPwdCount,badPasswordTime,lockoutTime,departmentNumber,homeDirectory,homeDrive,lastLogon,memberOf,profilePath,msDS-UserPasswordExpiryTimeComputed,msDS-User-Account-Control-Computed";
+            //var elements = "+";
             //var elements = "sAMAccountName,userPrincipalName,aauStaffID";
+            
 
-            var listElements = elements.Split(',');
+            //var listElements = elements.Split(',');
 
             DirectorySearcher search = new DirectorySearcher(de);
-            search.PropertiesToLoad.AddRange(listElements);
+            //search.PropertiesToLoad.AddRange(listElements);
             search.Filter = String.Format("(userPrincipalName={0})", upn);
             
             SearchResult result = search.FindOne();
 
             if (result != null)
             {
-                
-                //builder.Append((result.Properties["aauStaffID"][0])).ToString();
-
-                builder.Append("<table><tr><th>k</th><th>v</th></tr>");
-                
-                foreach (string k in listElements)
-                {
-                    builder.Append("<tr>");
-                    builder.Append("<td>"+k+"</td>");
-
-                    var a = result.Properties[k];
-                    if (a != null && a.Count > 0)
-                    {
-                        if (a.Count == 1) {
-                            var v = a[0];
-                            builder.Append("<td>"+v+"</td></tr>");
-                        } else {
-
-                            var v = a[0];
-                            builder.Append("<td>"+v+"</td>");
-                            for (int i = 1; i < a.Count; i++ ){
-                                v = a[i];
-                                builder.Append("<tr><td></td><td>"+v+"</td></tr>");
-                            }
-
-                        }
-
-                    } else {
-                        builder.Append("<td></td></tr>");
-                    }
-
-                }
-                
-                builder.Append("</table>");
-
-                displayName.Text = result.Properties["displayName"][0].ToString();
-
-                var groupsList = result.Properties["memberOf"];
-                var b = groupsList.Cast<string>();
-                var groupListConvert = b.ToArray<string>();
-                buildgroupssegmentLabel(groupListConvert);
-                buildFilesharessegmentLabel(groupListConvert);
-                
-                //Build SCSM
-                var scsmtest = new SCSMTest();
-                divServiceManager.Text = scsmtest.getActiveIncidents((string)result.Properties["userPrincipalName"][0], (string)result.Properties["displayName"][0]);
-
-
+                    
+                //Get the AD object
                 String adpath = result.Properties["ADsPath"][0].ToString();
+                
+                
+                //Get the AD object 
+                var userDE = new DirectoryEntry(adpath);
+                
+                //Save Session
                 Session["adpath"] = adpath;
 
+
+
+                //Build GUI
+
+                buildRawSegment(userDE);
+
+                buildBasicInfoSegment(userDE);
+                buildWarningSegment(userDE);
+                buildGroupsSegments(userDE);
+                BuildSCSMSegment(userDE);
 
             }
             else
             {
                 builder.Append("No user found");
+                ResultLabel.Text = builder.ToString();
             }
-            ResultLabel.Text = builder.ToString();
+            
 
             //Save user in session
             
@@ -372,6 +345,86 @@ namespace ITSWebMgmt
 
         }
 
+        private void buildRawSegment(DirectoryEntry result)
+        {
+            //builder.Append((result.Properties["aauStaffID"][0])).ToString();
+            var builder = new StringBuilder();
+            
+            builder.Append("<table><tr><th>k</th><th>v</th></tr>");
+
+            foreach (string k in result.Properties.PropertyNames)
+            {
+                builder.Append("<tr>");
+                builder.Append("<td>" + k + "</td>");
+
+                var a = result.Properties[k];
+                if (a != null && a.Count > 0)
+                {
+                    if (a.Count == 1)
+                    {
+                        var v = a[0];
+                        builder.Append("<td>" + v + "</td></tr>");
+                    }
+                    else
+                    {
+
+                        var v = a[0];
+                        builder.Append("<td>" + v + "</td>");
+                        for (int i = 1; i < a.Count; i++)
+                        {
+                            v = a[i];
+                            builder.Append("<tr><td></td><td>" + v + "</td></tr>");
+                        }
+
+                    }
+
+                }
+                else
+                {
+                    builder.Append("<td></td></tr>");
+                }
+
+            }
+
+            builder.Append("</table>");
+            ResultLabel.Text = builder.ToString();
+
+        }
+
+        private void BuildSCSMSegment(DirectoryEntry result)
+        {
+            var scsmtest = new SCSMTest();
+            divServiceManager.Text = scsmtest.getActiveIncidents((string)result.Properties["userPrincipalName"][0], (string)result.Properties["displayName"][0]);
+        }
+
+        private void buildGroupsSegments(DirectoryEntry result)
+        {
+            var groupsList = result.Properties["memberOf"];
+            var b = groupsList.Cast<string>();
+            var groupListConvert = b.ToArray<string>();
+            buildgroupssegmentLabel(groupListConvert);
+            buildFilesharessegmentLabel(groupListConvert);
+
+        }
+
+        private void buildBasicInfoSegment(DirectoryEntry result)
+        {
+            //Fills in basic user info
+            displayName.Text = result.Properties["displayName"][0].ToString();
+
+
+
+
+
+        }
+
+        private void buildWarningSegment(DirectoryEntry result)
+        {
+            //Creates warning headers for differnt kinds of user errors 
+
+
+
+        }
         
     }
 }
