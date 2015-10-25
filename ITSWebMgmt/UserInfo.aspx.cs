@@ -11,7 +11,7 @@ using System.Web.UI.WebControls;
 
 namespace ITSWebMgmt
 {
-    public partial class WebForm1 : System.Web.UI.Page
+    public partial class UserInfo : System.Web.UI.Page
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
         

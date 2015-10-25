@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Home Page" Language="C#" AutoEventWireup="true" CodeBehind="UserInfo.aspx.cs" Inherits="ITSWebMgmt.WebForm1" MasterPageFile="~/Site.Master" %>
+﻿<%@ Page Title="Home Page" Language="C#" AutoEventWireup="true" CodeBehind="UserInfo.aspx.cs" Inherits="ITSWebMgmt.UserInfo" MasterPageFile="~/Site.Master" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -36,8 +36,8 @@
                     <a class="item" data-tab="servicemanager">Service Manager</a>
                     <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
                     <a class="item" data-tab="groups">Groups</a>
-                    <a class="item" data-tab="fileshares">Fileshares</a><!--
-                    <a class="item" data-tab="networkdrives">Networkdrives</a>-->
+                    <a class="item" data-tab="fileshares">Fileshares</a>
+                    <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
                     <a class="item" data-tab="rawdata">Raw Data</a>
                     <a class="item" data-tab="tasks">Tasks</a>
 <!--                    <a class="item" data-tab="statustest">Statustest</a> -->
@@ -75,7 +75,11 @@
                     
                 </div>
                 <div class="ui tab segment" data-tab="networkdrives">
-                    networkdrives
+                    <h2>networkdrives</h2>
+                    <h3>GPO mounted</h3>
+                    not inplemented
+                    <h3>Logonscript</h3>
+                    not inplemented
                 </div>
                 <div class="ui tab segment" data-tab="servicemanager">
                     <asp:Label ID="divServiceManager" runat="server"></asp:Label>

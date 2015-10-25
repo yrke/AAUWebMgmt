@@ -10,7 +10,7 @@
 namespace ITSWebMgmt {
     
     
-    public partial class WebForm1 {
+    public partial class UserInfo {
         
         /// <summary>
         /// UserNameBox control.
