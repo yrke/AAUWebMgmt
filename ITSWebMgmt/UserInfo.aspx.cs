@@ -424,8 +424,10 @@ namespace ITSWebMgmt
 
             StringBuilder sb = new StringBuilder();
 
-            //Account is disabled!
             var flags =(int)result.Properties["userAccountControl"].Value;
+
+
+            //Account is disabled!
             const int ufAccountDisable = 0x0002;
             if (((flags & ufAccountDisable) == ufAccountDisable))
             { 
@@ -433,9 +435,34 @@ namespace ITSWebMgmt
             }
             
 
+            //Accont is locked
+
+            if ((Convert.ToBoolean(result.InvokeGet("IsAccountLocked")))) { 
+                errorUserLockedDiv.Style.Clear();
+            }
+
             //Password is expired and warning before expire (same timeline as windows displays warning)
 
         }
+
+        protected void unlockUserAccountButton_Click(object sender, EventArgs e)
+        {
+            string adpath = (string)Session["adpath"];
+            logger.Info("User {0} unlocked useraccont {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
+            unlockUserAccount(adpath);
+        }
+
+        protected void unlockUserAccount(string adpath)
+        {
+
+            DirectoryEntry uEntry = new DirectoryEntry(adpath);
+            uEntry.Properties["LockOutTime"].Value = 0; //unlock account
+
+            uEntry.CommitChanges(); //may not be needed but adding it anyways
+
+            uEntry.Close();
+        }
+
         
     }
 }

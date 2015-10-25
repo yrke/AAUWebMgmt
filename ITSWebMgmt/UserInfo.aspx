@@ -36,9 +36,26 @@
             <div class="header">
                 User is diabled
             </div>
-            <p>The user is disabled in AD, user can't login. User is expired in AdmDB or disabled by a administrator</p>
+            <p>The user is disabled in AD, user can't login. User is expired in AdmDB or disabled by a administrator, see <a href="onenote:https://docs.its.aau.dk/Documentation/Info%20til%20Service%20Desk/Disablet%20Users.one#Disabled%20users%20in%20AD&section-id={062F945F-AF8F-4E1C-8151-6C87AA1F134B}&page-id={86CE4A52-90A9-4A5C-A189-9402B9B6153B}&object-id={441C8DED-9C4E-4561-B184-186C63174D6D}&EB">onenote</a></p>
             </div>
         
+            <div class="ui negative message" id="errorUserLockedDiv" style="display:none" runat="server">
+            <div class="header">
+                User account is locked
+            </div>
+            <p>The user account is locked, used tasks unlock account to unlock it.</p>
+            </div>
+
+            <!-- 
+                <div class="ui warning message">
+              <i class="close icon"></i>
+              <div class="header">
+                You must register before you can do that!
+              </div>
+              Visit our registration page, then try again
+                </div>
+                -->
+
         </div>
             
         <h2><asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
@@ -106,8 +123,13 @@
                 <div class="ui tab segment" data-tab="tasks">
                     Tasks<br />
 
+                    Unlock Account (if locked by wrong password):
+                    <asp:Button runat="server" CssClass="ui button" ID="unlockUserAccountButton" Text="Unlock Account" OnClick="unlockUserAccountButton_Click" /><br />
+                    
+                    <br /><br />
                     Roaming Profile (enable/disable): 
                     <asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" /><br />
+                    <br /><br />
                     
                     Fix user OUT (only do this if you know what you are doing): 
                     <asp:Button runat="server" CssClass="ui button" ID="FixUserOUButton" Text="Fix User OU" OnClick="fixUserOUButton" /><br />
