@@ -10,6 +10,8 @@
 
     <h1>User Info</h1>
     <div>
+
+
         Username
         <div class="ui action input">
             <asp:TextBox ID="UserNameBox" runat="server" Text="kyrke@its.aau.dk" CssClass="ui input focus" placeholder="Search..." />
@@ -26,6 +28,19 @@
         </script>
 
         <div runat="server" id="ResultDiv">
+        
+            
+        <div runat="server" id="warningsAndErrorDIV">
+        
+            <div class="ui negative message" id="errorUserDisabled" style="display:none" runat="server">
+            <div class="header">
+                User is diabled
+            </div>
+            <p>The user is disabled in AD, user can't login. User is expired in AdmDB or disabled by a administrator</p>
+            </div>
+        
+        </div>
+            
         <h2><asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
 
 

@@ -412,7 +412,7 @@ namespace ITSWebMgmt
             //Fills in basic user info
             displayName.Text = result.Properties["displayName"][0].ToString();
 
-
+            //Password Expire date "PasswordExpirationDate"
 
 
 
@@ -422,7 +422,18 @@ namespace ITSWebMgmt
         {
             //Creates warning headers for differnt kinds of user errors 
 
+            StringBuilder sb = new StringBuilder();
 
+            //Account is disabled!
+            var flags =(int)result.Properties["userAccountControl"].Value;
+            const int ufAccountDisable = 0x0002;
+            if (((flags & ufAccountDisable) == ufAccountDisable))
+            { 
+                errorUserDisabled.Style.Clear();
+            }
+            
+
+            //Password is expired and warning before expire (same timeline as windows displays warning)
 
         }
         
