@@ -16,7 +16,7 @@
     <h1>ITSWebMgmt</h1>
 
     <a href="/UserInfo.aspx">User Info</a><br />
-    <a href="~/ComputerInfo.aspx">Computer Info</a><br />
+    <a href="/ComputerInfo.aspx">Computer Info</a><br />
         <br />
         <br />
         <br />
