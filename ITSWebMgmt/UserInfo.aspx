@@ -74,16 +74,16 @@
             </div>
             <p>The user is missing one or more of the AAU attributes. The user will not be able to login via login.aau.dk. Check CPR is correct in ADMdb</p>
             </div>
-
-            <!-- 
-                <div class="ui warning message">
+            
+             
+            <div class="ui warning message" id="warningNotStandardOU" style="display:none" runat="server">
               <i class="close icon"></i>
               <div class="header">
-                You must register before you can do that!
+                User is in a non standard OU
               </div>
-              Visit our registration page, then try again
-                </div>
-                -->
+              This might not be a problem. User can be affected by non-stadard group policy. User can be a service user or admin account.  
+            </div>
+               
 
         </div>
             
@@ -168,9 +168,11 @@
                     <asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" /><br />
                     <br /><br />
                     
+                    <div runat="server" id="divFixuserOU">
                     Fix user OU (only do this if you know what you are doing): 
                     <asp:Button runat="server" OnClick="fixUserOUButton" Text="Fix User OU" id="btnPostbackfixUserOUButton" style="display:none"/>                    
                     <button type="button" Class="ui button" ID="btnFixOUShowModal" onclick="$('#modalConfirmOUmove').modal('show');" >Fix User OU</button><br />
+                    </div>
                 </div>
                 <div class="ui tab segment" data-tab="statustest">
                     <table class="ui celled table">

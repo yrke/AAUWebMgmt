@@ -143,11 +143,47 @@ namespace ITSWebMgmt
 
          }
 
+         protected bool userIsInRightOU(DirectoryEntry de)
+         {
+
+             String dn = (string)de.Properties["distinguishedName"][0];
+             String[] dnarray = dn.Split(',');
+
+             String[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
+
+             int count = ou.Count();
+             if (count < 2)
+             {
+                 return false;
+             }
+             //Check root is people
+             if (!(ou[count - 1]).Equals("ou=people", StringComparison.CurrentCultureIgnoreCase))
+             {
+                 //Error user is not placed in people!!!!! Cant move the user (might not be a real user or admin or computer)
+                 return false;
+             }  
+             String[] okplaces = new String[3]{"ou=staff","ou=guests","ou=students"};
+             if (!okplaces.Contains(ou[count - 2], StringComparer.OrdinalIgnoreCase))
+             {
+                 //Error user is not in out staff, people or student, what is gowing on here?
+                 return false;
+             }
+             if (count > 2) {
+                 return false;
+             }
+             return true;
+
+         }
+
          protected bool fixUserOu(String adpath)
          {
              
              DirectoryEntry de = new DirectoryEntry(adpath);
 
+             
+             if (userIsInRightOU(de)) { return false; }
+
+             //See if it can be fixed!
              String dn = (string)de.Properties["distinguishedName"][0];
              String[] dnarray = dn.Split(',');
 
@@ -158,6 +194,7 @@ namespace ITSWebMgmt
              if (count < 2)
              {
                  //This cant be in people/{staff,student,guest}
+                 return false;
              }
              //Check root is people
              if (!(ou[count - 1]).Equals("ou=people", StringComparison.CurrentCultureIgnoreCase))
@@ -333,6 +370,8 @@ namespace ITSWebMgmt
                 buildGroupsSegments(userDE);
                 BuildSCSMSegment(userDE);
 
+                
+
             }
             else
             {
@@ -473,7 +512,17 @@ namespace ITSWebMgmt
             { 
                 errorMissingAAUAttr.Style.Clear();
             }
-            
+
+            if (!userIsInRightOU(result))
+            {
+                //Show warning
+                warningNotStandardOU.Style.Clear();
+            }
+            else
+            {
+                divFixuserOU.Visible = false;
+            } 
+
             //Password is expired and warning before expire (same timeline as windows displays warning)
 
         }
