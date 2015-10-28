@@ -2,6 +2,28 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
+<div class="ui dimmer modals page transition hidden" style="display: block !important;">
+<div class="ui small test modal transition hidden" style="margin-top: -92px; display: block !important;">
+    <div class="header">
+      Fix user OU
+    </div>
+    <div class="content">
+      <p>This task will move the user to the right OU. This will affect applied GPOs.</p>
+    </div>
+    <div class="actions">
+      <div class="ui negative button">
+        No
+      </div>
+
+          <div runat="server" class="ui positive right labeled icon button" onclick="$('#MainContent_btnPostbackfixUserOUButton').click()">
+       
+           Yes
+           <i class="checkmark icon"></i>
+          </div>
+    </div>
+  </div>
+</div>
+
 <div id="loader">
 <div class="ui active dimmer" style="display:none">
     <div class="ui text loader">Loading</div>
@@ -146,8 +168,10 @@
                     <asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" /><br />
                     <br /><br />
                     
-                    Fix user OUT (only do this if you know what you are doing): 
-                    <asp:Button runat="server" CssClass="ui button" ID="FixUserOUButton" Text="Fix User OU" OnClick="fixUserOUButton" /><br />
+                    Fix user OU (only do this if you know what you are doing): 
+                    <asp:Button runat="server" OnClick="fixUserOUButton" Text="Fix User OU" id="btnPostbackfixUserOUButton" style="display:none"/>          
+          
+                    <button type="button" Class="ui button" ID="btnFixOUShowModal" onclick="$('.small.modal').modal('show');" >Fix User OU</button><br />
                 </div>
                 <div class="ui tab segment" data-tab="statustest">
                     <table class="ui celled table">
