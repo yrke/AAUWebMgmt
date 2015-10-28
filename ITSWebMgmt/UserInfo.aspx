@@ -3,7 +3,7 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
 <div class="ui dimmer modals page transition hidden" style="display: block !important;">
-<div class="ui small test modal transition hidden" style="margin-top: -92px; display: block !important;">
+<div id="modalConfirmOUmove" class="ui small test modal transition hidden" style="margin-top: -92px; display: block !important;">
     <div class="header">
       Fix user OU
     </div>
@@ -169,9 +169,8 @@
                     <br /><br />
                     
                     Fix user OU (only do this if you know what you are doing): 
-                    <asp:Button runat="server" OnClick="fixUserOUButton" Text="Fix User OU" id="btnPostbackfixUserOUButton" style="display:none"/>          
-          
-                    <button type="button" Class="ui button" ID="btnFixOUShowModal" onclick="$('.small.modal').modal('show');" >Fix User OU</button><br />
+                    <asp:Button runat="server" OnClick="fixUserOUButton" Text="Fix User OU" id="btnPostbackfixUserOUButton" style="display:none"/>                    
+                    <button type="button" Class="ui button" ID="btnFixOUShowModal" onclick="$('#modalConfirmOUmove').modal('show');" >Fix User OU</button><br />
                 </div>
                 <div class="ui tab segment" data-tab="statustest">
                     <table class="ui celled table">
