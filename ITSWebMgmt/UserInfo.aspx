@@ -46,6 +46,13 @@
             <p>The user account is locked, used tasks unlock account to unlock it.</p>
             </div>
 
+            <div class="ui negative message" id="errorMissingAAUAttr" style="display:none" runat="server">
+            <div class="header">
+                User is missing AAU Attributes
+            </div>
+            <p>The user is missing one or more of the AAU attributes. The user will not be able to login via login.aau.dk. Check CPR is correct in ADMdb</p>
+            </div>
+
             <!-- 
                 <div class="ui warning message">
               <i class="close icon"></i>

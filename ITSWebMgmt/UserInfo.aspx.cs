@@ -466,7 +466,14 @@ namespace ITSWebMgmt
             if ((Convert.ToBoolean(result.InvokeGet("IsAccountLocked")))) { 
                 errorUserLockedDiv.Style.Clear();
             }
+           
+            //Missing Attributes 
 
+            if (!(result.Properties.Contains("aauUserClassification") && result.Properties.Contains("aauUserStatus") && (result.Properties.Contains("aauStaffID") || result.Properties.Contains("aauStudentID"))))
+            { 
+                errorMissingAAUAttr.Style.Clear();
+            }
+            
             //Password is expired and warning before expire (same timeline as windows displays warning)
 
         }
