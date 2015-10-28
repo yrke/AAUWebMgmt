@@ -6,6 +6,8 @@
           <div class="ui right internal attached rail" style="margin-top:50px;">
     <div class="ui segment" style="">
       <h3>Nyheder</h3>
+        <li>Webmgmt userinfo viser nu de SCCM maskier som en bruger har været logget på
+        <br /><br />
         <li>Webmgmt userinfo har nu en ny task til at unlocked account
         <br /><br />
         <li>Webmgmt viser nu en advarsel hvis en konto er disabled eller locked
@@ -17,6 +19,8 @@
 
     <a href="/UserInfo.aspx">User Info</a><br />
     <a href="/ComputerInfo.aspx">Computer Info</a><br />
+        <br /><br /><br />
+        <br />
         <br />
         <br />
         <br />

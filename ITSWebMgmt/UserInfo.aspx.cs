@@ -8,6 +8,7 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Management;
 
 namespace ITSWebMgmt
 {
@@ -327,6 +328,7 @@ namespace ITSWebMgmt
                 buildRawSegment(userDE);
 
                 buildBasicInfoSegment(userDE);
+                buildComputerInformation(userDE);
                 buildWarningSegment(userDE);
                 buildGroupsSegments(userDE);
                 BuildSCSMSegment(userDE);
@@ -418,6 +420,30 @@ namespace ITSWebMgmt
 
         }
 
+        
+        private void buildComputerInformation(DirectoryEntry result)
+        {
+
+            string upn = (string)result.Properties["userPrincipalName"][0];
+            string[] upnsplit = upn.Split('@');
+            string domain = upnsplit[1].Split('.')[0];
+
+            string userName = String.Format("{0}\\\\{1}", domain, upnsplit[0]);
+
+            var sb = new StringBuilder();
+
+            var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
+            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_UserMachineRelationship WHERE UniqueUserName = \""+userName+"\"");
+            var searcher = new ManagementObjectSearcher(ms, wqlq);
+
+            foreach (ManagementObject o in searcher.Get()) {
+                var machinename = o.Properties["ResourceName"].Value.ToString();
+                sb.Append("<a href=\"/computerInfo.aspx?computername="+ machinename  + "\">" + machinename  + "</a><br />");
+            }
+
+            divComputerInformation.Text = sb.ToString();
+
+        }
         private void buildWarningSegment(DirectoryEntry result)
         {
             //Creates warning headers for differnt kinds of user errors 

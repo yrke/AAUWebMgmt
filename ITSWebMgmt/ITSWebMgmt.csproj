@@ -47,6 +47,7 @@
       <HintPath>..\packages\SimpleImpersonation.1.0.1\lib\net40-Client\SimpleImpersonation.dll</HintPath>
     </Reference>
     <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />

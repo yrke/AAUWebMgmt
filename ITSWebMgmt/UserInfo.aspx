@@ -66,6 +66,7 @@
                 <div class="ui vertical fluid tabular menu">
                     <a class="active item" data-tab="basicinfo">Basic Info</a>
                     <a class="item" data-tab="servicemanager">Service Manager</a>
+                    <a class="item" data-tab="computerInformation">Computer Information</a>
                     <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
                     <a class="item" data-tab="groups">Groups</a>
                     <a class="item" data-tab="fileshares">Fileshares</a>
@@ -116,7 +117,14 @@
                 <div class="ui tab segment" data-tab="servicemanager">
                     <asp:Label ID="divServiceManager" runat="server"></asp:Label>
                 </div>
+
+                <div class="ui tab segment" data-tab="computerInformation">
+                    <h2>Computer Information</h2>
+                    <!-- Information from managerOf computers and logon machines from SCCM -->
+                    <asp:Label ID="divComputerInformation" runat="server"></asp:Label>
+                </div>
                 
+
                 <div class="ui tab segment" data-tab="rawdata">
                     <asp:Label ID="ResultLabel" runat="server"></asp:Label>
                 </div>
