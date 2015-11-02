@@ -38,6 +38,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="NLog, Version=4.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.1.0\lib\net45\NLog.dll</HintPath>
@@ -66,6 +70,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ADMdbtest.aspx" />
     <Content Include="CallManager.aspx" />
     <Content Include="ComputerInfo.aspx" />
     <Content Include="Content\bootstrap.css" />
@@ -99,6 +104,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ADMdbtest.aspx.cs">
+      <DependentUpon>ADMdbtest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ADMdbtest.aspx.designer.cs">
+      <DependentUpon>ADMdbtest.aspx</DependentUpon>
+    </Compile>
     <Compile Include="CallManager.aspx.cs">
       <DependentUpon>CallManager.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
