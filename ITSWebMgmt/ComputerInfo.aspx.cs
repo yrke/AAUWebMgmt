@@ -263,7 +263,7 @@ namespace ITSWebMgmt
             }
             else
             {
-                ResultLabel.Text = passwordRetuned + "<br /> Password will expire in 4 hours";
+                ResultLabel.Text = "<code>"+passwordRetuned + "</code><br /> Password will expire in 4 hours";
             }
 
             ResultGetPassword.Visible = false;
