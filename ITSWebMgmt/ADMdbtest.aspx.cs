@@ -69,7 +69,7 @@ namespace ITSWebMgmt
             string secret = File.ReadAllText(@"C:\webmgmtlog\webmgmtsecret-admdb.txt");
             
 
-            String wsusername = "kyrkeadmin@ist.aau.dk";
+            String wsusername = "svc_webmgmt-admdb@srv.aau.dk";
             String wspassword = secret;
             String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(wsusername + ":" + wspassword));
             request.Headers.Add("Authorization", "Basic " + encoded);
