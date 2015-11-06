@@ -452,6 +452,16 @@ namespace ITSWebMgmt
         {
             //Fills in basic user info
             displayName.Text = result.Properties["displayName"][0].ToString();
+            var admdb = new ADMdbtest();
+            
+            String upn = (string)result.Properties["userPrincipalName"][0];
+            var tmp = upn.Split('@');
+            var domain = tmp[1].Split('.')[0];
+
+
+
+            basicInfoAdmDBExpireDate.Text = admdb.loadUserExpiredate(domain, tmp[0]);
+
 
             //Password Expire date "PasswordExpirationDate"
 

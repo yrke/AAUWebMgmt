@@ -61,7 +61,7 @@ namespace ITSWebMgmt
             {"dec","12"}
         };
 
-        protected string loadUserExpiredate(string domain, string username) {
+        public string loadUserExpiredate(string domain, string username) {
             var url = admdburl[domain.ToLower()]; //Throws exception on wrong domain
             
             WebRequest request = WebRequest.Create(url);

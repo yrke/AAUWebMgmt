@@ -118,8 +118,8 @@
                                 <td><asp:Label runat="server" id="displayName"></asp:Label></td>
                             </tr>
                             <tr>
-                                <td>Email:</td>
-                                <td></td>
+                                <td>ADMdb Expire Date</td>
+                                <td><asp:Label runat="server" id="basicInfoAdmDBExpireDate"></asp:Label></td>
                             </tr>
                         </tbody>
                     </table>
