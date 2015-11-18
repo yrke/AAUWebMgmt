@@ -373,19 +373,35 @@ namespace ITSWebMgmt
             var searcher = new ManagementObjectSearcher(ms, wqlq);
 
             ManagementObject obj = new ManagementObject();
+            var results = searcher.Get();
 
-
-            foreach (ManagementObject o in searcher.Get())
+            bool hasValues=false;
+            try
             {
-                //o.Properties["ResourceID"].Value.ToString();
-                var collectionID = o.Properties["CollectionID"].Value.ToString();
-                var pathString = "\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1" + ":SMS_Collection.CollectionID=\"" + collectionID + "\"";
-                ManagementPath path = new ManagementPath(pathString);
+                var t = results.Count;
+                hasValues=true;
+            }catch (ManagementException e){
 
-                obj.Path = path;
-                obj.Get();
+            }
+            
+            if (hasValues)
+            {
+                foreach (ManagementObject o in results)
+                {
+                    //o.Properties["ResourceID"].Value.ToString();
+                    var collectionID = o.Properties["CollectionID"].Value.ToString();
+                    var pathString = "\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1" + ":SMS_Collection.CollectionID=\"" + collectionID + "\"";
+                    ManagementPath path = new ManagementPath(pathString);
 
-                sb.Append(string.Format("{0}<br/>", obj["Name"]));
+                    obj.Path = path;
+                    obj.Get();
+
+                    sb.Append(string.Format("{0}<br/>", obj["Name"]));
+                }
+            }
+            else
+            {
+                sb.Append("Computer not found i SCCM");
             }
 
 
