@@ -20,6 +20,7 @@ namespace ITSWebMgmt
             ResultGetPassword.Visible = false;
             ResultGetPassword2.Visible = false;
             MoveComputerOUdiv.Visible = false;
+            ResultLabel.Text = "";
 
             ResultDiv.Visible = false;
 
