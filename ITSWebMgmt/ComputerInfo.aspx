@@ -20,7 +20,7 @@
         ComputerName: 
         
         <div class="ui action input">
-            <asp:TextBox ID="ComputerNameInput" runat="server"  Text="AAU804396" CssClass="ui input focus" /> 
+            <asp:TextBox ID="ComputerNameInput" runat="server"  Text="ITS\AAU804396" CssClass="ui input focus" />
             <asp:Button runat="server" ID="sumbit" OnClick="lookupComputer" Text="Søg" CssClass="ui button"/>
         </div>
         

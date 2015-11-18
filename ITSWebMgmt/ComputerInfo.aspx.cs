@@ -26,7 +26,7 @@ namespace ITSWebMgmt
 
             if (!IsPostBack)
             {
-                
+
 
                 String computername = Request.QueryString["computername"];
                 if (computername != null)
@@ -35,15 +35,15 @@ namespace ITSWebMgmt
                     buildlookupComputer();
                 }
 
-                
+
             }
             else
             {
 
             }
-            
-            
-            
+
+
+
         }
         protected void moveComputerToOU(String adpath, String newOUpath)
         {
@@ -71,11 +71,15 @@ namespace ITSWebMgmt
             int count = ou.Count();
 
             //Check if topou is clients (where is should be)
-            if (ou[count -1].Equals("OU=Clients", StringComparison.CurrentCultureIgnoreCase)) {
+            if (ou[count - 1].Equals("OU=Clients", StringComparison.CurrentCultureIgnoreCase))
+            {
                 //XXX why not do this :p return count ==1
-                if (count == 1)  {
+                if (count == 1)
+                {
                     return true;
-                }else {
+                }
+                else
+                {
                     //Is in a sub ou for clients, we need to move it
                     return false;
                 }
@@ -100,7 +104,8 @@ namespace ITSWebMgmt
         protected String getLocalAdminPassword(String adobject)
         {
 
-            if (String.IsNullOrEmpty(adobject)){ //Error no session
+            if (String.IsNullOrEmpty(adobject))
+            { //Error no session
                 return null;
             }
 
@@ -116,7 +121,7 @@ namespace ITSWebMgmt
                 String value = expiredate.ToFileTime().ToString();
                 de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value = value;
                 de.CommitChanges();
-             
+
                 return f;
 
             }
@@ -125,7 +130,7 @@ namespace ITSWebMgmt
                 return null;
             }
 
-            
+
             //DirectorySearcher search = new DirectorySearcher(de);
             //search.PropertiesToLoad.Add("ms-Mcs-AdmPwd");
             //SearchResult r = search.FindOne();
@@ -134,8 +139,8 @@ namespace ITSWebMgmt
             //{
             //    return r.Properties["ms-Mcs-AdmPwd"][0].ToString();
 
-                //DirectoryEntry  = r.GetDirectoryEntry();
-                //de
+            //DirectoryEntry  = r.GetDirectoryEntry();
+            //de
 
 
             //}
@@ -152,54 +157,76 @@ namespace ITSWebMgmt
             
             
             Session["adpath"] = null;
-            var computerName = ComputerNameInput.Text;
+            var tmpName = ComputerNameInput.Text;
+            string computername = tmpName;
+            string domain = null;
+            if (tmpName.Contains("\\")) {
+                var tmp = tmpName.Split('\\');
+                computername = tmp[1];
+                
+                if (!tmp[0].Equals("aau",StringComparison.CurrentCultureIgnoreCase)){
+                    domain = tmp[0]+".aau.dk";
+                }else {
+                    domain = "aau.dk";
+                }
+            }
 
-            DirectoryEntry de = new DirectoryEntry("GC://aau.dk");
-            string filter = string.Format("(&(objectClass=computer)(cn={0}))", computerName);
-            //string filter = string.Format("(name={0})", computerName);
+           
 
-
-            DirectorySearcher search = new DirectorySearcher(de);
-            //DirectorySearcher search = new DirectorySearcher(filter);
-            search.Filter = filter;
-            search.PropertiesToLoad.Add("distinguishedName");
+            if (domain == null){
+            
+                var de = new DirectoryEntry("GC://aau.dk");
+                string filter = string.Format("(&(objectClass=computer)(cn={0}))", computername);
+            
+                var search = new DirectorySearcher(de);
+                search.Filter = filter;
+                search.PropertiesToLoad.Add("distinguishedName");
             
 
-            SearchResult r = search.FindOne();
+                var r = search.FindOne();
 
-            if (r == null){ //Computer not found
+                if (r == null){ //Computer not found
+
+                    ResultLabel.Text = "Computer Not Found";
+                    return;
+                }
+
+                var distinguishedName = r.Properties["distinguishedName"][0].ToString();
+                var split = distinguishedName.Split(',');
+
+                var len = split.GetLength(0);
+                domain = (split[len-3] + "." + split[len-2] + "." + split[len-1]).Replace("DC=","");
+
+            }
+            //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
+            
+                
+            
+            var de2 = new DirectoryEntry("LDAP://"+domain);
+            var search2 = new DirectorySearcher(de2);
+
+            search2.PropertiesToLoad.Add("cn");
+
+            //search.PropertiesToLoad.Add("ms-Mcs-AdmPwd");
+            search2.PropertiesToLoad.Add("ms-Mcs-AdmPwdExpirationTime");
+            search2.PropertiesToLoad.Add("memberOf");
+
+            search2.Filter = string.Format("(&(objectClass=computer)(cn={0}))", computername);
+            var resultLocal = search2.FindOne();
+
+            labelDomain.Text = domain;
+
+            if (resultLocal == null)
+            { //Computer not found
 
                 ResultLabel.Text = "Computer Not Found";
                 return;
             }
-            var distinguishedName = r.Properties["distinguishedName"][0].ToString();
-            var split = distinguishedName.Split(',');
-
-            var len = split.GetLength(0);
-            var domain = (split[len-3] + "." + split[len-2] + "." + split[len-1]).Replace("DC=","");
-
-            //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
-            logger.Info("User {0} requesed info about computer {1}", System.Web.HttpContext.Current.User.Identity.Name, (split[len - 3]).Replace("DC=", "") + "\\" + computerName);
-
-            de = new DirectoryEntry("LDAP://"+domain);
-            //de.Username = "its\\kyrke";
-            //de.Password = "";
-            search.PropertiesToLoad.Add("cn");
-
-            search = new DirectorySearcher(de);
-            //search.PropertiesToLoad.Add("ms-Mcs-AdmPwd");
-            search.PropertiesToLoad.Add("ms-Mcs-AdmPwdExpirationTime");
-            search.PropertiesToLoad.Add("memberOf");
-
-            search.Filter = string.Format("(&(objectClass=computer)(distinguishedName={0}))", distinguishedName);
-            r = search.FindOne();
-
-            labelDomain.Text = domain;
 
 
-            if (r.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
+            if (resultLocal.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
             {
-                long rawDate = (long)r.Properties["ms-Mcs-AdmPwdExpirationTime"][0];
+                long rawDate = (long)resultLocal.Properties["ms-Mcs-AdmPwdExpirationTime"][0];
                 DateTime expireDate = DateTime.FromFileTime(rawDate);
                 labelPwdExpireDate.Text = expireDate.ToString();
             }
@@ -209,13 +236,16 @@ namespace ITSWebMgmt
             }
 
 
-            String adpath = r.Properties["ADsPath"][0].ToString();
+            String adpath = resultLocal.Properties["ADsPath"][0].ToString();
+
+            logger.Info("User {0} requesed info about computer {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
+
 
             Session["adpath"] = adpath;
 
             //builder.Append((string)Session["adpath"]);
 
-            if (r.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
+            if (resultLocal.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
             {
                 ResultGetPassword.Visible = true; 
                 ResultGetPassword2.Visible = true;
@@ -227,7 +257,7 @@ namespace ITSWebMgmt
 
 
             var rawbuilder = new RawADGridGenerator();
-            ResultLabelRaw.Text = rawbuilder.buildRawSegment(r.GetDirectoryEntry());
+            ResultLabelRaw.Text = rawbuilder.buildRawSegment(resultLocal.GetDirectoryEntry());
 
             
             ResultDiv.Visible = true;
@@ -238,7 +268,8 @@ namespace ITSWebMgmt
             String adpath = (string)Session["adpath"];
 
 
-            if (!checkComputerOU(adpath)) {
+            if (!checkComputerOU(adpath))
+            {
                 //OU is wrong lets calulate the right one
                 String[] adpathsplit = adpath.ToLower().Replace("ldap://", "").Split('/');
                 String protocol = "LDAP://";
@@ -254,10 +285,10 @@ namespace ITSWebMgmt
             }
             else
             {
-                logger.Debug("computer " + adpath + " is in the right ou"); 
+                logger.Debug("computer " + adpath + " is in the right ou");
             }
 
-            
+
 
         }
 
@@ -270,18 +301,19 @@ namespace ITSWebMgmt
 
             var passwordRetuned = this.getLocalAdminPassword(adpath);
 
-            if (String.IsNullOrEmpty(passwordRetuned)) { 
+            if (String.IsNullOrEmpty(passwordRetuned))
+            {
                 ResultLabel.Text = "Not found";
             }
             else
             {
-                ResultLabel.Text = "<code>"+passwordRetuned + "</code><br /> Password will expire in 4 hours";
+                ResultLabel.Text = "<code>" + passwordRetuned + "</code><br /> Password will expire in 4 hours";
             }
 
             ResultGetPassword.Visible = false;
-        
+
         }
 
-        
+
     }
 }
