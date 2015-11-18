@@ -112,7 +112,8 @@ namespace ITSWebMgmt
 
                  var split = adpath.Split(',');
                  var groupname = split[0].Replace("CN=","");
-
+                 
+                 //sb.Append(adpath + "<br />");
                  sb.Append(groupname + "<br/>");
                  
              }
@@ -362,7 +363,9 @@ namespace ITSWebMgmt
 
                 //Build GUI
 
-                buildRawSegment(userDE);
+                var rawbuilder = new RawADGridGenerator();
+                var rawsegment = rawbuilder.buildRawSegment(userDE);
+                ResultLabel.Text = rawsegment;
 
                 buildBasicInfoSegment(userDE);
                 buildComputerInformation(userDE);
@@ -386,51 +389,6 @@ namespace ITSWebMgmt
 
         }
 
-        private void buildRawSegment(DirectoryEntry result)
-        {
-            //builder.Append((result.Properties["aauStaffID"][0])).ToString();
-            var builder = new StringBuilder();
-            
-            builder.Append("<table><tr><th>k</th><th>v</th></tr>");
-
-            foreach (string k in result.Properties.PropertyNames)
-            {
-                builder.Append("<tr>");
-                builder.Append("<td>" + k + "</td>");
-
-                var a = result.Properties[k];
-                if (a != null && a.Count > 0)
-                {
-                    if (a.Count == 1)
-                    {
-                        var v = a[0];
-                        builder.Append("<td>" + v + "</td></tr>");
-                    }
-                    else
-                    {
-
-                        var v = a[0];
-                        builder.Append("<td>" + v + "</td>");
-                        for (int i = 1; i < a.Count; i++)
-                        {
-                            v = a[i];
-                            builder.Append("<tr><td></td><td>" + v + "</td></tr>");
-                        }
-
-                    }
-
-                }
-                else
-                {
-                    builder.Append("<td></td></tr>");
-                }
-
-            }
-
-            builder.Append("</table>");
-            ResultLabel.Text = builder.ToString();
-
-        }
 
         private void BuildSCSMSegment(DirectoryEntry result)
         {
@@ -452,15 +410,15 @@ namespace ITSWebMgmt
         {
             //Fills in basic user info
             displayName.Text = result.Properties["displayName"][0].ToString();
-            var admdb = new ADMdbtest();
+            //var admdb = new ADMdbtest();
             
-            String upn = (string)result.Properties["userPrincipalName"][0];
-            var tmp = upn.Split('@');
-            var domain = tmp[1].Split('.')[0];
+            //String upn = (string)result.Properties["userPrincipalName"][0];
+            //var tmp = upn.Split('@');
+            //var domain = tmp[1].Split('.')[0];
 
 
 
-            basicInfoAdmDBExpireDate.Text = admdb.loadUserExpiredate(domain, tmp[0]);
+            //basicInfoAdmDBExpireDate.Text = admdb.loadUserExpiredate(domain, tmp[0]);
 
 
             //Password Expire date "PasswordExpirationDate"

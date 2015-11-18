@@ -58,6 +58,51 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label ResultLabel;
         
         /// <summary>
+        /// ResultDiv control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ResultDiv;
+        
+        /// <summary>
+        /// labelDomain control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelDomain;
+        
+        /// <summary>
+        /// labelPwdExpireDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelPwdExpireDate;
+        
+        /// <summary>
+        /// ResultGetPassword2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ResultGetPassword2;
+        
+        /// <summary>
+        /// ResultLabelRaw control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ResultLabelRaw;
+        
+        /// <summary>
         /// ResultGetPassword control.
         /// </summary>
         /// <remarks>

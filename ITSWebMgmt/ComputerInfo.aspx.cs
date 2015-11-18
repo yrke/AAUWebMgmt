@@ -18,12 +18,30 @@ namespace ITSWebMgmt
         protected void Page_Load(object sender, EventArgs e)
         {
             ResultGetPassword.Visible = false;
+            ResultGetPassword2.Visible = false;
             MoveComputerOUdiv.Visible = false;
-            String computername = Request.QueryString["computername"];
-            if (computername != null)
+
+            ResultDiv.Visible = false;
+
+            if (!IsPostBack)
             {
-                ComputerNameInput.Text = computername;
+                
+
+                String computername = Request.QueryString["computername"];
+                if (computername != null)
+                {
+                    ComputerNameInput.Text = computername;
+                    buildlookupComputer();
+                }
+
+                
             }
+            else
+            {
+
+            }
+            
+            
             
         }
         protected void moveComputerToOU(String adpath, String newOUpath)
@@ -124,8 +142,11 @@ namespace ITSWebMgmt
             //    return null;
             //}
         }
-
         protected void lookupComputer(object sender, EventArgs e)
+        {
+            buildlookupComputer();
+        }
+        protected void buildlookupComputer()
         {
             
             
@@ -170,34 +191,21 @@ namespace ITSWebMgmt
             search.PropertiesToLoad.Add("memberOf");
 
             search.Filter = string.Format("(&(objectClass=computer)(distinguishedName={0}))", distinguishedName);
-
-            var builder = new StringBuilder();
             r = search.FindOne();
-            if (r != null)
+
+            labelDomain.Text = domain;
+
+
+            if (r.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
             {
-
-                //builder.Append((result.Properties["aauStaffID"][0])).ToString();
-
-                foreach (string k in search.PropertiesToLoad)
-                {
-                    builder.Append(k);
-
-                    var a = r.Properties[k];
-                    if (a != null && a.Count > 0)
-                    {
-                        foreach (var j in a){
-                            var value = (j.ToString());
-                            builder.Append(" : " + value);
-                        }
-                    }
-                    builder.Append("<br />");
-                }
-
+                long rawDate = (long)r.Properties["ms-Mcs-AdmPwdExpirationTime"][0];
+                DateTime expireDate = DateTime.FromFileTime(rawDate);
+                labelPwdExpireDate.Text = expireDate.ToString();
             }
-
-            //long rawDate = (long)r.Properties["ms-Mcs-AdmPwdExpirationTime"][0];
-            //DateTime expireDate = DateTime.FromFileTime(rawDate);
-            //builder.Append(expireDate);
+            else
+            {
+                labelPwdExpireDate.Text = "LAPS not Enabled";
+            }
 
 
             String adpath = r.Properties["ADsPath"][0].ToString();
@@ -206,16 +214,22 @@ namespace ITSWebMgmt
 
             //builder.Append((string)Session["adpath"]);
 
-            ResultLabel.Text = builder.ToString();
-
             if (r.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
-            { 
-                ResultGetPassword.Visible = true;
+            {
+                ResultGetPassword.Visible = true; 
+                ResultGetPassword2.Visible = true;
             }
             if (!checkComputerOU(adpath))
             {
                 MoveComputerOUdiv.Visible = true;
             }
+
+
+            var rawbuilder = new RawADGridGenerator();
+            ResultLabelRaw.Text = rawbuilder.buildRawSegment(r.GetDirectoryEntry());
+
+            
+            ResultDiv.Visible = true;
         }
 
         protected void MoveOU_Click(object sender, EventArgs e)
@@ -248,9 +262,6 @@ namespace ITSWebMgmt
 
         protected void ResultGetPassword_Click(object sender, EventArgs e)
         {
-
-
-            
 
             String adpath = (string)Session["adpath"];
 
