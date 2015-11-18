@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -259,6 +260,9 @@ namespace ITSWebMgmt
             var rawbuilder = new RawADGridGenerator();
             ResultLabelRaw.Text = rawbuilder.buildRawSegment(resultLocal.GetDirectoryEntry());
 
+            buildSCCMInfo(computername);
+
+
             
             ResultDiv.Visible = true;
         }
@@ -313,6 +317,81 @@ namespace ITSWebMgmt
             ResultGetPassword.Visible = false;
 
         }
+
+
+        protected string getSCCMResourceIDFromComputerName(string computername)
+        {
+
+            /*  strQuery = 
+              Set foundComputers = SWbemServices.ExecQuery(strQuery)
+
+              ' XXX Assuming only one result   (find the right way to do this)
+              for each c in foundComputers 
+                computerResourceID = c.ResourceID
+                exit for 
+              Next
+
+              computerNameToID = computerResourceID */
+            
+            var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
+            var wqlq = new WqlObjectQuery("select ResourceID from SMS_CM_RES_COLL_SMS00001 where name like '" + computername + "'");
+            var searcher = new ManagementObjectSearcher(ms, wqlq);
+
+            string resourceID=null;
+            foreach (ManagementObject o in searcher.Get())
+            {
+                resourceID = o.Properties["ResourceID"].Value.ToString();
+                break;
+            }
+            return resourceID;
+            
+
+        }
+
+
+        protected void buildSCCMInfo(string computername)
+        {
+            /*
+             *     strQuery = "SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID="& computerID 
+                    for each fc in foundCollections
+                       Set collection = SWbemServices.Get ("SMS_Collection.CollectionID=""" & fc.CollectionID &"""")
+                       stringResult = stringResult & "<li> "  & collection.Name & "<br />"
+                Next
+            
+             * SMS_Collection.CollectionID = 
+             * 
+             */
+
+
+            //XXX: remeber to filter out computers that are obsolite in sccm (not active)
+            var sb = new StringBuilder();
+
+            var resourceID = getSCCMResourceIDFromComputerName(computername);
+            
+            var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
+            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID=" + resourceID);
+            var searcher = new ManagementObjectSearcher(ms, wqlq);
+
+            ManagementObject obj = new ManagementObject();
+
+
+            foreach (ManagementObject o in searcher.Get())
+            {
+                //o.Properties["ResourceID"].Value.ToString();
+                var collectionID = o.Properties["CollectionID"].Value.ToString();
+                var pathString = "\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1" + ":SMS_Collection.CollectionID=\"" + collectionID + "\"";
+                ManagementPath path = new ManagementPath(pathString);
+
+                obj.Path = path;
+                obj.Get();
+
+                sb.Append(string.Format("{0}<br/>", obj["Name"]));
+            }
+
+
+            labelSCCMCollections.Text = sb.ToString();
+        }
+
 
 
     }
