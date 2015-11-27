@@ -6,13 +6,14 @@
           <div class="ui right internal attached rail" style="margin-top:50px;">
     <div class="ui segment" style="">
       <h3>Nyheder</h3>
+        <li>Updated userinfo basic med samme felter som fra gammel HTA udgave af userinfo
+        <br /><br />
         <li>Webmgmt computerinfo viser nu om sccm collections information, samt opdateret design.
         <br /><br />
         <li>Webmgmt userinfo viser nu de SCCM maskier som en bruger har været logget på
         <br /><br />
         <li>Webmgmt userinfo har nu en ny task til at unlocked account
-        <br /><br />
-        <li>Webmgmt viser nu en advarsel hvis en konto er disabled eller locked
+       
     </div>
   </div>
     <h1>ITSWebMgmt</h1>

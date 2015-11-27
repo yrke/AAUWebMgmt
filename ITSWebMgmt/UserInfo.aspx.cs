@@ -263,6 +263,17 @@ namespace ITSWebMgmt
             }
         }
 
+
+        public DateTime convertADTimeToDateTime(object adsLargeInteger)
+        {
+
+            var highPart = (Int32)adsLargeInteger.GetType().InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
+            var lowPart  = (Int32)adsLargeInteger.GetType().InvokeMember("LowPart",  System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
+            var result =  highPart * ((Int64)UInt32.MaxValue + 1) + lowPart;
+
+            return DateTime.FromFileTime(result);
+        }
+
         protected void button_toggle_userprofile(object sender, EventArgs e)
         {
             String adpath = (String)Session["adpath"];
@@ -355,7 +366,8 @@ namespace ITSWebMgmt
                 
                 //Get the AD object 
                 var userDE = new DirectoryEntry(adpath);
-                
+                    
+
                 //Save Session
                 Session["adpath"] = adpath;
 
@@ -415,6 +427,66 @@ namespace ITSWebMgmt
             //String upn = (string)result.Properties["userPrincipalName"][0];
             //var tmp = upn.Split('@');
             //var domain = tmp[1].Split('.')[0];
+
+            var attrToDisplay = "userPrincipalName, aauUserStatus, aauStaffID, aauStudentID, aauUserClassification, displayName department, userAccountControl, badPwdCount, badPasswordTime, departmentNumber, profilePath, homeDirectory, homeDrive, lastLogon";
+            var attrArry = attrToDisplay.Replace(" ", "").Split(',');
+            string[] dateFields = {"lastLogon", "badPasswordTime"};
+
+            var sb = new StringBuilder();
+            foreach (string k in attrArry) {
+
+                
+                sb.Append("<tr>");
+
+                sb.Append(String.Format("<td>{0}</td>", k));
+
+
+                if (result.Properties.Contains(k))
+                {
+                    
+                    if (dateFields.Contains(k)) {
+
+                        sb.Append(String.Format("<td>{0}</td>", convertADTimeToDateTime(result.Properties[k].Value)));
+
+                    }else {
+
+                        string v = result.Properties[k].Value.ToString();
+                        sb.Append(String.Format("<td>{0}</td>", v));
+                    }
+                    
+                    
+                }
+                else
+                {
+                    sb.Append("<td></td>");
+                }
+
+                sb.Append("</tr>");
+
+            }
+
+            //Password Expire
+
+            //convertADTimeToDateTime
+
+            string attName = "msDS-UserPasswordExpiryTimeComputed,msDS-User-Account-Control-Computed";
+            result.RefreshCache(attName.Split(','));
+
+            const int UF_LOCKOUT = 0x0010;
+            int userFlags = (int)result.Properties["msDS-User-Account-Control-Computed"].Value;
+
+            basicInfoPasswordExpired.Text = "False";
+
+            if ((userFlags & UF_LOCKOUT) == UF_LOCKOUT) {
+                basicInfoPasswordExpired.Text = "True";
+            }
+
+            DateTime expireDate = convertADTimeToDateTime(result.Properties["msDS-UserPasswordExpiryTimeComputed"].Value);
+
+            ;
+            basicInfoPasswordExpireDate.Text = expireDate.ToString();
+
+            labelBasicInfoTable.Text = sb.ToString();
 
 
 

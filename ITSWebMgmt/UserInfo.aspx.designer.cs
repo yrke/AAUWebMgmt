@@ -130,6 +130,33 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label basicInfoAdmDBExpireDate;
         
         /// <summary>
+        /// basicInfoPasswordExpired control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label basicInfoPasswordExpired;
+        
+        /// <summary>
+        /// basicInfoPasswordExpireDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label basicInfoPasswordExpireDate;
+        
+        /// <summary>
+        /// labelBasicInfoTable control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelBasicInfoTable;
+        
+        /// <summary>
         /// groupssegmentLabel control.
         /// </summary>
         /// <remarks>
