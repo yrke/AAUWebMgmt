@@ -6,6 +6,8 @@
           <div class="ui right internal attached rail" style="margin-top:50px;">
     <div class="ui segment" style="">
       <h3>Nyheder</h3>
+        <li>Du kan nu oprette IR/SR direkte fra UserInfo
+        <br /><br />
         <li>Updated userinfo basic med samme felter som fra gammel HTA udgave af userinfo
         <br /><br />
         <li>Webmgmt computerinfo viser nu om sccm collections information, samt opdateret design.
