@@ -406,6 +406,11 @@ namespace ITSWebMgmt
         {
             var scsmtest = new SCSMTest();
             divServiceManager.Text = scsmtest.getActiveIncidents((string)result.Properties["userPrincipalName"][0], (string)result.Properties["displayName"][0]);
+            var userID = scsmtest.userID;
+            Session["scsmuserID"] = userID;
+            
+            
+
         }
 
         private void buildGroupsSegments(DirectoryEntry result)
@@ -583,6 +588,13 @@ namespace ITSWebMgmt
             uEntry.CommitChanges(); //may not be needed but adding it anyways
 
             uEntry.Close();
+        }
+
+        protected void createNewIRSR_Click(object sender, EventArgs e)
+        {
+            string userID = (string)Session["scsmuserID"];
+
+            Response.Redirect("/CreateWorkItem.aspx?userID=" + userID + "&userDisplayName=" + UserNameBox.Text);
         }
 
         

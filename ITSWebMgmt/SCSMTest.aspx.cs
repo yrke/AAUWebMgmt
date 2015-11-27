@@ -17,6 +17,8 @@ namespace ITSWebMgmt
         string webserviceURL = "https://service.aau.dk";
         //string webserviceURL = "http://scsm-tms1.srv.aau.dk";
 
+        public string userID = "";
+
         protected string getAuthKey()
         {
 
@@ -157,12 +159,13 @@ namespace ITSWebMgmt
                 JavaScriptSerializer jss = new JavaScriptSerializer();
                 jss.MaxJsonLength = Int32.MaxValue;
                 dynamic jsonString = jss.Deserialize<dynamic>(userjson);
+                userID = (string)obj["Id"];
 
                 if (upn.Equals((string)jsonString["UPN"], StringComparison.CurrentCultureIgnoreCase)) {
                     break;
                 }
             }
-
+            ;
             return userjson;
 
         }
