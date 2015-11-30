@@ -264,12 +264,17 @@ namespace ITSWebMgmt
         }
 
 
-        public DateTime convertADTimeToDateTime(object adsLargeInteger)
+        public DateTime? convertADTimeToDateTime(object adsLargeInteger)
         {
 
             var highPart = (Int32)adsLargeInteger.GetType().InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
             var lowPart  = (Int32)adsLargeInteger.GetType().InvokeMember("LowPart",  System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
             var result =  highPart * ((Int64)UInt32.MaxValue + 1) + lowPart;
+
+            if (result == 9223372032559808511)
+            {
+                return null;
+            }
 
             return DateTime.FromFileTime(result);
         }
@@ -486,10 +491,19 @@ namespace ITSWebMgmt
                 basicInfoPasswordExpired.Text = "True";
             }
 
-            DateTime expireDate = convertADTimeToDateTime(result.Properties["msDS-UserPasswordExpiryTimeComputed"].Value);
+            // Never expire = 9223372036854775807 
 
-            ;
-            basicInfoPasswordExpireDate.Text = expireDate.ToString();
+            DateTime? expireDate = convertADTimeToDateTime(result.Properties["msDS-UserPasswordExpiryTimeComputed"].Value);
+            if (expireDate == null)
+            {
+                basicInfoPasswordExpireDate.Text = "Never";
+            }
+            else
+            {
+                basicInfoPasswordExpireDate.Text = expireDate.ToString();
+            }
+            
+            
 
             labelBasicInfoTable.Text = sb.ToString();
 
