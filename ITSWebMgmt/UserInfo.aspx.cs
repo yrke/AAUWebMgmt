@@ -324,7 +324,21 @@ namespace ITSWebMgmt
 
         protected void lookupUser(object sender, EventArgs e)
         {
+            
             UserName = UserNameBox.Text;
+            int val;
+            if (UserName.Length == 4 && int.TryParse(UserName, out val))
+            {
+                var res = doPhoneSearch(UserName);
+                if (res != null)
+                {
+
+                    string url = Request.Url.AbsolutePath;
+                    string updatedQueryString = "?" + "username=" + res;
+                    Response.Redirect(url + updatedQueryString);
+                }
+            }
+            
             UserNameLabel.Text = UserName;
             buildUserLookup(UserName);
         }

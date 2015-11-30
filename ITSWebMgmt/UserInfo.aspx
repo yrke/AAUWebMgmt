@@ -39,8 +39,8 @@
             <asp:TextBox ID="UserNameBox" runat="server" Text="kyrke@its.aau.dk" CssClass="ui input focus" placeholder="Search..." />
             <asp:Button runat="server" CssClass="ui button" ID="sumbit" OnClick="lookupUser" Text="Søg"  OnClientClick='$("#loader > div").show("fast");'/>
         </div>
-        <asp:RegularExpressionValidator ID="regexEmailValid" runat="server" ValidationExpression="\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ControlToValidate="UserNameBox" ErrorMessage="Invalid format"></asp:RegularExpressionValidator>
-        <asp:RequiredFieldValidator runat="server" ID="reqName" ControlToValidate="UserNameBox" ErrorMessage="Please enter a value" />
+        <!--<asp:RegularExpressionValidator ID="regexEmailValid" runat="server" ValidationExpression="\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ControlToValidate="UserNameBox" ErrorMessage="Invalid format"></asp:RegularExpressionValidator>
+        <asp:RequiredFieldValidator runat="server" ID="reqName" ControlToValidate="UserNameBox" ErrorMessage="Please enter a value" />-->
         <br />
         <br />
         <script>
