@@ -55,6 +55,12 @@ namespace ITSWebMgmt
             //Print the user info! 
             var sb = new StringBuilder();
 
+            if (userjson == null)
+            {
+                sb.Append("User not found i SCSM");
+                return sb.ToString();
+            }
+
             JavaScriptSerializer js = new JavaScriptSerializer();
             js.MaxJsonLength = Int32.MaxValue;
             dynamic json = js.Deserialize<dynamic>(userjson);
