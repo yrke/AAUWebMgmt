@@ -138,7 +138,7 @@ namespace ITSWebMgmt
             //Get username from UPN
             
 
-            WebRequest request = WebRequest.Create(webserviceURL+"/api/V3/User/GetUserList?userFilter="+displayName);
+            WebRequest request = WebRequest.Create(webserviceURL+"/api/V3/User/GetUserList?userFilter="+upn);
             request.Method = "Get";
             request.ContentType = "text/json";
             request.ContentType = "application/json; charset=utf-8";
