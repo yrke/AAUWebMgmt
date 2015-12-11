@@ -411,9 +411,7 @@ namespace ITSWebMgmt
             {
                 var t = results.Count;
                 hasValues=true;
-            }catch (ManagementException e){
-
-            }
+            }catch (ManagementException e){}
             
             if (hasValues)
             {
@@ -428,6 +426,50 @@ namespace ITSWebMgmt
                     obj.Get();
 
                     sb.Append(string.Format("{0}<br/>", obj["Name"]));
+                }
+            }
+            else
+            {
+                sb.Append("Computer not found i SCCM");
+            }
+
+            //Basal Info
+            var wqlqSystem = new WqlObjectQuery("SELECT * FROM SMS_R_System WHERE ResourceId=" + resourceID);
+            var searcherSystem = new ManagementObjectSearcher(ms, wqlqSystem);
+
+            ManagementObject objSystem = new ManagementObject();
+            var resultsSystem = searcherSystem.Get();
+
+            hasValues = false;
+            try
+            {
+                var t2 = resultsSystem.Count;
+                hasValues = true;
+            }
+            catch (ManagementException e) {}
+
+            sb.Append("<h3>Computer Details</h3>");
+
+            if (hasValues)
+            {
+
+                
+                foreach (ManagementObject o in resultsSystem) //Has one!
+                {
+                    //OperatingSystemNameandVersion = Microsoft Windows NT Workstation 6.1
+
+                    foreach (var property in o.Properties)
+                    {
+                        string key = property.Name;
+
+
+                        sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
+                    }
+
+                    sb.Append("OS: " + o.Properties["OperatingSystemNameandVersion"].Value.ToString());
+                    
+                    //o.Properties["ResourceID"].Value.ToString();
+                    
                 }
             }
             else
