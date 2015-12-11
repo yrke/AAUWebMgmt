@@ -466,7 +466,6 @@ namespace ITSWebMgmt
                         sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
                     }
 
-                    sb.Append("OS: " + o.Properties["OperatingSystemNameandVersion"].Value.ToString());
                     
                     //o.Properties["ResourceID"].Value.ToString();
                     
