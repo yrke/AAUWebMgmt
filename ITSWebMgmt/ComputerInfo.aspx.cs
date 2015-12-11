@@ -261,7 +261,8 @@ namespace ITSWebMgmt
             ResultLabelRaw.Text = rawbuilder.buildRawSegment(resultLocal.GetDirectoryEntry());
 
             buildSCCMInfo(computername);
-
+            buildGroupsSegments(resultLocal.GetDirectoryEntry());
+            
 
             
             ResultDiv.Visible = true;
@@ -345,6 +346,36 @@ namespace ITSWebMgmt
             }
             return resourceID;
             
+
+        }
+
+
+
+        private void buildGroupsSegments(DirectoryEntry result)
+        {
+            //XXX is memeber of an attribute
+            var groupsList = result.Properties["memberOf"];
+            var b = groupsList.Cast<string>();
+            var groupListConvert = b.ToArray<string>();
+
+            var sb = new StringBuilder();
+
+            foreach (string adpath in groupsList)
+            {
+         
+                var split = adpath.Split(',');
+                var groupname = split[0].Replace("CN=", "");
+
+                sb.Append(String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname));
+         
+            }
+
+
+            groupssegmentLabel.Text = sb.ToString();
+         
+
+
+
 
         }
 
