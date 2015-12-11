@@ -83,8 +83,8 @@ namespace ITSWebMgmt
                     {
                         link = "https://service.aau.dk/ServiceRequest/Edit/" + id;
                     }
-                    
-                    sb.Append("<a href=\""+link+"\" target=\"_blank\">" + json["MyRequest"][i]["DisplayName"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
+
+                    sb.Append("<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["Id"] + " - " + json["MyRequest"][i]["Title"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
                 }
             }
 
@@ -104,7 +104,7 @@ namespace ITSWebMgmt
                         link = "https://service.aau.dk/ServiceRequest/Edit/" + id;
                     }
 
-                    sb.Append("<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["DisplayName"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
+                    sb.Append("<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["Id"] + " - " + json["MyRequest"][i]["Title"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
                 }
             }
             

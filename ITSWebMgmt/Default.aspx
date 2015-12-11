@@ -14,10 +14,6 @@
         <br /><br />
         <li>Du kan nu se mere info omkring grupper via gruppeinfo, links fra group segment i userinfo
        
-        
-        
-        
-        
     </div>
   </div>
     <h1>ITSWebMgmt</h1>
