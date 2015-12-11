@@ -65,7 +65,8 @@ namespace ITSWebMgmt
             js.MaxJsonLength = Int32.MaxValue;
             dynamic json = js.Deserialize<dynamic>(userjson);
 
-            
+            sb.Append("<br /><br />" + string.Format("<a href=\"{0}{1}\">Servie Portal User Info</a>", "https://service.aau.dk/user/UserRelatedInfoById/", userID) + "<br/>");
+
             
             sb.Append("<h1>Open Requests</h1><br />");
 
@@ -84,6 +85,26 @@ namespace ITSWebMgmt
                     }
                     
                     sb.Append("<a href=\""+link+"\" target=\"_blank\">" + json["MyRequest"][i]["DisplayName"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
+                }
+            }
+
+            sb.Append("<br /><br /><h3>Closed Requests</h3>");
+            for (int i = 0; i < json["MyRequest"].Length; i++)
+            {
+                if ("Closed".Equals(json["MyRequest"][i]["Status"]["Name"]))
+                {
+                    string id = json["MyRequest"][i]["Id"];
+                    string link;
+                    if (id.StartsWith("IR"))
+                    {
+                        link = "https://service.aau.dk/Incident/Edit/" + id;
+                    }
+                    else //if (id.StartsWith("SR"))
+                    {
+                        link = "https://service.aau.dk/ServiceRequest/Edit/" + id;
+                    }
+
+                    sb.Append("<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["DisplayName"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
                 }
             }
             

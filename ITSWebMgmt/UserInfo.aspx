@@ -153,8 +153,8 @@
                     not inplemented
                 </div>
                 <div class="ui tab segment" data-tab="servicemanager">
-                    <asp:Button ID="buttonCreateIRSR" runat="server" OnClick="createNewIRSR_Click" Text="Create new IR/SR" />
-                    
+                    <h2>SCSM Information</h2>
+                    <asp:Button ID="buttonCreateIRSR" runat="server" OnClick="createNewIRSR_Click" Text="Create new IR/SR" />        
                     <asp:Label ID="divServiceManager" runat="server"></asp:Label>
                 </div>
 
