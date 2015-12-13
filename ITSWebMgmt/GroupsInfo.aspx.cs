@@ -126,7 +126,111 @@ namespace ITSWebMgmt
 
         private void buildBasicInfo(DirectoryEntry group)
         {
-            return;
+            var sb = new StringBuilder();
+
+
+            sb.Append("<table class=\"ui definition table\">");
+
+            sb.Append("<tr><td>");
+            sb.Append("Name");
+            sb.Append("</td><td>");
+            sb.Append(group.Properties["name"].Value.ToString());
+            sb.Append("</td></tr>");
+
+            sb.Append("<tr><td>");
+            sb.Append("Domain");
+            sb.Append("</td><td>");
+            var dom = group.Path.Split(',').Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
+            sb.Append(dom);
+            sb.Append("</td></tr>");
+
+            string managedByString = "none";
+            if (group.Properties.Contains("managedBy"))
+            {
+                var manager = group.Properties["managedBy"].Value.ToString();
+
+                var ldapSplit = manager.Split(',');
+                var name = ldapSplit[0].Replace("CN=", "");
+                var domain = ldapSplit.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
+
+                managedByString = string.Format("<a href=\"/Redirector.aspx?adpath={0}\">{1}</a>", HttpUtility.HtmlEncode("LDAP://"+manager), domain + "\\" + name);
+
+            }
+            sb.Append("<tr><td>");
+            sb.Append("Managed By");
+            sb.Append("</td><td>");
+            sb.Append(managedByString);
+            sb.Append("</td></tr>");
+            
+            //IsDistributionGroup?
+            //ManamgedBy
+
+            var isDistgrp = false;
+            string groupType = ""; //domain Local, Global, Universal 
+
+            var gt = group.Properties["groupType"].Value.ToString();
+            switch (gt)
+            {
+                case "2":
+                    isDistgrp=true;
+                    groupType="Global";
+                    break;
+                case "4":
+                    groupType="Domain local";
+                    isDistgrp=true;
+                    break;
+                case "8":
+                    groupType="Universal";
+                    isDistgrp=true;
+                    break;
+                case "-2147483646":
+                    groupType="Global";
+                    break;
+                case "-2147483644":
+                    groupType="Domain local";
+                    break;
+                case "-2147483640":
+                    groupType="Universal";
+                    break;
+            }
+
+            sb.Append("<tr><td>");
+            sb.Append("Is Distribution group");
+            sb.Append("</td><td>");
+            sb.Append(isDistgrp.ToString());
+            sb.Append("</td></tr>");
+
+            sb.Append("<tr><td>");
+            sb.Append("Group Type");
+            sb.Append("</td><td>");
+            sb.Append(groupType);
+            sb.Append("</td></tr>");
+
+            if (group.Properties.Contains("description"))
+            {
+                sb.Append("<tr><td>");
+                sb.Append("Description");
+                sb.Append("</td><td>");
+                sb.Append(group.Properties["description"].Value.ToString());
+                sb.Append("</td></tr>");
+            }
+
+            //I found a object that had a attrib that was info not description?
+            if (group.Properties.Contains("info"))
+            {
+                sb.Append("<tr><td>");
+                sb.Append("Info");
+                sb.Append("</td><td>");
+                sb.Append(group.Properties["info"].Value.ToString());
+                sb.Append("</td></tr>");
+            }
+            
+            //TODO: IsRequrceGroup (is exchange, fileshare or other resource type group?)
+            
+
+
+            sb.Append("</table>");
+            lblBasicInfo.Text = sb.ToString();
         }
 
 
