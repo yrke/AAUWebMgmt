@@ -101,6 +101,7 @@
                     <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
                     <a class="item" data-tab="groups">Groups</a>
                     <a class="item" data-tab="fileshares">Fileshares</a>
+                    <a class="item" data-tab="exchange">Exchange Resources</a>
                     <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
                     <a class="item" data-tab="rawdata">Raw Data</a>
                     <a class="item" data-tab="tasks">Tasks</a>
@@ -151,6 +152,11 @@
                     <h2>Calendar Agenda</h2>
                     <asp:Label runat="server" ID="lblcalAgenda" />
                 </div>
+                <div class="ui tab segment" data-tab="exchange">
+                    <h2>Exchange</h2>
+                    <asp:Label runat="server" ID="lblexchange" />
+                </div>
+                
                 <div class="ui tab segment" data-tab="networkdrives">
                     <h2>networkdrives</h2>
                     <h3>GPO mounted</h3>

@@ -46,7 +46,7 @@
 
         <div class="ui container">
             <div href="#" class="header item">
-                <img class="logo" src="http://semantic-ui.com/examples/assets/images/logo.png">
+                <img class="logo" src="http://www.resources.aau.dk/design2013/images/logo.png">
                 ITS Webmgmt
             </div>
             <a href="/" class="item">Home</a>
@@ -124,7 +124,7 @@
             
             <div class="ui inverted section divider"></div>
 -->
-            <img src="http://semantic-ui.com/examples/assets/images/logo.png" class="ui centered mini image">
+            <img src="http://www.resources.aau.dk/design2013/images/logo.png" class="ui centered mini image">
             <p>&copy; <%: DateTime.Now.Year %> - ITS Web Manager by kyrke</p>
             <!--<div class="ui horizontal inverted small divided link list">
                 <a class="item" href="#">Site Map</a>
