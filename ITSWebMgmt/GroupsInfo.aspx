@@ -42,8 +42,9 @@
         <div class="ui grid">
             <div class="four wide column">
                 <div class="ui vertical fluid tabular menu">
-                    <!--<a class="active item" data-tab="basicinfo">Basic Info</a>
-                    <a class="item" data-tab="members">Members</a>-->
+                    <!--<a class="active item" data-tab="basicinfo">Basic Info</a>-->
+                    <a class="item" data-tab="members">Members</a>
+                    <a class="item" data-tab="memberOf">Member Of</a>
                     <!--<a class="item" data-tab="">Recurs memeberof?</a>-->
                     <a class="active item" data-tab="rawData">Raw Data</a>
 
@@ -55,13 +56,15 @@
                 </div>
     <!--            <div class="ui active tab segment" data-tab="basicinfo">
                 </div>
-                <div class="ui tab segment" data-tab="members">
-                    advanced
+     -->            <div class="ui tab segment" data-tab="members">
+                    <h2>Members</h2>
+                    <asp:Label runat="server" ID="lblMembers" />
                 </div>
                 <div class="ui tab segment" data-tab="memberOf">
-                    advanced
+                    <h2>Member Of</h2>
+                    <asp:Label runat="server" ID="lblMemberOf" />
                 </div>
-        -->     <div class="ui active tab segment" data-tab="rawData">
+            <div class="ui active tab segment" data-tab="rawData">
                     <h2>Raw Data</h2>
                     <asp:Label runat="server" ID="labelRawData" />
                 </div>

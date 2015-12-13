@@ -76,7 +76,10 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="CreateWorkItem.aspx" />
     <Content Include="Default.aspx" />
+    <Content Include="GroupsInfo.aspx" />
+    <Content Include="Redirector.aspx" />
     <Content Include="SCSMTest.aspx" />
     <Content Include="Site.Master" />
     <Content Include="packages.config">
@@ -98,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="FindLocalAdminPassword.aspx" />
+    <Content Include="test.aspx" />
     <Content Include="UserInfo.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -125,6 +129,13 @@
     <Compile Include="ComputerInfo.aspx.designer.cs">
       <DependentUpon>ComputerInfo.aspx</DependentUpon>
     </Compile>
+    <Compile Include="CreateWorkItem.aspx.cs">
+      <DependentUpon>CreateWorkItem.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CreateWorkItem.aspx.designer.cs">
+      <DependentUpon>CreateWorkItem.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -139,7 +150,22 @@
     <Compile Include="FindLocalAdminPassword.aspx.designer.cs">
       <DependentUpon>FindLocalAdminPassword.aspx</DependentUpon>
     </Compile>
+    <Compile Include="GroupsInfo.aspx.cs">
+      <DependentUpon>GroupsInfo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GroupsInfo.aspx.designer.cs">
+      <DependentUpon>GroupsInfo.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RawADGridGenerator.cs" />
+    <Compile Include="Redirector.aspx.cs">
+      <DependentUpon>Redirector.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Redirector.aspx.designer.cs">
+      <DependentUpon>Redirector.aspx</DependentUpon>
+    </Compile>
     <Compile Include="SCSMTest.aspx.cs">
       <DependentUpon>SCSMTest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -154,6 +180,13 @@
     <Compile Include="Site.Master.designer.cs">
       <DependentUpon>Site.Master</DependentUpon>
     </Compile>
+    <Compile Include="test.aspx.cs">
+      <DependentUpon>test.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="test.aspx.designer.cs">
+      <DependentUpon>test.aspx</DependentUpon>
+    </Compile>
     <Compile Include="UserInfo.aspx.cs">
       <DependentUpon>UserInfo.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -164,6 +197,10 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controls\" />
+    <Folder Include="DynamicData\FieldTemplates\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -40,6 +40,24 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl ResultDiv;
         
         /// <summary>
+        /// lblMembers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMembers;
+        
+        /// <summary>
+        /// lblMemberOf control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMemberOf;
+        
+        /// <summary>
         /// labelRawData control.
         /// </summary>
         /// <remarks>
