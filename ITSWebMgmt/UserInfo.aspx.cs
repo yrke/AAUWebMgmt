@@ -113,7 +113,7 @@ namespace ITSWebMgmt
                  var split = adpath.Split(',');
                  var groupname = split[0].Replace("CN=","");
 
-                 sb.Append(String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a>", HttpUtility.UrlEncode("LDAP://"+adpath), groupname));
+                 sb.Append(String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://"+adpath), groupname));
                  //sb.Append(adpath + "<br />");
                  //sb.Append(groupname + "<br/>");
                  //sb.Append("");
@@ -139,7 +139,7 @@ namespace ITSWebMgmt
                  {
                      //This is a group access group
                      var groupname = split[0].Replace("CN=", "");
-                     sb.Append(String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a>", HttpUtility.UrlEncode("LDAP://" + group), groupname));
+                     sb.Append(String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + group), groupname));
                      //sb.Append(groupname + "<br/>"); 
                  }
              }
