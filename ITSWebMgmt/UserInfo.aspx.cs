@@ -355,6 +355,21 @@ namespace ITSWebMgmt
             //XXX, this is a use input, might not be save us use in log 
             logger.Info("User {0} lookedup user {1}", System.Web.HttpContext.Current.User.Identity.Name, username);
 
+            if (username.Contains("\\")) {
+                //Form is domain\useranme
+                var tmp = username.Split('\\');
+                if (!tmp[0].Equals("AAU", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    username = string.Format("{0}@{1}.aau.dk", tmp[1], tmp[0]);
+                }
+                else //IS AAU domain 
+                {
+                    username = string.Format("{0}@{1}.dk", tmp[1], tmp[0]);
+                }
+            }
+                
+        
+
             var upn = globalSearch(username);
             if (upn == null)
             {
