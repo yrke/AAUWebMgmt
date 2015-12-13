@@ -7,6 +7,8 @@
     <div class="ui segment" style="">
       <h3>Nyheder</h3>
         
+        <li>Der er nu links mellem bruger/computere og grupper
+        <br /><br />
         <li>Userinfo acceptere nu søgning på form domain\username
         <br /><br />
         <li>Computer Info er udvidet med yderligere data fra SCCM
@@ -30,7 +32,7 @@
         <br />
         <br />
         <br />
-  
+  <br /><br />
         </div>
     <div class="ui segment">
         Du kan bidrage til udviklingen af Webmgmt på siden <a href="https://github.com/yrke/AAUWebMgmt">github.com/yrke/AAUWebMgmt</a>
