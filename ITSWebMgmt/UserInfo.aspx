@@ -95,6 +95,8 @@
                 <div class="ui vertical fluid tabular menu">
                     <a class="active item" data-tab="basicinfo">Basic Info</a>
                     <a class="item" data-tab="servicemanager">Service Manager</a>
+                    <a class="item" data-tab="calAgenda">Calendar Agenda</a>
+                    
                     <a class="item" data-tab="computerInformation">Computer Information</a>
                     <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
                     <a class="item" data-tab="groups">Groups</a>
@@ -144,6 +146,10 @@
                     <h2>fileshares</h2>
                     <asp:Label ID="filesharessegmentLabel" runat="server"></asp:Label>
                     
+                </div>
+                <div class="ui tab segment" data-tab="calAgenda">
+                    <h2>Calendar Agenda</h2>
+                    <asp:Label runat="server" ID="lblcalAgenda" />
                 </div>
                 <div class="ui tab segment" data-tab="networkdrives">
                     <h2>networkdrives</h2>

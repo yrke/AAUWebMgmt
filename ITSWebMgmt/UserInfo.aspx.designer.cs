@@ -175,6 +175,15 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label filesharessegmentLabel;
         
         /// <summary>
+        /// lblcalAgenda control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblcalAgenda;
+        
+        /// <summary>
         /// buttonCreateIRSR control.
         /// </summary>
         /// <remarks>

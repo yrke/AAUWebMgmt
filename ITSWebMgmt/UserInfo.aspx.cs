@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Management;
+using Microsoft.Exchange.WebServices.Data;
 
 namespace ITSWebMgmt
 {
@@ -128,6 +129,11 @@ namespace ITSWebMgmt
          protected void buildFilesharessegmentLabel(String[] groupsList)
          {
              StringBuilder sb = new StringBuilder();
+
+             var helper = new HTMLTableHelper(4);
+             sb.Append(helper.printStart());
+             sb.Append(helper.printRow(new string[] { "Type", "Domain", "Name", "Access" }, true));
+
              foreach (string group in groupsList)
              {
                  
@@ -139,10 +145,28 @@ namespace ITSWebMgmt
                  {
                      //This is a group access group
                      var groupname = split[0].Replace("CN=", "");
-                     sb.Append(String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + group), groupname));
-                     //sb.Append(groupname + "<br/>"); 
+                     var groupNameSplit = groupname.Split('_');
+
+                     var type = groupNameSplit[2];
+                     if (type.Equals("generic"))
+                     {
+                         type = "fileshares";
+                     }
+                     else
+                     {
+                         type = "department";
+                     }
+                     var domain = groupNameSplit[1];
+                     var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + group), groupNameSplit[3]);
+                     var access = groupNameSplit[4];
+
+                     sb.Append(helper.printRow(new string[] { type, domain, name, access }));
+
+
                  }
              }
+             sb.Append(helper.printEnd());
+
              filesharessegmentLabel.Text = sb.ToString();
 
          }
@@ -421,7 +445,7 @@ namespace ITSWebMgmt
                 buildWarningSegment(userDE);
                 buildGroupsSegments(userDE);
                 BuildSCSMSegment(userDE);
-
+                buildCalAgenda(userDE);
                 
 
             }
@@ -549,7 +573,71 @@ namespace ITSWebMgmt
 
 
         }
+        private void buildCalAgenda(DirectoryEntry result)
+        {
+            ExchangeService service = new ExchangeService(ExchangeVersion.Exchange2010_SP2);
+            service.UseDefaultCredentials = true; // Use domain account for connecting 
+            //service.Credentials = new WebCredentials("user1@contoso.com", "password"); // used if we need to enter a password, but for now we are using domain credentials
+            //service.AutodiscoverUrl("kyrke@its.aau.dk");  //XXX we should use the service user for webmgmt!
+            service.Url = new System.Uri("https://mail.aau.dk/EWS/exchange.asmx");
 
+            List<AttendeeInfo> attendees = new List<AttendeeInfo>();
+
+            
+
+            attendees.Add(new AttendeeInfo()
+            {
+                SmtpAddress = result.Properties["userPrincipalName"].Value.ToString(),
+                AttendeeType = MeetingAttendeeType.Organizer
+            });
+
+
+            // Specify availability options.
+            AvailabilityOptions myOptions = new AvailabilityOptions();
+
+            myOptions.MeetingDuration = 30;
+            myOptions.RequestedFreeBusyView = FreeBusyViewType.FreeBusy;
+
+            // Return a set of free/busy times.
+            DateTime dayBegin = DateTime.Now.Date;
+            var window = new TimeWindow(dayBegin, dayBegin.AddDays(1));
+            GetUserAvailabilityResults freeBusyResults = service.GetUserAvailability(attendees,
+                                                                                 window,
+                                                                                     AvailabilityData.FreeBusy,
+                                                                                     myOptions);
+
+            var sb = new StringBuilder();
+            // Display available meeting times.
+            
+
+            DateTime now = DateTime.Now;
+            foreach (AttendeeAvailability availability in freeBusyResults.AttendeesAvailability)
+            {
+
+                foreach (CalendarEvent calendarItem in availability.CalendarEvents)
+                {
+                    if (calendarItem.FreeBusyStatus != LegacyFreeBusyStatus.Free)
+                    {
+
+                        bool isNow = false;
+                        if (now > calendarItem.StartTime && calendarItem.EndTime > now)
+                        {
+                            sb.Append("<b>");
+                            isNow = true;
+                        }
+                        sb.Append(string.Format("{0}-{1}: {2}<br/>", calendarItem.StartTime.ToString("HH:mm"), calendarItem.EndTime.ToString("HH:mm"), calendarItem.FreeBusyStatus));
+
+                        if (isNow)
+                        {
+                            sb.Append("</b>");
+                        }
+                    }
+                }
+            }
+
+
+            lblcalAgenda.Text = sb.ToString();
+        }
         
         private void buildComputerInformation(DirectoryEntry result)
         {
