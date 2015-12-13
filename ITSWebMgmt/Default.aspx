@@ -7,6 +7,8 @@
     <div class="ui segment" style="">
       <h3>Nyheder</h3>
         
+        <li>UserInfo viser nu information omkring exchange rettigehder for brugere
+        <br /><br />
         <li>UserInfo viser nu free/busy time for brugere
         <br /><br />
         <li>Der er nu links mellem bruger/computere og grupper
