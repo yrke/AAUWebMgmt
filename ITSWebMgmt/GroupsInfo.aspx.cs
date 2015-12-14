@@ -195,9 +195,9 @@ namespace ITSWebMgmt
             }
 
             sb.Append("<tr><td>");
-            sb.Append("Is Distribution group");
+            sb.Append("Is Security group");
             sb.Append("</td><td>");
-            sb.Append(isDistgrp.ToString());
+            sb.Append((!isDistgrp).ToString());
             sb.Append("</td></tr>");
 
             sb.Append("<tr><td>");
