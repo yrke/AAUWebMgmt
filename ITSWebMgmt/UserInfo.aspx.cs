@@ -537,12 +537,19 @@ namespace ITSWebMgmt
 
         private void buildGroupsSegments(DirectoryEntry result)
         {
+
             var groupsList = result.Properties["memberOf"];
+            string attName = "msds-memberOfTransitive";
+            result.RefreshCache(attName.Split(','));
+
             var b = groupsList.Cast<string>();
             var groupListConvert = b.ToArray<string>();
+
+            var groupsListAll = result.Properties["msds-memberOfTransitive"];
+            var groupsListAllConverted = groupsListAll.Cast<string>().ToArray<string>();
             buildgroupssegmentLabel(groupListConvert);
-            buildExchangeLabel(groupListConvert);
-            buildFilesharessegmentLabel(groupListConvert);
+            buildExchangeLabel(groupsListAllConverted);
+            buildFilesharessegmentLabel(groupsListAllConverted);
 
         }
 
