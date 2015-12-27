@@ -148,11 +148,11 @@
                     advanced
                 </div>
                 <div class="ui tab segment" data-tab="groups">
-                    <h2>groups</h2>
+                    <h2>Groups</h2>
                     <asp:Label ID="groupssegmentLabel" runat="server"></asp:Label>
                 </div>
                 <div class="ui tab segment" data-tab="fileshares">
-                    <h2>fileshares</h2>
+                    <h2>Fileshares</h2>
                     <asp:Label ID="filesharessegmentLabel" runat="server"></asp:Label>
                     
                 </div>
@@ -189,7 +189,7 @@
                     <asp:Label ID="ResultLabel" runat="server"></asp:Label>
                 </div>
                 <div class="ui tab segment" data-tab="tasks">
-                    Tasks<br />
+                    <h2>Tasks</h2><br />
 
                     Unlock Account (if locked by wrong password):
                     <asp:Button runat="server" CssClass="ui button" ID="unlockUserAccountButton" Text="Unlock Account" OnClick="unlockUserAccountButton_Click" /><br />

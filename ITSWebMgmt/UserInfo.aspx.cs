@@ -135,9 +135,15 @@ namespace ITSWebMgmt
 
         }
 
-        protected void buildExchangeLabel(String[] groupsList)
+        protected void buildExchangeLabel(String[] groupsList, bool isTransitiv)
         {
             var sb = new StringBuilder();
+
+            if (!isTransitiv)
+            {
+                sb.Append("<h3>NB: Listen viser kun direkte medlemsskaber, kunne ikke finde fuld liste på denne Domain Controller eller domæne</h3>");
+            }
+            
             var helper = new HTMLTableHelper(4);
 
             sb.Append(helper.printStart());
@@ -183,9 +189,14 @@ namespace ITSWebMgmt
 
             lblexchange.Text = sb.ToString();
         }
-        protected void buildFilesharessegmentLabel(String[] groupsList)
+        protected void buildFilesharessegmentLabel(String[] groupsList, bool isTransitiv)
         {
             StringBuilder sb = new StringBuilder();
+
+            if (!isTransitiv)
+            {
+                sb.Append("<h3>NB: Listen viser kun direkte medlemsskaber, kunne ikke finde fuld liste på denne Domain Controller eller domæne</h3>");
+            }
 
             var helper = new HTMLTableHelper(4);
             sb.Append(helper.printStart());
@@ -559,13 +570,24 @@ namespace ITSWebMgmt
 
             var b = groupsList.Cast<string>();
             var groupListConvert = b.ToArray<string>();
+            buildgroupssegmentLabel(groupListConvert);
 
             var groupsListAll = result.Properties["msds-memberOfTransitive"];
-            var groupsListAllConverted = groupsListAll.Cast<string>().ToArray<string>();
-            buildgroupssegmentLabel(groupListConvert);
-            buildExchangeLabel(groupsListAllConverted);
-            buildFilesharessegmentLabel(groupsListAllConverted);
 
+            
+            var groupsListAllConverted = groupsListAll.Cast<string>().ToArray<string>();
+           
+
+            if (groupsListAllConverted.Length > 0)
+            {
+                buildExchangeLabel(groupsListAllConverted, true);
+                buildFilesharessegmentLabel(groupsListAllConverted, true);
+            }
+            else
+            {   //If we dont have transitive data
+                buildExchangeLabel(groupListConvert, false);
+                buildFilesharessegmentLabel(groupListConvert, false);
+            }
         }
 
         private void buildBasicInfoSegment(DirectoryEntry result)
