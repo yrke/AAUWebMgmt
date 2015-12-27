@@ -190,6 +190,7 @@
                 
 
                 <div class="ui tab segment" data-tab="rawdata">
+                    <h2>Raw Data</h2>
                     <asp:Label ID="ResultLabel" runat="server"></asp:Label>
                 </div>
                 <div class="ui tab segment" data-tab="tasks">
