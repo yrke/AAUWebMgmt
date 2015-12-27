@@ -70,6 +70,10 @@ namespace ITSWebMgmt
             
             sb.Append("<h1>Open Requests</h1><br />");
 
+            var helper = new HTMLTableHelper(4);
+            sb.Append(helper.printStart());
+            sb.Append(helper.printRow(new string[]{"ID","Title", "Status", "Last Change" }, true));
+
             for (int i = 0; i < json["MyRequest"].Length; i++)
             {
                 if (!"Closed".Equals(json["MyRequest"][i]["Status"]["Name"])) {
@@ -83,12 +87,23 @@ namespace ITSWebMgmt
                     {
                         link = "https://service.aau.dk/ServiceRequest/Edit/" + id;
                     }
+                    string sID = "<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["Id"] + "</a><br/>";
+                    string sTitle = json["MyRequest"][i]["Title"];
+                    string sStatus = json["MyRequest"][i]["Status"]["Name"];
+                    string tmp = json["MyRequest"][i]["LastModified"];
+                    string sLastChange = Convert.ToDateTime(tmp).ToString(); 
 
-                    sb.Append("<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["Id"] + " - " + json["MyRequest"][i]["Title"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
+                    sb.Append(helper.printRow(new String[] { sID, sTitle, sStatus, sLastChange }));
+                    //sb.Append("<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["Id"] + " - " + json["MyRequest"][i]["Title"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
                 }
             }
+            sb.Append(helper.printEnd());
 
             sb.Append("<br /><br /><h3>Closed Requests</h3>");
+            sb.Append(helper.printStart());
+            sb.Append(helper.printRow(new string[] { "ID", "Title", "Status", "Last Change" }, true));
+
+            
             for (int i = 0; i < json["MyRequest"].Length; i++)
             {
                 if ("Closed".Equals(json["MyRequest"][i]["Status"]["Name"]))
@@ -103,11 +118,19 @@ namespace ITSWebMgmt
                     {
                         link = "https://service.aau.dk/ServiceRequest/Edit/" + id;
                     }
+                    string sID = "<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["Id"] + "</a><br/>";
+                    string sTitle = json["MyRequest"][i]["Title"];
+                    string sStatus = json["MyRequest"][i]["Status"]["Name"];
+                    string tmp = json["MyRequest"][i]["LastModified"];
+                    string sLastChange = Convert.ToDateTime(tmp).ToString();
 
-                    sb.Append("<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["Id"] + " - " + json["MyRequest"][i]["Title"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
+                    sb.Append(helper.printRow(new String[] { sID, sTitle, sStatus, sLastChange }));
                 }
             }
-            
+
+            sb.Append(helper.printEnd());
+
+
             //sb.Append("<br /><br/>IsAssignedToUser<br />");
             //foreach (dynamic s in json["IsAssignedToUser"])
             //for (int i = 0; i < json["IsAssignedToUser"].Length; i++)
