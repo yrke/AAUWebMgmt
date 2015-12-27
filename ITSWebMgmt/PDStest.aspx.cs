@@ -15,6 +15,9 @@ namespace ITSWebMgmt
         protected void Page_Load(object sender, EventArgs e)
         {
 
+            //var f = new PDStest("115928");
+
+            //lblresult.Text = f.department;
         }
 
 
@@ -34,12 +37,14 @@ namespace ITSWebMgmt
         public string OfficeAddress
         {
             get { return streetAddress + " (" + extendedAddress.Trim() + ")"; }
-        } 
+        }
+        public PDStest()
+        {
 
+        }
         public PDStest(string empID)
         {
-            string toReturn = "";
-
+            
             //string empID = "115928";
             string url = "http://personprofil.aau.dk/" + empID + "?lang=en";
 
@@ -54,7 +59,8 @@ namespace ITSWebMgmt
 
             if (responseText.Contains("Profile not found."))
             {
-                toReturn = "Not Found";
+                //"Not Found";
+                return;
             }
             else
             {
