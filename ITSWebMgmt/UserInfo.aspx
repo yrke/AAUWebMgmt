@@ -5,10 +5,14 @@
 <div class="ui dimmer modals page transition hidden" style="display: block !important;">
 <div id="modalConfirmOUmove" class="ui small test modal transition hidden" style="margin-top: -92px; display: block !important;">
     <div class="header">
-      Fix user OU
+      Move user to Default OU
     </div>
     <div class="content">
-      <p>This task will move the user to the right OU. This will affect applied GPOs.</p>
+      <p>The user is placed in a non standard OU, this means applied GPOs and settings might differ from the standard. 
+          Run this task to move the user to the default configuration. 
+          <br />
+          <br />
+          <b><i>Warning: This action will affect the user, only run this it in agreement with the user!</i></b></p>
     </div>
     <div class="actions">
       <div class="ui negative button">
@@ -200,9 +204,9 @@
                     <br /><br />
                     
                     <div runat="server" id="divFixuserOU">
-                    Fix user OU (only do this if you know what you are doing): 
-                    <asp:Button runat="server" OnClick="fixUserOUButton" Text="Fix User OU" id="btnPostbackfixUserOUButton" style="display:none"/>                    
-                    <button type="button" Class="ui button" ID="btnFixOUShowModal" onclick="$('#modalConfirmOUmove').modal('show');" >Fix User OU</button><br />
+                    Move user to default OU: 
+                    <asp:Button runat="server" OnClick="fixUserOUButton" Text="Move user to default OU" id="btnPostbackfixUserOUButton" style="display:none"/>                    
+                    <button type="button" Class="ui button" ID="btnFixOUShowModal" onclick="$('#modalConfirmOUmove').modal('show');" >Move user to default OU</button><br />
                     </div>
                 </div>
                 <div class="ui tab segment" data-tab="statustest">
