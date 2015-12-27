@@ -201,7 +201,7 @@ namespace ITSWebMgmt
             sb.Append("</td></tr>");
 
             sb.Append("<tr><td>");
-            sb.Append("Group Type");
+            sb.Append("Group Scope");
             sb.Append("</td><td>");
             sb.Append(groupType);
             sb.Append("</td></tr>");
