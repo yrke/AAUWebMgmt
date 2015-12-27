@@ -157,7 +157,7 @@
                     
                 </div>
                 <div class="ui tab segment" data-tab="calAgenda">
-                    <h2>Calendar Agenda</h2>
+                    <h2>Calendar Agenda (today)</h2>
                     <asp:Label runat="server" ID="lblcalAgenda" />
                 </div>
                 <div class="ui tab segment" data-tab="exchange">
