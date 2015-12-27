@@ -43,6 +43,8 @@ namespace ITSWebMgmt
             
             sb.Append("<input hidden='true' name='vm' value='"+jsondata+"'/>");
             sb.Append("<input type='submit' value='Recreate IR/SR (if someting whent wrong)' />");
+
+            sb.Append(@"<br /><br /><a href=""#"" onclick=""window.history.go(-2); return false;""> Go back to UserInfo </a>");
                     
             sb.Append("</form>");
             sb.Append("</body></html>");
