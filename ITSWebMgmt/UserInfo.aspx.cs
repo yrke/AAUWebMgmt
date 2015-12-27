@@ -176,14 +176,8 @@ namespace ITSWebMgmt
                         var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + group), nameSplit[2]);
                         var access = nameSplit[3];
                         sb.Append(helper.printRow(new string[] { domain, type, name, access }));
-
-
                     }
-
-
                 }
-
-
             }
             sb.Append(helper.printEnd());
 
