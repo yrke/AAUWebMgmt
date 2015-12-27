@@ -88,6 +88,7 @@
     <Content Include="CreateWorkItem.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="GroupsInfo.aspx" />
+    <Content Include="PDStest.aspx" />
     <Content Include="Redirector.aspx" />
     <Content Include="SCSMTest.aspx" />
     <Content Include="Site.Master" />
@@ -166,6 +167,13 @@
     </Compile>
     <Compile Include="GroupsInfo.aspx.designer.cs">
       <DependentUpon>GroupsInfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PDStest.aspx.cs">
+      <DependentUpon>PDStest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PDStest.aspx.designer.cs">
+      <DependentUpon>PDStest.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RawADGridGenerator.cs" />
