@@ -560,10 +560,10 @@ namespace ITSWebMgmt
             displayName.Text = result.Properties["displayName"][0].ToString();
 
             //lblbasicInfoOfficePDS
-            string empID = result.Properties["aauStaffID"].Value.ToString();
-
-            if (!String.IsNullOrWhiteSpace(empID))
+            if (result.Properties.Contains("aauStaffID"))            
             {
+                string empID = result.Properties["aauStaffID"].Value.ToString();
+
                 var pds = new PDStest(empID);
                 lblbasicInfoDepartmentPDS.Text = pds.Department;
                 lblbasicInfoOfficePDS.Text = pds.OfficeAddress;
