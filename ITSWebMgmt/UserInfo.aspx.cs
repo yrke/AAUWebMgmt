@@ -141,7 +141,7 @@ namespace ITSWebMgmt
             var helper = new HTMLTableHelper(4);
 
             sb.Append(helper.printStart());
-            sb.Append(helper.printRow(new string[] { "Domain", "Type", "Name", "Access" }, true));
+            sb.Append(helper.printRow(new string[] { "Type", "Domain", "Name", "Access" }, true));
 
             foreach (string group in groupsList)
             {
@@ -158,7 +158,7 @@ namespace ITSWebMgmt
                         var domain = nameSplit[1];
                         var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + group), nameSplit[3]);
                         var access = nameSplit[4];
-                        sb.Append(helper.printRow(new string[] { domain, type, name, access }));
+                        sb.Append(helper.printRow(new string[] { type, domain, name, access }));
 
 
                     } //XXX: if Length == 4 this a all resources group
