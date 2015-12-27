@@ -125,6 +125,14 @@
                                 <td><asp:Label runat="server" id="basicInfoAdmDBExpireDate"></asp:Label></td>
                             </tr>
                             <tr>
+                                <td>Department (PDS)</td>
+                                <td><asp:Label runat="server" id="lblbasicInfoDepartmentPDS"></asp:Label></td>
+                            </tr>
+                            <tr>
+                                <td>Office (PDS)</td>
+                                <td><asp:Label runat="server" id="lblbasicInfoOfficePDS"></asp:Label></td>
+                            </tr>
+                            <tr>
                                 <td>Password Expired</td>
                                 <td><asp:Label runat="server" ID="basicInfoPasswordExpired"></asp:Label></td>
                             </tr>

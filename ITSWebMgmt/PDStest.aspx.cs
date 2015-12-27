@@ -33,10 +33,10 @@ namespace ITSWebMgmt
 
         public string OfficeAddress
         {
-            get { return streetAddress + " (" + extendedAddress + ")"; }
+            get { return streetAddress + " (" + extendedAddress.Trim() + ")"; }
         } 
 
-        PDStest(string empID)
+        public PDStest(string empID)
         {
             string toReturn = "";
 

@@ -559,7 +559,17 @@ namespace ITSWebMgmt
             //Fills in basic user info
             displayName.Text = result.Properties["displayName"][0].ToString();
 
+            //lblbasicInfoOfficePDS
+            string empID = result.Properties["aauStaffID"].Value.ToString();
 
+            if (!String.IsNullOrWhiteSpace(empID))
+            {
+                var pds = new PDStest(empID);
+                lblbasicInfoDepartmentPDS.Text = pds.Department;
+                lblbasicInfoOfficePDS.Text = pds.OfficeAddress;
+            }
+
+            //Other fileds
             var attrToDisplay = "userPrincipalName, aauUserStatus, aauStaffID, aauStudentID, aauUserClassification, displayName department, userAccountControl, badPwdCount, badPasswordTime, departmentNumber, profilePath, homeDirectory, homeDrive, lastLogon";
             var attrArry = attrToDisplay.Replace(" ", "").Split(',');
             string[] dateFields = { "lastLogon", "badPasswordTime" };
