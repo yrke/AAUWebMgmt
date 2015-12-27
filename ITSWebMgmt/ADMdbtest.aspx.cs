@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,7 @@ namespace ITSWebMgmt
 
     public partial class ADMdbtest : System.Web.UI.Page
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         Dictionary<string, string> admdburl = new Dictionary<string, string>() {
             {"its","https://tools.ist.aau.dk/its/i88/adm_db/adm.pl"},
@@ -98,12 +100,13 @@ namespace ITSWebMgmt
 
             if (responseText.Contains("Found no entries that matches the specified search parameters"))
             {
-                return null;
+                return "Ingen aktiv ramme";
 
             }
             else
             {
 
+                try { 
                 HtmlDocument doc = new HtmlDocument();
                 doc.LoadHtml(responseText);
 
@@ -119,6 +122,11 @@ namespace ITSWebMgmt
                 string endYear = selectEmployeesEndYear.Element("option").GetAttributeValue("value", "");
 
                 return "" + endYear + "-" + month[endMonth.ToLower()]  + "-" + endday;
+                } catch (Exception e) {
+                    logger.Debug("User not found on key username: " + domain+"\\"+username);
+                    return "UserInfo Error on Lookup";
+                }
+
             }
         }
 
