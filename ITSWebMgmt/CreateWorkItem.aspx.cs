@@ -56,8 +56,8 @@ namespace ITSWebMgmt
 
 
         protected void createForm(string url){
-                createRedirectCode(Request.QueryString["userID"], tb_affectedUser.Text, tb_title.Text, tb_description.Text, url);
-        
+            string descriptionConverted = tb_description.Text.Replace("\n", "\\n").Replace("\r", "\\r");
+            createRedirectCode(Request.QueryString["userID"], tb_affectedUser.Text, tb_title.Text, descriptionConverted, url);        
         }
         protected void createSR_OnClick(object sender, EventArgs e)
         {
