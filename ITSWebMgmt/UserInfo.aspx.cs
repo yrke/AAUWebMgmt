@@ -214,8 +214,22 @@ namespace ITSWebMgmt
                         type = "department";
                     }
                     var domain = groupNameSplit[1];
-                    var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + group), groupNameSplit[3]);
-                    var access = groupNameSplit[4];
+
+                    //XXX: Can do this with array copy and a join simpler 
+                    string nameString = null;
+                    for (int i = 3; i < groupNameSplit.Length - 1; i++)
+                    {
+                        if (nameString == null)
+                        {
+                            nameString = groupNameSplit[i];
+                        }
+                        else { 
+                            nameString = nameString + "_" + groupNameSplit[i];
+                        }
+                    }
+                    
+                    var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + group), nameString);
+                    var access = groupNameSplit[groupNameSplit.Length-1];
 
                     sb.Append(helper.printRow(new string[] { type, domain, name, access }));
 
