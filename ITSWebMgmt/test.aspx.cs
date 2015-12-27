@@ -36,6 +36,10 @@ namespace ITSWebMgmt
             sb.Append("<br/>" + groupsCount);
             
              */
+        
+            
+            
+            
             var sb = new StringBuilder();
 
             DirectoryEntry deBase = new DirectoryEntry("GC://aau.dk");
