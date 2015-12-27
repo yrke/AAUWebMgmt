@@ -111,26 +111,21 @@ namespace ITSWebMgmt
         {
             StringBuilder sb = new StringBuilder();
 
+            var helper = new HTMLTableHelper(2);
+            sb.Append(helper.printStart());
+            sb.Append(helper.printRow(new string[]{"Domain", "Name"}, true));
+
             foreach (string adpath in groupsList)
             {
-                //DirectoryEntry de = new DirectoryEntry("LDAP://"+adpath);
-
-                //string groupname = de.Properties["cn"][0].ToString();
-                //TODO:
-                //UserPrincipal user = UserPrincipal.FindByIdentity(new PrincipalContext (ContextType.Domain, "mydomain.com"), IdentityType.SamAccountName, "username");
-                //foreach (GroupPrincipal group in user.GetGroups())
-
                 var split = adpath.Split(',');
                 var groupname = split[0].Replace("CN=", "");
+                var domain = split.Where<string>(s=>s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
+                var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname);
 
-                sb.Append(String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname));
-                //sb.Append(adpath + "<br />");
-                //sb.Append(groupname + "<br/>");
-                //sb.Append("");
-
+                sb.Append(helper.printRow(new string[] { domain, name }));
             }
 
-
+            sb.Append(helper.printEnd());
             groupssegmentLabel.Text = sb.ToString();
 
         }
