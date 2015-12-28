@@ -595,37 +595,28 @@ namespace ITSWebMgmt
             }
 
             //Other fileds
-            var attrToDisplay = "userPrincipalName, aauUserStatus, aauStaffID, aauStudentID, aauUserClassification, displayName department, userAccountControl, badPwdCount, badPasswordTime, departmentNumber, profilePath, homeDirectory, homeDrive, lastLogon";
+            var attrToDisplay = "userPrincipalName, aauUserStatus, aauStaffID, aauStudentID, aauUserClassification, telephoneNumber, lastLogon";
             var attrArry = attrToDisplay.Replace(" ", "").Split(',');
             string[] dateFields = { "lastLogon", "badPasswordTime" };
 
             var sb = new StringBuilder();
             foreach (string k in attrArry)
             {
-
-
                 sb.Append("<tr>");
 
                 sb.Append(String.Format("<td>{0}</td>", k));
 
-
                 if (result.Properties.Contains(k))
                 {
-
                     if (dateFields.Contains(k))
                     {
-
                         sb.Append(String.Format("<td>{0}</td>", convertADTimeToDateTime(result.Properties[k].Value)));
-
                     }
                     else
                     {
-
                         string v = result.Properties[k].Value.ToString();
                         sb.Append(String.Format("<td>{0}</td>", v));
                     }
-
-
                 }
                 else
                 {
@@ -636,9 +627,19 @@ namespace ITSWebMgmt
 
             }
 
-            //Password Expire
-
-            //convertADTimeToDateTime
+            //Email
+            var helper = new HTMLTableHelper(2);
+            var proxyAddressesAD = result.Properties["proxyAddresses"];
+            var proxyAddresses = proxyAddressesAD.Cast<string>().ToArray<string>();
+            string email = "";
+            foreach (string s in proxyAddresses) {
+                if (s.StartsWith("SMTP:", StringComparison.CurrentCultureIgnoreCase)){
+                    var tmp2 = s.ToLower().Replace("smtp:", "");
+                    email += string.Format("<a href=\"mailto:{0}\">{0}</a><br/>", tmp2);
+                }
+            }
+            sb.Append(helper.printRow(new string[] { "E-mails", email }));
+            
 
             string attName = "msDS-UserPasswordExpiryTimeComputed,msDS-User-Account-Control-Computed";
             result.RefreshCache(attName.Split(','));
@@ -650,7 +651,7 @@ namespace ITSWebMgmt
 
             if ((userFlags & UF_LOCKOUT) == UF_LOCKOUT)
             {
-                basicInfoPasswordExpired.Text = "True";
+            //    basicInfoPasswordExpired.Text = "True";
             }
 
             // Never expire = 9223372036854775807 
@@ -801,6 +802,20 @@ namespace ITSWebMgmt
             if ((Convert.ToBoolean(result.InvokeGet("IsAccountLocked"))))
             {
                 errorUserLockedDiv.Style.Clear();
+            }
+
+            //Password Expired
+            string attName = "msDS-User-Account-Control-Computed";
+            result.RefreshCache(attName.Split(','));
+
+            const int UF_LOCKOUT = 0x0010;
+            int userFlags = (int)result.Properties["msDS-User-Account-Control-Computed"].Value;
+
+            basicInfoPasswordExpired.Text = "False";
+
+            if ((userFlags & UF_LOCKOUT) == UF_LOCKOUT)
+            {
+                errorPasswordExpired.Style.Clear();
             }
 
             //Missing Attributes 

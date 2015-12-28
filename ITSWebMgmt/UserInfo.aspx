@@ -72,6 +72,13 @@
             <p>The user account is locked, used tasks unlock account to unlock it.</p>
             </div>
 
+            <div class="ui negative message" id="errorPasswordExpired" style="display:none" runat="server">
+            <div class="header">
+                Password Expired
+            </div>
+            <p>The user account is locked due to an expired password. User must change password or reset the users password.</p>
+            </div>
+
             <div class="ui negative message" id="errorMissingAAUAttr" style="display:none" runat="server">
             <div class="header">
                 User is missing AAU Attributes
@@ -135,10 +142,6 @@
                             <tr>
                                 <td>Office (PDS)</td>
                                 <td><asp:Label runat="server" id="lblbasicInfoOfficePDS"></asp:Label></td>
-                            </tr>
-                            <tr>
-                                <td>Password Expired</td>
-                                <td><asp:Label runat="server" ID="basicInfoPasswordExpired"></asp:Label></td>
                             </tr>
                             <tr>
                                 <td>Password Expire Date</td>

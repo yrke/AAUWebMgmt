@@ -76,6 +76,15 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl errorUserLockedDiv;
         
         /// <summary>
+        /// errorPasswordExpired control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl errorPasswordExpired;
+        
+        /// <summary>
         /// errorMissingAAUAttr control.
         /// </summary>
         /// <remarks>
@@ -137,15 +146,6 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblbasicInfoOfficePDS;
-        
-        /// <summary>
-        /// basicInfoPasswordExpired control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label basicInfoPasswordExpired;
         
         /// <summary>
         /// basicInfoPasswordExpireDate control.
