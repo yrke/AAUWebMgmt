@@ -115,14 +115,36 @@ namespace ITSWebMgmt
             sb.Append(helper.printStart());
             sb.Append(helper.printRow(new string[]{"Domain", "Name"}, true));
 
+            Array.Sort(groupsList);
+            var skiped = new List<string>();
+
             foreach (string adpath in groupsList)
             {
-                var split = adpath.Split(',');
-                var groupname = split[0].Replace("CN=", "");
-                var domain = split.Where<string>(s=>s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
-                var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname);
+                if (!(adpath.StartsWith("CN=MBX_") || adpath.StartsWith("CN=ACL_"))) //if not fileshare or mailbox
+                {
+                    var split = adpath.Split(',');
+                    var groupname = split[0].Replace("CN=", "");
+                    var domain = split.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
+                    var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname);
 
-                sb.Append(helper.printRow(new string[] { domain, name }));
+                    sb.Append(helper.printRow(new string[] { domain, name }));
+                }
+                else
+                {
+                    skiped.Add(adpath);
+                }
+            }
+
+            foreach (string adpath in skiped)
+            {
+                
+                    var split = adpath.Split(',');
+                    var groupname = split[0].Replace("CN=", "");
+                    var domain = split.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
+                    var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname);
+
+                    sb.Append(helper.printRow(new string[] { domain, name }));
+                
             }
 
             sb.Append(helper.printEnd());

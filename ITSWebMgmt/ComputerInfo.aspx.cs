@@ -27,23 +27,17 @@ namespace ITSWebMgmt
 
             if (!IsPostBack)
             {
-
-
                 String computername = Request.QueryString["computername"];
                 if (computername != null)
                 {
                     ComputerNameInput.Text = computername;
                     buildlookupComputer();
                 }
-
-
             }
             else
             {
 
             }
-
-
 
         }
         protected void moveComputerToOU(String adpath, String newOUpath)
