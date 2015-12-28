@@ -15,7 +15,7 @@ namespace ITSWebMgmt
             //builder.Append((result.Properties["aauStaffID"][0])).ToString();
             var builder = new StringBuilder();
 
-            builder.Append("<table class=\"ui celled table\"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>");
+            builder.Append("<table class=\"ui celled structured table\"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>");
 
             foreach (string k in result.Properties.PropertyNames)
             {
@@ -26,11 +26,12 @@ namespace ITSWebMgmt
                 }
 
                 builder.Append("<tr>");
-                builder.Append("<td>" + k + "</td>");
-
+                
                 var a = result.Properties[k];
                 if (a != null && a.Count > 0)
                 {
+                    builder.Append("<td rowspan=\""+a.Count+"\">" + k + "</td>");
+
                     if (a.Count == 1)
                     {
                         var v = a[0];
@@ -44,7 +45,7 @@ namespace ITSWebMgmt
                         for (int i = 1; i < a.Count; i++)
                         {
                             v = a[i];
-                            builder.Append("<tr><td></td><td>" + v + "</td></tr>");
+                            builder.Append("<tr><td>" + v + "</td></tr>");
                         }
 
                     }
