@@ -128,7 +128,7 @@
                     <table class="ui definition table">
                         <tbody>
                             <tr>
-                                <td>Navn</td>
+                                <td>Name</td>
                                 <td><asp:Label runat="server" id="displayName"></asp:Label></td>
                             </tr>
                             <tr>

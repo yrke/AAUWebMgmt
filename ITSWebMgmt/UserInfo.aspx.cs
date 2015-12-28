@@ -595,16 +595,19 @@ namespace ITSWebMgmt
             }
 
             //Other fileds
-            var attrToDisplay = "userPrincipalName, aauUserStatus, aauStaffID, aauStudentID, aauUserClassification, telephoneNumber, lastLogon";
+            var attrToDisplay =   "userPrincipalName, aauUserStatus, aauStaffID, aauStudentID, aauUserClassification, telephoneNumber, lastLogon";
+            var attrDisplayName = "UserName, UserStatus, StaffID, StudentID, UserClassification, Telephone, LastLogon (approx.)";
             var attrArry = attrToDisplay.Replace(" ", "").Split(',');
+            var dispArry = attrDisplayName.Split(',');
             string[] dateFields = { "lastLogon", "badPasswordTime" };
 
             var sb = new StringBuilder();
-            foreach (string k in attrArry)
+            for (int i = 0; i < attrArry.Length; i++)
             {
+                string k = attrArry[i];
                 sb.Append("<tr>");
 
-                sb.Append(String.Format("<td>{0}</td>", k));
+                sb.Append(String.Format("<td>{0}</td>", dispArry[i].Trim()));
 
                 if (result.Properties.Contains(k))
                 {
