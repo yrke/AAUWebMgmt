@@ -647,7 +647,7 @@ namespace ITSWebMgmt
             const int UF_LOCKOUT = 0x0010;
             int userFlags = (int)result.Properties["msDS-User-Account-Control-Computed"].Value;
 
-            basicInfoPasswordExpired.Text = "False";
+            //basicInfoPasswordExpired.Text = "False";
 
             if ((userFlags & UF_LOCKOUT) == UF_LOCKOUT)
             {
@@ -810,8 +810,6 @@ namespace ITSWebMgmt
 
             const int UF_LOCKOUT = 0x0010;
             int userFlags = (int)result.Properties["msDS-User-Account-Control-Computed"].Value;
-
-            basicInfoPasswordExpired.Text = "False";
 
             if ((userFlags & UF_LOCKOUT) == UF_LOCKOUT)
             {
