@@ -455,14 +455,25 @@ namespace ITSWebMgmt
                     foreach (var property in o.Properties)
                     {
                         string key = property.Name;
+                        object value = property.Value;
 
-
-                        sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
+                        int i = 0;
+                        if (value != null && value.GetType().IsArray)
+                        {
+                            var arry = (string[])value;
+                            foreach (string f in arry)
+                            {
+                                sb.Append(string.Format("{0}[{2}]: {1}<br />", key, f, i));
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
+                        }
+                        
                     }
 
-                    
-                    //o.Properties["ResourceID"].Value.ToString();
-                    
                 }
             }
             else
