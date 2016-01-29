@@ -486,6 +486,48 @@ namespace ITSWebMgmt
         }
 
 
+        protected void addComputerToCollection(string resourceID, string collectionID)
+        {
+              /*  Set collection = SWbemServices.Get ("SMS_Collection.CollectionID=""" & CollID &"""")
+  
+                  Set CollectionRule = SWbemServices.Get("SMS_CollectionRuleDirect").SpawnInstance_()
+                  CollectionRule.ResourceClassName = "SMS_R_System"
+                  CollectionRule.RuleName = "Static-"&ResourceID
+                  CollectionRule.ResourceID = ResourceID
+                  collection.AddMembershipRule CollectionRule*/
+
+            //o.Properties["ResourceID"].Value.ToString();
+
+            var pathString = "\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1" + ":SMS_Collection.CollectionID=\"" + collectionID + "\"";
+            ManagementPath path = new ManagementPath(pathString);
+            ManagementObject obj = new ManagementObject(path);
+
+            ManagementClass ruleClass = new ManagementClass("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1" + ":SMS_CollectionRuleDirect");
+
+            ManagementObject rule = ruleClass.CreateInstance();
+
+            rule["RuleName"] = "Static-"+ resourceID;
+            rule["ResourceClassName"] = "SMS_R_System";
+            rule["ResourceID"] = resourceID;
+
+            obj.InvokeMethod("AddMembershipRule", new object[] { rule });
+
+        }
+ 
+        
+        protected void buttonEnableBitlockerEncryption_Click(object sender, EventArgs e)
+        {
+            string adpath = (string)Session["adpath"];
+            string[] adpathsplit = adpath.Split('/');
+            string computerName = (adpathsplit[adpathsplit.Length-1].Split(','))[0].Replace("CN=", "");
+
+            var resourceID = getSCCMResourceIDFromComputerName(computerName);
+            var collectionID = "AA1000B8"; //Enabled Bitlocker Encryption Collection ID
+            addComputerToCollection(resourceID, collectionID);
+
+        }
+
+
 
     }
 }
