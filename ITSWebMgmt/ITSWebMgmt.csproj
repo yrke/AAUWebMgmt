@@ -133,6 +133,7 @@
     <Compile Include="CallManager.aspx.designer.cs">
       <DependentUpon>CallManager.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\HTMLEncodingHelper.cs" />
     <Compile Include="HTMLTableHelper.cs" />
     <Compile Include="ComputerInfo.aspx.cs">
       <DependentUpon>ComputerInfo.aspx</DependentUpon>

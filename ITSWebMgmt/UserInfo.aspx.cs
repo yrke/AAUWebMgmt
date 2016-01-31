@@ -431,7 +431,6 @@ namespace ITSWebMgmt
             search.PropertiesToLoad.Add("userPrincipalName");
             SearchResult r = search.FindOne();
 
-
             if (r != null)
             {
                 return r.Properties["userPrincipalName"][0].ToString(); //XXX handle if result is 0 (null exception)
@@ -698,10 +697,14 @@ namespace ITSWebMgmt
             var admdb = new ADMdbtest();
 
             String upn = (string)result.Properties["userPrincipalName"][0];
+
+            string firstName = (string)result.Properties["givenName"][0];
+            string lastName = (string)result.Properties["sn"][0];
+
             var tmp = upn.Split('@');
             var domain = tmp[1].Split('.')[0];
 
-            basicInfoAdmDBExpireDate.Text = admdb.loadUserExpiredate(domain, tmp[0]);
+            basicInfoAdmDBExpireDate.Text = admdb.loadUserExpiredate(domain, tmp[0], firstName, lastName);
 
 
             //Password Expire date "PasswordExpirationDate"

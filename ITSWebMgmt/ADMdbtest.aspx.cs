@@ -63,7 +63,7 @@ namespace ITSWebMgmt
             {"dec","12"}
         };
 
-        public string loadUserExpiredate(string domain, string username) {
+        public string loadUserExpiredate(string domain, string username, string firstName, string lastName) {
             var url = admdburl[domain.ToLower()]; //Throws exception on wrong domain
             
             WebRequest request = WebRequest.Create(url);
@@ -78,13 +78,16 @@ namespace ITSWebMgmt
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
 
-            var outgoingQueryString = HttpUtility.ParseQueryString(String.Empty);
+            var outgoingQueryString = HttpUtility.ParseQueryString(String.Empty, System.Text.Encoding.GetEncoding("Windows-1252"));
             //outgoingQueryString.Add("field1", "value1");
             outgoingQueryString.Add("osnames.username", username);
+            outgoingQueryString.Add("persons.firstname", firstName);
+            outgoingQueryString.Add("persons.lastname", lastName);
             outgoingQueryString.Add("Submit", "Search");
             outgoingQueryString.Add("page", "SearchStatus");
-            
+
             string postdata = outgoingQueryString.ToString();
+            postdata = ITSWebMgmt.Helpers.HTMLEncodingHelper.convertUTF8encodingToWindows1252(postdata);
 
             var requestSteam = new StreamWriter(request.GetRequestStream());
             requestSteam.Write(postdata);
@@ -133,7 +136,7 @@ namespace ITSWebMgmt
         protected void Page_Load(object sender, EventArgs e)
         {
 
-            var response = loadUserExpiredate("its", "kyrke");
+            var response = loadUserExpiredate("its", "kyrke", "Kenneth Yrke", "Jørgensen");
             if (response != null) {
                 labelResult.Text = response;
             }
