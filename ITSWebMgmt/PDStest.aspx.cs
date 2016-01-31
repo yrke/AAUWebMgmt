@@ -21,12 +21,12 @@ namespace ITSWebMgmt
         }
 
 
-        string department;
-        string streetAddress;
-        string extendedAddress;
-        string postalCode;
-        string locality;
-        string countryName;
+        string department = "";
+        string streetAddress = "";
+        string extendedAddress = "";
+        string postalCode = "";
+        string locality = "";
+        string countryName = "";
 
 
         public string Department
@@ -60,6 +60,8 @@ namespace ITSWebMgmt
             if (responseText.Contains("Profile not found."))
             {
                 //"Not Found";
+                extendedAddress = "Not found in PDS";
+                department = "Not found in PDS";
                 return;
             }
             else
@@ -71,13 +73,18 @@ namespace ITSWebMgmt
                 var adr = doc.DocumentNode.SelectSingleNode("//*[@id=\"visitkort\"]/div/div/address");
 
 
-
-                department = adr.SelectSingleNode("span[1]").InnerText;
-                streetAddress = adr.SelectSingleNode("span[2]").InnerText;
-                extendedAddress = adr.SelectSingleNode("span[3]").InnerText;
-                postalCode = adr.SelectSingleNode("span[4]").InnerText;
-                locality = adr.SelectSingleNode("span[5]").InnerText;
-                countryName = adr.SelectSingleNode("span[6]").InnerText;
+                try
+                {
+                    department = adr.SelectSingleNode("span[1]").InnerText;
+                    streetAddress = adr.SelectSingleNode("span[2]").InnerText;
+                    extendedAddress = adr.SelectSingleNode("span[3]").InnerText;
+                    postalCode = adr.SelectSingleNode("span[4]").InnerText;
+                    locality = adr.SelectSingleNode("span[5]").InnerText;
+                    countryName = adr.SelectSingleNode("span[6]").InnerText;
+                }
+                catch (NullReferenceException e) {
+                //Do nothing, just value missing, default value empty
+                }    
 
 
             }
