@@ -7,6 +7,8 @@
     <div class="ui segment" style="">
       <h3>Nyheder</h3>
         
+        <li>2016-02-01 - Computerinfo improved basic info tab
+        <br /><br />
         <li>2016-01-31 - Forbedret stabilitet af opslag i ADMdb og PDS
         <br /><br />
         

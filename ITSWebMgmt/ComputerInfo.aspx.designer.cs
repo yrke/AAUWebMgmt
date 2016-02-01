@@ -85,6 +85,33 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label labelPwdExpireDate;
         
         /// <summary>
+        /// labelBasicInfoPCConfig control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelBasicInfoPCConfig;
+        
+        /// <summary>
+        /// labelBasicInfoExtraConfig control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelBasicInfoExtraConfig;
+        
+        /// <summary>
+        /// labelBasicInfoTestUpdates control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelBasicInfoTestUpdates;
+        
+        /// <summary>
         /// ResultGetPassword2 control.
         /// </summary>
         /// <remarks>
@@ -110,6 +137,15 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button ResultGetPassword;
+        
+        /// <summary>
+        /// buttonEnableBitlockerEncryption control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button buttonEnableBitlockerEncryption;
         
         /// <summary>
         /// MoveComputerOUdiv control.

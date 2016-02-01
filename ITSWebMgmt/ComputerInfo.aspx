@@ -56,12 +56,33 @@
                 </div>
                 <div class="ui active tab segment" data-tab="basicinfo">
                 
-
-
-                    Domain: <asp:Label runat="server" ID="labelDomain" /><br />
-                    Admin Pwd Expire: <asp:Label runat="server" ID="labelPwdExpireDate"></asp:Label> <br />
-
-                
+                    <div class="ui active tab segment" data-tab="basicinfo">
+                    <table class="ui definition table">
+                        <tbody>
+                            <tr>
+                                <td>Domain</td>
+                                <td><asp:Label runat="server" ID="labelDomain" /></td>
+                            </tr>
+                            <tr>
+                                <td>Admin Pwd Expire:</td>
+                                <td><asp:Label runat="server" ID="labelPwdExpireDate"/></td>
+                            </tr>
+                            <tr>
+                                <td>PC Config:</td>
+                                <td><asp:Label runat="server" ID="labelBasicInfoPCConfig"/></td>
+                            </tr>
+                            <tr>
+                                <td>Bitlocker Enabled:</td>
+                                <td><asp:Label runat="server" ID="labelBasicInfoExtraConfig"/></td>
+                            </tr>
+                            <tr>
+                                <td>Modtager test updates:</td>
+                                <td><asp:Label runat="server" ID="labelBasicInfoTestUpdates"/></td>
+                            </tr>
+                        </tbody>
+                     </table>
+                   </div>
+<br /><br />
                     <asp:Button ID="ResultGetPassword2" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click" CssClass="ui button" />
                     
                 

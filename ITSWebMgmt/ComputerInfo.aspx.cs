@@ -218,6 +218,12 @@ namespace ITSWebMgmt
                 return;
             }
 
+            String adpath = resultLocal.Properties["ADsPath"][0].ToString();
+            Session["adpath"] = adpath;
+
+            logger.Info("User {0} requesed info about computer {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
+
+
 
             if (resultLocal.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
             {
@@ -229,37 +235,66 @@ namespace ITSWebMgmt
             {
                 labelPwdExpireDate.Text = "LAPS not Enabled";
             }
+            
+
+            var rawbuilder = new RawADGridGenerator();
+            ResultLabelRaw.Text = rawbuilder.buildRawSegment(resultLocal.GetDirectoryEntry());
+
+            buildBasicInfo(resultLocal.GetDirectoryEntry());
+            buildSCCMInfo(computername);
+            buildGroupsSegments(resultLocal.GetDirectoryEntry());
+           
+            ResultDiv.Visible = true;
 
 
-            String adpath = resultLocal.Properties["ADsPath"][0].ToString();
-
-            logger.Info("User {0} requesed info about computer {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
-
-
-            Session["adpath"] = adpath;
-
-            //builder.Append((string)Session["adpath"]);
-
-            if (resultLocal.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
-            {
-                ResultGetPassword.Visible = true; 
-                ResultGetPassword2.Visible = true;
-            }
             if (!checkComputerOU(adpath))
             {
                 MoveComputerOUdiv.Visible = true;
             }
 
+        }
 
-            var rawbuilder = new RawADGridGenerator();
-            ResultLabelRaw.Text = rawbuilder.buildRawSegment(resultLocal.GetDirectoryEntry());
+        public DateTime? convertADTimeToDateTime(object adsLargeInteger)
+        {
 
-            buildSCCMInfo(computername);
-            buildGroupsSegments(resultLocal.GetDirectoryEntry());
+            var highPart = (Int32)adsLargeInteger.GetType().InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
+            var lowPart = (Int32)adsLargeInteger.GetType().InvokeMember("LowPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
+            var result = highPart * ((Int64)UInt32.MaxValue + 1) + lowPart;
+
+            if (result == 9223372032559808511)
+            {
+                return null;
+            }
+
+            return DateTime.FromFileTime(result);
+        }
+
+        protected void buildBasicInfo(DirectoryEntry de)
+        {
+            
+            if (de.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
+            {
+               
+                DateTime? expireDate = convertADTimeToDateTime(de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value);
+                labelPwdExpireDate.Text = expireDate.ToString();
+            }
+            else
+            {
+                labelPwdExpireDate.Text = "LAPS not Enabled";
+            }
+
+
             
 
+            //builder.Append((string)Session["adpath"]);
+
+            if (de.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
+            {
+                ResultGetPassword.Visible = true;
+                ResultGetPassword2.Visible = true;
+            }
             
-            ResultDiv.Visible = true;
+
         }
 
         protected void MoveOU_Click(object sender, EventArgs e)
@@ -406,13 +441,42 @@ namespace ITSWebMgmt
                 var t = results.Count;
                 hasValues=true;
             }catch (ManagementException e){}
-            
+
+            string configPC = "Unknown";
+            string configExtra = "False";
+            string getsTestUpdates = "False";
+
             if (hasValues)
             {
                 foreach (ManagementObject o in results)
                 {
                     //o.Properties["ResourceID"].Value.ToString();
                     var collectionID = o.Properties["CollectionID"].Value.ToString();
+
+                    if (collectionID.Equals("AA100015"))
+                    {
+                        configPC = "AAU PC";
+                    }else if (collectionID.Equals("AA100087")){
+                        configPC = "AAU8 PC";
+                    }else if (collectionID.Equals("AA100027"))
+                    {
+                        configPC = "Administrativ PC";
+                    }
+                    else if (collectionID.Equals("AA10009C"))
+                    {
+                        configPC = "Imported";
+                    }
+
+                    if (collectionID.Equals("AA1000B8"))
+                    {
+                        configExtra = "True";
+                    }
+
+                    if (collectionID.Equals("AA100069") || collectionID.Equals("AA100066") || collectionID.Equals("AA100065") || collectionID.Equals("AA100064") || collectionID.Equals("AA100063") || collectionID.Equals("AA100083"))
+                    {
+                        getsTestUpdates = "True";
+                    }
+
                     var pathString = "\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1" + ":SMS_Collection.CollectionID=\"" + collectionID + "\"";
                     ManagementPath path = new ManagementPath(pathString);
 
@@ -426,6 +490,10 @@ namespace ITSWebMgmt
             {
                 sb.Append("Computer not found i SCCM");
             }
+
+            labelBasicInfoPCConfig.Text = configPC;
+            labelBasicInfoExtraConfig.Text = configExtra;
+            labelBasicInfoTestUpdates.Text = getsTestUpdates;
 
             //Basal Info
             var wqlqSystem = new WqlObjectQuery("SELECT * FROM SMS_R_System WHERE ResourceId=" + resourceID);
