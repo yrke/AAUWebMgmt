@@ -7,19 +7,9 @@
     <div class="ui segment" style="">
       <h3>Nyheder</h3>
         
-        <li>UserInfo viser nu information omkring exchange rettigehder for brugere
+        <li>2016-01-31 - Forbedret stabilitet af opslag i ADMdb og PDS
         <br /><br />
-        <li>UserInfo viser nu free/busy time for brugere
-        <br /><br />
-        <li>Der er nu links mellem bruger/computere og grupper
-        <br /><br />
-        <li>Userinfo acceptere nu søgning på form domain\username
-        <br /><br />
-        <li>Computer Info er udvidet med yderligere data fra SCCM
-        <br /><br />
-        <li>Forbedret visning af data fra servie portalten
-        <br /><br />
-        <li>Du kan nu se grupper for computere via computer info
+        
         
        
     </div>
