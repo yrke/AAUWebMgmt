@@ -55,8 +55,8 @@
                     none<!-- spacer as the fist elemen else is placed differencet -->
                 </div>
                 <div class="ui active tab segment" data-tab="basicinfo">
-                
-                    <div class="ui active tab segment" data-tab="basicinfo">
+                                
+                    
                     <table class="ui definition table">
                         <tbody>
                             <tr>
@@ -81,13 +81,13 @@
                             </tr>
                         </tbody>
                      </table>
-                   </div>
-<br /><br />
+                   <br />
                     <asp:Button ID="ResultGetPassword2" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click" CssClass="ui button" />
-                    
+                 </div> 
+                  
                 
                 
-                </div>
+                
                 <div class="ui tab segment" data-tab="userInformation">
                 </div>
                 <div class="ui tab segment" data-tab="rawdata">
