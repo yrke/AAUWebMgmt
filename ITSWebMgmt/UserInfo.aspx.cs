@@ -706,6 +706,12 @@ namespace ITSWebMgmt
 
             basicInfoAdmDBExpireDate.Text = admdb.loadUserExpiredate(domain, tmp[0], firstName, lastName);
 
+            //Has roaming
+            labelBasicInfoRomaing.Text = "false";
+            if (result.Properties.Contains("profilepath"))
+            {
+                labelBasicInfoRomaing.Text = "true";
+            }
 
             //Password Expire date "PasswordExpirationDate"
 

@@ -148,6 +148,10 @@
                                 <td><asp:Label runat="server" ID="basicInfoPasswordExpireDate"></asp:Label></td>
                             </tr>
                             <asp:Label runat="server" ID="labelBasicInfoTable" />
+                            <tr>
+                                <td>Romaing Profile</td>
+                                <td><asp:Label runat="server" ID="labelBasicInfoRomaing"/></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
