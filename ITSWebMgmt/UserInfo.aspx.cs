@@ -31,6 +31,7 @@ namespace ITSWebMgmt
             {
 
                 ResultDiv.Visible = false;
+                errordiv.Visible = false;
 
                 String username = Request.QueryString["username"];
                 if (username != null)
@@ -516,15 +517,16 @@ namespace ITSWebMgmt
             var builder = new StringBuilder();
 
             builder.Append("User Not found");
-            ResultLabel.Text = builder.ToString();
-            return;
+            ResultErrorLabel.Text = builder.ToString();
+            ResultDiv.Visible = false;
+            errordiv.Visible = true;
+
+
         }
 
         protected void buildUserLookup(string adpath)
         {
-            var builder = new StringBuilder();
-
-           
+                       
             //builder.Append("Found UPN:" +  upn);
             //var dc = upn.Split('@')[1];
             //DirectoryEntry de = new DirectoryEntry("LDAP://" + dc);
@@ -545,13 +547,8 @@ namespace ITSWebMgmt
             if (adpath != null)
             {
 
-                //Get the AD object
-                //String adpath = result.Properties["ADsPath"][0].ToString();
-
-
                 //Get the AD object 
                 var userDE = new DirectoryEntry(adpath);
-
 
                 //Save Session
                 Session["adpath"] = adpath;
@@ -559,7 +556,7 @@ namespace ITSWebMgmt
                 //Build GUI
                 var rawbuilder = new RawADGridGenerator();
                 var rawsegment = rawbuilder.buildRawSegment(userDE);
-                ResultLabel.Text = rawsegment;
+                labelRawdata.Text = rawsegment;
 
                 buildBasicInfoSegment(userDE);
                 buildComputerInformation(userDE);
@@ -568,18 +565,11 @@ namespace ITSWebMgmt
                 BuildSCSMSegment(userDE);
                 buildCalAgenda(userDE);
 
-
             }
-            else
-            {
-                builder.Append("No user found");
-                ResultLabel.Text = builder.ToString();
-            }
-
 
             //Save user in session
-
             ResultDiv.Visible = true;
+            errordiv.Visible = false;
 
         }
 

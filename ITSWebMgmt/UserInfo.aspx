@@ -53,6 +53,10 @@
             });
         </script>
 
+        <div id="errordiv" runat="server">
+            <asp:Label ID="ResultErrorLabel" runat="server"></asp:Label>
+        </div>
+
         <div runat="server" id="ResultDiv">
         
             
@@ -98,8 +102,9 @@
 
         </div>
             
-        <h2><asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
 
+
+        <h2><asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
 
         <div class="ui grid">
             <div class="four wide column">
@@ -198,7 +203,7 @@
 
                 <div class="ui tab segment" data-tab="rawdata">
                     <h2>Raw Data</h2>
-                    <asp:Label ID="ResultLabel" runat="server"></asp:Label>
+                    <asp:Label ID="labelRawdata" runat="server"></asp:Label>
                 </div>
                 <div class="ui tab segment" data-tab="tasks">
                     <h2>Tasks</h2><br />
