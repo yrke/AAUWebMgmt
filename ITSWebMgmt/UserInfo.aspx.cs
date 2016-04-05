@@ -36,25 +36,14 @@ namespace ITSWebMgmt
                 if (username != null)
                 {
                     UserNameBox.Text = username;
-                    buildUserLookup(username);
+                    
+                    buildUserLookupFromUsername(username);
                 }
 
                 String phoneNr = Request.QueryString["phone"];
                 if (phoneNr != null)
                 {
-                    //Got a phonenumber to lookup
-                    string res = doPhoneSearch(phoneNr);
-                    if (res != null)
-                    {
-
-                        string url = Request.Url.AbsolutePath;
-                        string updatedQueryString = "?" + "username=" + res;
-                        Response.Redirect(url + updatedQueryString);
-                    }
-                    else
-                    {
-                        //TODO: No user show error
-                    }
+                    buildUserLookupFromPhone(phoneNr);
 
                 }
 
@@ -91,14 +80,14 @@ namespace ITSWebMgmt
             //logger.Debug(filter);
 
             DirectorySearcher search = new DirectorySearcher(de, filter);
-            search.PropertiesToLoad.Add("userPrincipalName");
+            //search.PropertiesToLoad.Add("userPrincipalName");
             SearchResult r = search.FindOne();
 
 
             if (r != null)
             {
                 //return r.Properties["ADsPath"][0].ToString(); //XXX handle if result is 0 (null exception)
-                return r.Properties["userPrincipalName"][0].ToString();
+                return r.Properties["ADsPath"][0].ToString().Replace("GC:","LDAP:").Replace("aau.dk/","");
             }
             else
             {
@@ -428,12 +417,14 @@ namespace ITSWebMgmt
 
 
             DirectorySearcher search = new DirectorySearcher(de, filter);
-            search.PropertiesToLoad.Add("userPrincipalName");
+            //search.PropertiesToLoad.Add("userPrincipalName");
             SearchResult r = search.FindOne();
 
             if (r != null)
             {
-                return r.Properties["userPrincipalName"][0].ToString(); //XXX handle if result is 0 (null exception)
+                //return r.Properties["userPrincipalName"][0].ToString(); //XXX handle if result is 0 (null exception)
+                String adpath = r.Properties["ADsPath"][0].ToString();
+                return adpath.Replace("aau.dk/", "").Replace("GC:","LDAP:");
             }
             else
             {
@@ -452,26 +443,42 @@ namespace ITSWebMgmt
             int val;
             if (UserName.Length == 4 && int.TryParse(UserName, out val))
             {
-                var res = doPhoneSearch(UserName);
-                if (res != null)
-                {
-
-                    string url = Request.Url.AbsolutePath;
-                    string updatedQueryString = "?" + "username=" + res;
-                    Response.Redirect(url + updatedQueryString);
-                }
+                    buildUserLookupFromPhone(UserName);
             }
 
             UserNameLabel.Text = UserName;
-            buildUserLookup(UserName);
+
+            buildUserLookupFromUsername(UserName);
         }
 
-        protected void buildUserLookup(string username)
+
+        protected void buildUserLookupFromPhone(string phone)
         {
-            var builder = new StringBuilder();
+            var adpath = doPhoneSearch(phone);
+            buildUserLookupFromAdpath(adpath);
 
+        }
+        protected void buildUserLookupFromUsername(string username)
+        {
+            string adpath = getADPathFromUsername(username);
+            buildUserLookupFromAdpath(adpath);
+        }
 
+        protected void buildUserLookupFromAdpath(string adpath)
+        {
 
+            if (adpath == null)
+            {
+                buildUserNotFound();
+            } else
+            {
+                buildUserLookup(adpath);
+            }
+            
+        }
+
+        protected string getADPathFromUsername(string username)
+        {
             //XXX, this is a use input, might not be save us use in log 
             logger.Info("User {0} lookedup user {1}", System.Web.HttpContext.Current.User.Identity.Name, username);
 
@@ -489,18 +496,38 @@ namespace ITSWebMgmt
                 }
             }
 
-
-
-            var upn = globalSearch(username);
-            if (upn == null)
+            var adpath = globalSearch(username);
+            if (adpath == null)
             {
-                builder.Append("User Not found");
-                ResultLabel.Text = builder.ToString();
-                return;
+                //Show user not found
+                return null;
+            } else
+            {
+                //We got ADPATH lets build the GUI
+                return adpath;
             }
+
+        }
+
+
+
+        protected void buildUserNotFound()
+        {
+            var builder = new StringBuilder();
+
+            builder.Append("User Not found");
+            ResultLabel.Text = builder.ToString();
+            return;
+        }
+
+        protected void buildUserLookup(string adpath)
+        {
+            var builder = new StringBuilder();
+
+           
             //builder.Append("Found UPN:" +  upn);
-            var dc = upn.Split('@')[1];
-            DirectoryEntry de = new DirectoryEntry("LDAP://" + dc);
+            //var dc = upn.Split('@')[1];
+            //DirectoryEntry de = new DirectoryEntry("LDAP://" + dc);
 
             //var elements = "cn,userAccountControl,sAMAccountName,userPrincipalName,aauStudentID,aauStaffID,aauUserClassification,aauUserStatus,displayName,department,proxyAddresses,badPwdCount,badPasswordTime,lockoutTime,departmentNumber,homeDirectory,homeDrive,lastLogon,memberOf,profilePath,msDS-UserPasswordExpiryTimeComputed,msDS-User-Account-Control-Computed";
             //var elements = "+";
@@ -509,17 +536,17 @@ namespace ITSWebMgmt
 
             //var listElements = elements.Split(',');
 
-            DirectorySearcher search = new DirectorySearcher(de);
+            //DirectorySearcher search = new DirectorySearcher(de);
             //search.PropertiesToLoad.AddRange(listElements);
-            search.Filter = String.Format("(userPrincipalName={0})", upn);
+            //search.Filter = String.Format("(userPrincipalName={0})", upn);
 
-            SearchResult result = search.FindOne();
+            //SearchResult result = search.FindOne();
 
-            if (result != null)
+            if (adpath != null)
             {
 
                 //Get the AD object
-                String adpath = result.Properties["ADsPath"][0].ToString();
+                //String adpath = result.Properties["ADsPath"][0].ToString();
 
 
                 //Get the AD object 
@@ -529,10 +556,7 @@ namespace ITSWebMgmt
                 //Save Session
                 Session["adpath"] = adpath;
 
-
-
                 //Build GUI
-
                 var rawbuilder = new RawADGridGenerator();
                 var rawsegment = rawbuilder.buildRawSegment(userDE);
                 ResultLabel.Text = rawsegment;
@@ -562,12 +586,11 @@ namespace ITSWebMgmt
 
         private void BuildSCSMSegment(DirectoryEntry result)
         {
+
             var scsmtest = new SCSMTest();
             divServiceManager.Text = scsmtest.getActiveIncidents((string)result.Properties["userPrincipalName"][0], (string)result.Properties["displayName"][0]);
             var userID = scsmtest.userID;
             Session["scsmuserID"] = userID;
-
-
 
         }
 
