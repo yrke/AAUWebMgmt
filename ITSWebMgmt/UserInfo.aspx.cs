@@ -444,12 +444,14 @@ namespace ITSWebMgmt
             int val;
             if (UserName.Length == 4 && int.TryParse(UserName, out val))
             {
-                    buildUserLookupFromPhone(UserName);
+                buildUserLookupFromPhone(UserName);
+
+            } else {
+
+                UserNameLabel.Text = UserName;
+
+                buildUserLookupFromUsername(UserName);
             }
-
-            UserNameLabel.Text = UserName;
-
-            buildUserLookupFromUsername(UserName);
         }
 
 
