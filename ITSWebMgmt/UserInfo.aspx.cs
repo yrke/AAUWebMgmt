@@ -39,12 +39,14 @@ namespace ITSWebMgmt
                     UserNameBox.Text = username;
                     
                     buildUserLookupFromUsername(username);
+                    return;
                 }
 
                 String phoneNr = Request.QueryString["phone"];
                 if (phoneNr != null)
                 {
                     buildUserLookupFromPhone(phoneNr);
+                    return;
 
                 }
 
