@@ -333,10 +333,10 @@ namespace ITSWebMgmt
                 String[] adpathsplit = adpath.ToLower().Replace("ldap://", "").Split('/');
                 String protocol = "LDAP://";
                 String domain = adpathsplit[0];
-                String[] dcpath = (adpathsplit[1].Split(',')).Where<string>(s => s.StartsWith("DC=", StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
+                String[] dcpath = (adpathsplit[0].Split(',')).Where<string>(s => s.StartsWith("dc=", StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
 
                 String newOU = String.Format("{0},{1}", ou[count - 2], ou[count - 1]);
-                String newPath = String.Format("{0}{1}/{2},{3}", protocol, domain, newOU, String.Join(",", dcpath));
+                String newPath = String.Format("{0}{1}/{2},{3}", protocol, String.Join(".", dcpath).Replace("dc=", ""), newOU, String.Join(",", dcpath));
 
                 logger.Info("user " + System.Web.HttpContext.Current.User.Identity.Name + " changed OU on user to: " + newPath + " from " + adpath + ".");
 
