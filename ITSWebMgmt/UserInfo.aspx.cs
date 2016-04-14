@@ -56,6 +56,7 @@ namespace ITSWebMgmt
         //Searhces on a phone numer (internal or external), and returns a upn (later ADsPath) to a use or null if not found
         protected string doPhoneSearch(string numberIn)
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             string number = numberIn;
             //If number is a shot internal number, expand it :)
             if (number.Length == 4)
@@ -86,6 +87,8 @@ namespace ITSWebMgmt
             //search.PropertiesToLoad.Add("userPrincipalName");
             SearchResult r = search.FindOne();
 
+            watch.Stop();
+            System.Diagnostics.Debug.WriteLine("phonesearch took: " + watch.ElapsedMilliseconds);
 
             if (r != null)
             {
