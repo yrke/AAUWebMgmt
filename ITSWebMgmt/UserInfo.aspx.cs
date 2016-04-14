@@ -79,12 +79,13 @@ namespace ITSWebMgmt
             } // else format is ok
 
             DirectoryEntry de = new DirectoryEntry("GC://aau.dk");
-            string filter = string.Format("(&(objectCategory=person)(telephoneNumber={0}))", number);
+            //string filter = string.Format("(&(objectCategory=person)(telephoneNumber={0}))", number);
+            string filter = string.Format("(&(objectCategory=person)(objectClass=user)(telephoneNumber={0}))", number);
 
             //logger.Debug(filter);
 
             DirectorySearcher search = new DirectorySearcher(de, filter);
-            //search.PropertiesToLoad.Add("userPrincipalName");
+            search.PropertiesToLoad.Add("userPrincipalName"); //Load something to speed up the object get?
             SearchResult r = search.FindOne();
 
             watch.Stop();
