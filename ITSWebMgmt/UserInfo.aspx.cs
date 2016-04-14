@@ -528,28 +528,13 @@ namespace ITSWebMgmt
 
         }
 
-        protected void buildUserLookup(string adpath)
+        protected async void buildUserLookup(string adpath)
         {
-                       
-            //builder.Append("Found UPN:" +  upn);
-            //var dc = upn.Split('@')[1];
-            //DirectoryEntry de = new DirectoryEntry("LDAP://" + dc);
-
-            //var elements = "cn,userAccountControl,sAMAccountName,userPrincipalName,aauStudentID,aauStaffID,aauUserClassification,aauUserStatus,displayName,department,proxyAddresses,badPwdCount,badPasswordTime,lockoutTime,departmentNumber,homeDirectory,homeDrive,lastLogon,memberOf,profilePath,msDS-UserPasswordExpiryTimeComputed,msDS-User-Account-Control-Computed";
-            //var elements = "+";
-            //var elements = "sAMAccountName,userPrincipalName,aauStaffID";
-
-
-            //var listElements = elements.Split(',');
-
-            //DirectorySearcher search = new DirectorySearcher(de);
-            //search.PropertiesToLoad.AddRange(listElements);
-            //search.Filter = String.Format("(userPrincipalName={0})", upn);
-
-            //SearchResult result = search.FindOne();
-
+            
             if (adpath != null)
             {
+
+                var watch = System.Diagnostics.Stopwatch.StartNew();
 
                 //Get the AD object 
                 var userDE = new DirectoryEntry(adpath);
@@ -557,34 +542,42 @@ namespace ITSWebMgmt
                 //Save Session
                 Session["adpath"] = adpath;
 
+                //Async
+                var task1 = buildBasicInfoSegment(userDE);
+                var task2 = BuildSCSMSegment(userDE);
+
                 //Build GUI
                 var rawbuilder = new RawADGridGenerator();
                 var rawsegment = rawbuilder.buildRawSegment(userDE);
                 labelRawdata.Text = rawsegment;
-
-                buildBasicInfoSegment(userDE);
+                
                 buildComputerInformation(userDE);
                 buildWarningSegment(userDE);
                 buildGroupsSegments(userDE);
-                BuildSCSMSegment(userDE);
                 buildCalAgenda(userDE);
 
-            }
+                await System.Threading.Tasks.Task.WhenAll(task1, task2);
 
-            //Save user in session
-            ResultDiv.Visible = true;
-            errordiv.Visible = false;
+                //Save user in session
+                ResultDiv.Visible = true;
+                errordiv.Visible = false;
+
+                watch.Stop();
+                System.Diagnostics.Debug.WriteLine("buildUserLookup took: "+  watch.ElapsedMilliseconds);
+            }
 
         }
 
 
-        private void BuildSCSMSegment(DirectoryEntry result)
+        private async System.Threading.Tasks.Task  BuildSCSMSegment(DirectoryEntry result)
         {
-
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             var scsmtest = new SCSMTest();
-            divServiceManager.Text = scsmtest.getActiveIncidents((string)result.Properties["userPrincipalName"][0], (string)result.Properties["displayName"][0]);
+            divServiceManager.Text = await scsmtest.getActiveIncidents((string)result.Properties["userPrincipalName"][0], (string)result.Properties["displayName"][0]);
             var userID = scsmtest.userID;
             Session["scsmuserID"] = userID;
+            watch.Stop();
+            System.Diagnostics.Debug.WriteLine("BuildSCSMSegment took: " + watch.ElapsedMilliseconds);
 
         }
 
@@ -617,7 +610,7 @@ namespace ITSWebMgmt
             }
         }
 
-        private void buildBasicInfoSegment(DirectoryEntry result)
+        private async System.Threading.Tasks.Task buildBasicInfoSegment(DirectoryEntry result)
         {
             //Fills in basic user info
             displayName.Text = result.Properties["displayName"][0].ToString();
@@ -721,7 +714,12 @@ namespace ITSWebMgmt
             var tmp = upn.Split('@');
             var domain = tmp[1].Split('.')[0];
 
-            basicInfoAdmDBExpireDate.Text = admdb.loadUserExpiredate(domain, tmp[0], firstName, lastName);
+
+            //Make lookup in ADMdb
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            basicInfoAdmDBExpireDate.Text = await admdb.loadUserExpiredate(domain, tmp[0], firstName, lastName);
+            watch.Stop();
+            System.Diagnostics.Debug.WriteLine("ADMdb Lookup took: " + watch.ElapsedMilliseconds);
 
             //Has roaming
             labelBasicInfoRomaing.Text = "false";

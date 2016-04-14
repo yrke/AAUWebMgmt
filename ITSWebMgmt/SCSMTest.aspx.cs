@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.UI;
@@ -19,7 +20,7 @@ namespace ITSWebMgmt
 
         public string userID = "";
 
-        protected string getAuthKey()
+        protected async Task<string> getAuthKey()
         {
 
             WebRequest request = WebRequest.Create(webserviceURL+"/api/V3/Authorization/GetToken");
@@ -39,8 +40,8 @@ namespace ITSWebMgmt
             requestSteam.Flush();
             requestSteam.Close();
             
-            var response = request.GetResponse();
-            var responseSteam = response.GetResponseStream();
+            var response = await request.GetResponseAsync();
+            var responseSteam =  response.GetResponseStream();
 
             var streamReader = new StreamReader(responseSteam);
 
@@ -143,7 +144,7 @@ namespace ITSWebMgmt
 
 
         //returns json string for uuid
-        protected string lookupUserByUUID(string uuid, string authkey) {
+        protected async Task<string> lookupUserByUUID(string uuid, string authkey) {
 
             //WebRequest request = WebRequest.Create(webserviceURL+"api/V3/User/GetUserRelatedInfoByUserId/?userid=352b43f6-9ff4-a36f-0342-6ce1ae283e37");
             WebRequest request = WebRequest.Create(webserviceURL+"/api/V3/User/GetUserRelatedInfoByUserId/?userid="+uuid);
@@ -152,7 +153,7 @@ namespace ITSWebMgmt
             request.Headers.Add("Authorization", "Token " + authkey);
             request.ContentType = "application/json; text/json";
 
-            var response = request.GetResponse();
+            var response = await request.GetResponseAsync();
             var responseSteam = response.GetResponseStream();
 
             var streamReader = new StreamReader(responseSteam);
@@ -170,19 +171,20 @@ namespace ITSWebMgmt
             
         }
 
-        
-        protected string getUserUUIDByUPN(string upn, string authkey) {
+
+        protected async Task<string> getUserUUIDByUPN(string upn, string authkey)
+        {
             var userName = upn.Split('@')[0];
-            return getUserUUIDByUPN(upn, userName, authkey);
+            return await getUserUUIDByUPN(upn, userName, authkey);
         }
 
         //Takes a upn and retuns the users uuid
-        protected string getUserUUIDByUPN(string upn, string displayName, string authkey)
+        protected async Task<string> getUserUUIDByUPN(string upn, string displayName, string authkey)
         {
             //Get username from UPN
-            
 
-            WebRequest request = WebRequest.Create(webserviceURL+"/api/V3/User/GetUserList?userFilter="+upn);
+
+            WebRequest request = WebRequest.Create(webserviceURL + "/api/V3/User/GetUserList?userFilter=" + upn);
             request.Method = "Get";
             request.ContentType = "text/json";
             request.ContentType = "application/json; charset=utf-8";
@@ -190,7 +192,7 @@ namespace ITSWebMgmt
 
             request.Headers.Add("Authorization", "Token " + authkey);
 
-            var response = request.GetResponse();
+            var response = await request.GetResponseAsync();
             var responseSteam = response.GetResponseStream();
 
             var streamReader = new StreamReader(responseSteam);
@@ -202,16 +204,19 @@ namespace ITSWebMgmt
 
             StringBuilder sb = new StringBuilder();
             string userjson = null;
+
+            //TODO: Don't await for each item, make all requests and await, then look over data
             foreach (dynamic obj in json)
             {
                 //sb.Append((string)obj["Id"]);
-                userjson = lookupUserByUUID((string)obj["Id"], authkey);
+                userjson = await lookupUserByUUID((string)obj["Id"], authkey);
                 JavaScriptSerializer jss = new JavaScriptSerializer();
                 jss.MaxJsonLength = Int32.MaxValue;
                 dynamic jsonString = jss.Deserialize<dynamic>(userjson);
                 userID = (string)obj["Id"];
 
-                if (upn.Equals((string)jsonString["UPN"], StringComparison.CurrentCultureIgnoreCase)) {
+                if (upn.Equals((string)jsonString["UPN"], StringComparison.CurrentCultureIgnoreCase))
+                {
                     break;
                 }
             }
@@ -228,20 +233,20 @@ namespace ITSWebMgmt
 
         }
 
-        protected void button_Click(object sender, EventArgs e)
+        protected async void button_Click(object sender, EventArgs e)
         {
-            string authkey = getAuthKey();
+            string authkey = await getAuthKey();
             //string uuid = getUserUUIDByUPN("kyrke@its.aau.dk", authkey);
             //string s = doAction(uuid);
-            string s = lookupUserByUUID("008f492b-df58-6e9c-47c5-bd4ae81028af", authkey);
+            string s = await lookupUserByUUID("008f492b-df58-6e9c-47c5-bd4ae81028af", authkey);
             
             responseLbl.Text = s;
 
         }
 
-        public string getActiveIncidents(string upn, string displayName){
-            string authkey = getAuthKey();
-            string uuid = getUserUUIDByUPN(upn, displayName, authkey);
+        public async Task<string> getActiveIncidents(string upn, string displayName){
+            string authkey = await getAuthKey();
+            string uuid = await getUserUUIDByUPN(upn, displayName, authkey);
             return doAction(uuid);
         }
     }

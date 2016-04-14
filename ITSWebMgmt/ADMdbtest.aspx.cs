@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -63,7 +64,7 @@ namespace ITSWebMgmt
             {"dec","12"}
         };
 
-        public string loadUserExpiredate(string domain, string username, string firstName, string lastName) {
+        public async Task<string> loadUserExpiredate(string domain, string username, string firstName, string lastName) {
             var url = admdburl[domain.ToLower()]; //Throws exception on wrong domain
             
             WebRequest request = WebRequest.Create(url);
@@ -94,7 +95,7 @@ namespace ITSWebMgmt
             requestSteam.Flush();
             requestSteam.Close();
 
-            var response = request.GetResponse();
+            var response = await request.GetResponseAsync();
             var responseSteam = response.GetResponseStream();
 
             var streamReader = new StreamReader(responseSteam);
@@ -136,14 +137,14 @@ namespace ITSWebMgmt
         protected void Page_Load(object sender, EventArgs e)
         {
 
-            var response = loadUserExpiredate("its", "kyrke", "Kenneth Yrke", "Jørgensen");
+            /*var response = loadUserExpiredate("its", "kyrke", "Kenneth Yrke", "Jørgensen");
             if (response != null) {
                 labelResult.Text = response;
             }
             else
             {
                 labelResult.Text = "user expired";
-            }
+            }*/
             
         }
     }
