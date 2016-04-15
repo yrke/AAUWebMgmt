@@ -39,7 +39,7 @@
 
 </head>
 <body>
-    <form runat="server">
+    
 
 
    <div class="ui fixed inverted menu">
@@ -78,11 +78,13 @@
     </div>
 
 
+
+    
     <div class="ui main text container">
         <asp:ContentPlaceHolder ID="MainContent" runat="server">
         </asp:ContentPlaceHolder>
     </div>
-
+    
 
 
      <div class="ui inverted vertical footer segment">
@@ -135,6 +137,6 @@
         </div>
     </div>
 
-    </form>
+    
 </body>
 </html>

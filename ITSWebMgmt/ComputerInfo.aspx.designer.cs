@@ -13,33 +13,6 @@ namespace ITSWebMgmt {
     public partial class ComputerInfo {
         
         /// <summary>
-        /// ComputerNameInput control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox ComputerNameInput;
-        
-        /// <summary>
-        /// sumbit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button sumbit;
-        
-        /// <summary>
-        /// reqName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator reqName;
-        
-        /// <summary>
         /// UserNameLabel control.
         /// </summary>
         /// <remarks>

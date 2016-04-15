@@ -33,10 +33,19 @@ namespace ITSWebMgmt
                 ResultDiv.Visible = false;
                 errordiv.Visible = false;
 
+                String search = Request.QueryString["search"];
+                if (search != null)
+                {
+                    UserName = search;
+
+                    lookupUser(search);
+                    return;
+                }
+
                 String username = Request.QueryString["username"];
                 if (username != null)
                 {
-                    UserNameBox.Text = username;
+                    UserName = username;
                     
                     buildUserLookupFromUsername(username);
                     return;
@@ -45,12 +54,32 @@ namespace ITSWebMgmt
                 String phoneNr = Request.QueryString["phone"];
                 if (phoneNr != null)
                 {
+                    UserName = phoneNr;
                     buildUserLookupFromPhone(phoneNr);
                     return;
 
                 }
 
             }
+        }
+
+        protected void lookupUser(string username)
+        {
+
+            UserName = username;
+            int val;
+            if (UserName.Length == 4 && int.TryParse(UserName, out val))
+            {
+                buildUserLookupFromPhone(UserName);
+
+            }
+            else {
+
+                UserNameLabel.Text = UserName;
+
+                buildUserLookupFromUsername(UserName);
+            }
+            
         }
 
         //Searhces on a phone numer (internal or external), and returns a upn (later ADsPath) to a use or null if not found
@@ -443,22 +472,7 @@ namespace ITSWebMgmt
             fixUserOu((string)Session["adpath"]);
         }
 
-        protected void lookupUser(object sender, EventArgs e)
-        {
 
-            UserName = UserNameBox.Text;
-            int val;
-            if (UserName.Length == 4 && int.TryParse(UserName, out val))
-            {
-                buildUserLookupFromPhone(UserName);
-
-            } else {
-
-                UserNameLabel.Text = UserName;
-
-                buildUserLookupFromUsername(UserName);
-            }
-        }
 
 
         protected void buildUserLookupFromPhone(string phone)
@@ -912,7 +926,7 @@ namespace ITSWebMgmt
         {
             string userID = (string)Session["scsmuserID"];
 
-            Response.Redirect("/CreateWorkItem.aspx?userID=" + userID + "&userDisplayName=" + UserNameBox.Text);
+            Response.Redirect("/CreateWorkItem.aspx?userID=" + userID + "&userDisplayName=" + UserName);
         }
 
 

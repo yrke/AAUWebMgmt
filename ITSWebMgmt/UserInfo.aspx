@@ -37,14 +37,17 @@
     <h1>User Info</h1>
     <div>
 
-
+        <form method="get">
         Username
         <div class="ui action input">
-            <asp:TextBox ID="UserNameBox" runat="server" Text="kyrke@its.aau.dk" CssClass="ui input focus" placeholder="Search..." />
-            <asp:Button runat="server" CssClass="ui button" ID="sumbit" OnClick="lookupUser" Text="Søg"  OnClientClick='$("#loader > div").show("fast");'/>
+            
+            <input name="search" class="ui input focus" value="kyrke@its.aau.dk" />
+            
+            <input type="submit" value="Search" onclick='$("#loader > div").show("fast");'/>
         </div>
+        </form>
 
-        <asp:RequiredFieldValidator runat="server" ID="reqName" ControlToValidate="UserNameBox" ErrorMessage="Please enter a value" />
+        
         <br />
         <br />
         <script>
@@ -103,7 +106,7 @@
         </div>
             
 
-
+        <form runat="server">
         <h2><asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
 
         <div class="ui grid">
@@ -208,6 +211,7 @@
                 <div class="ui tab segment" data-tab="tasks">
                     <h2>Tasks</h2><br />
 
+                    
                     Unlock Account (if locked by wrong password):
                     <asp:Button runat="server" CssClass="ui button" ID="unlockUserAccountButton" Text="Unlock Account" OnClick="unlockUserAccountButton_Click" /><br />
                     
@@ -221,46 +225,16 @@
                     <asp:Button runat="server" OnClick="fixUserOUButton" Text="Move user to default OU" id="btnPostbackfixUserOUButton" style="display:none"/>                    
                     <button type="button" Class="ui button" ID="btnFixOUShowModal" onclick="$('#modalConfirmOUmove').modal('show');" >Move user to default OU</button><br />
                     </div>
+                    
                 </div>
-                <div class="ui tab segment" data-tab="statustest">
-                    <table class="ui celled table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Status</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>No Name Specified</td>
-                                <td>Unknown</td>
-                                <td class="negative">None</td>
-                            </tr>
-                            <tr class="positive">
-                                <td>Jimmy</td>
-                                <td><i class="icon checkmark"></i>Approved</td>
-                                <td>None</td>
-                            </tr>
-                            <tr>
-                                <td>Jamie</td>
-                                <td>Unknown</td>
-                                <td class="positive"><i class="icon close"></i>Requires call</td>
-                            </tr>
-                            <tr class="negative">
-                                <td>Jill</td>
-                                <td>Unknown</td>
-                                <td>None</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+              </div>
+            
         </div>
+            </form>
         </div>
 
-        
-        <!--<asp:TextBox ID="ResultBox" TextMode="MultiLine" Width="700" Height="200" runat="server"></asp:TextBox>-->
+
+       
 
     </div>
 </asp:Content>

@@ -30,8 +30,8 @@ namespace ITSWebMgmt
                 String computername = Request.QueryString["computername"];
                 if (computername != null)
                 {
-                    ComputerNameInput.Text = computername;
-                    buildlookupComputer();
+                    
+                    buildlookupComputer(computername);
                 }
             }
             else
@@ -143,17 +143,15 @@ namespace ITSWebMgmt
             //    return null;
             //}
         }
-        protected void lookupComputer(object sender, EventArgs e)
-        {
-            buildlookupComputer();
-        }
-        protected void buildlookupComputer()
+        
+        protected void buildlookupComputer(string computername)
         {
             
             
             Session["adpath"] = null;
-            var tmpName = ComputerNameInput.Text;
-            string computername = tmpName;
+            var tmpName = computername;
+
+
             string domain = null;
             if (tmpName.Contains("\\")) {
                 var tmp = tmpName.Split('\\');
