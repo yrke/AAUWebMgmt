@@ -13,6 +13,13 @@ namespace ITSWebMgmt
 {
     public partial class ComputerInfo : System.Web.UI.Page
     {
+        string computername = "ITS\\AAU804396";
+        public string ComputerName
+        {
+            get { return computername; }
+            set { computername = value; }
+        }
+
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -28,9 +35,10 @@ namespace ITSWebMgmt
             if (!IsPostBack)
             {
                 String computername = Request.QueryString["computername"];
+                
                 if (computername != null)
                 {
-                    
+                    ComputerName = computername;
                     buildlookupComputer(computername);
                 }
             }

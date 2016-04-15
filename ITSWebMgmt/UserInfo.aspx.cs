@@ -17,7 +17,7 @@ namespace ITSWebMgmt
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        string username = "USERNAME";
+        string username = "kyrke@its.aau.dk";
         public string UserName
         {
             get { return username; }

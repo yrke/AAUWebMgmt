@@ -41,7 +41,7 @@
         Username
         <div class="ui action input">
             
-            <input name="search" class="ui input focus" value="kyrke@its.aau.dk" />
+            <input name="search" class="ui input focus" value="<% =UserName %>" />
             
             <input type="submit" value="Search" onclick='$("#loader > div").show("fast");'/>
         </div>
