@@ -6,6 +6,8 @@
           <div class="ui right internal attached rail" style="margin-top:50px;">
     <div class="ui segment" style="">
       <h3>Nyheder</h3>
+        <li>2016-04-15 -  Some small speed and bug fixes
+        <br /><br />
         <li>2016-04-05 - Improved search time for phone number search
         <br /><br />
         <li>2016-02-01 - Computerinfo improved basic info tab
