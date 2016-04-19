@@ -2,7 +2,7 @@
 
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-
+    <form runat="server">
     <div class="ui form">
         <div class="field">
             <label>Affected User</label>
@@ -20,4 +20,5 @@
         <asp:Button Text="Create SR" runat="server" OnClick="createSR_OnClick" CssClass="ui button" />
         <asp:Button Text="Create IR" runat="server" OnClick="createIR_OnClick" CssClass="ui button" />
     </div>
+    </form>
 </asp:Content>
