@@ -826,12 +826,12 @@ namespace ITSWebMgmt
 
             string userName = String.Format("{0}\\\\{1}", domain, upnsplit[0]);
 
-            var helper = new HTMLTableHelper(1);
+            var helper = new HTMLTableHelper(2);
 
             var sb = new StringBuilder();
             sb.Append("<h4>Links til computerinfo kan være til maskiner i et forkert domæne, da info omkring computer domæne ikke er tilgængelig i denne søgning</h4>");
             sb.Append(helper.printStart());
-            sb.Append(helper.printRow(new string[] { "Computername" }, true));
+            sb.Append(helper.printRow(new string[] { "Computername", "AAU Fjernsupport" }, true));
 
             var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_UserMachineRelationship WHERE UniqueUserName = \"" + userName + "\"");
@@ -841,7 +841,8 @@ namespace ITSWebMgmt
             {
                 var machinename = o.Properties["ResourceName"].Value.ToString();
                 var name = "<a href=\"/computerInfo.aspx?computername=" + machinename + "\">" + machinename + "</a><br />";
-                sb.Append(helper.printRow(new string[]{name}));
+                var fjernsupport = "<a href=\"https://support.its.aau.dk/api/client_script?type=rep&operation=generate&action=start_pinned_client_session&client.hostname="+machinename + "\">Start</a>";
+                sb.Append(helper.printRow(new string[]{name, fjernsupport}));
             }
             sb.Append(helper.printEnd());
             divComputerInformation.Text = sb.ToString();

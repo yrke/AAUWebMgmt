@@ -135,6 +135,7 @@
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Properties\PublishProfiles\a.pubxml" />
     <None Include="Properties\PublishProfiles\Webmgmt.pubxml" />
     <None Include="Properties\PublishProfiles\WebMgmt01.pubxml" />
     <None Include="Web.Debug.config">
@@ -255,6 +256,7 @@
   <ItemGroup>
     <Folder Include="Controls\" />
     <Folder Include="DynamicData\FieldTemplates\" />
+    <Folder Include="Functions\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

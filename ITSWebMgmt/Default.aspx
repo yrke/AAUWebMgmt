@@ -6,6 +6,8 @@
           <div class="ui right internal attached rail" style="margin-top:50px;">
     <div class="ui segment" style="">
       <h3>Nyheder</h3>
+        <li>2016-07-08 -  Added action to start bomgar session directly from user info
+        <br /><br />
         <li>2016-07-08 -  Bugfix - computerinfo now show config AAU10 correctly
         <br /><br />
         <li>2016-04-15 -  Some small speed and bug fixes
