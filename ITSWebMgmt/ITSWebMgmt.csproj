@@ -168,6 +168,7 @@
     <Compile Include="CallManager.aspx.designer.cs">
       <DependentUpon>CallManager.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Functions\Loginscript.cs" />
     <Compile Include="Helpers\HTMLEncodingHelper.cs" />
     <Compile Include="Helpers\HTMLTableHelper.cs" />
     <Compile Include="ComputerInfo.aspx.cs">
@@ -256,7 +257,6 @@
   <ItemGroup>
     <Folder Include="Controls\" />
     <Folder Include="DynamicData\FieldTemplates\" />
-    <Folder Include="Functions\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

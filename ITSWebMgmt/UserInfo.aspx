@@ -122,6 +122,7 @@
                     <a class="item" data-tab="fileshares">Fileshares</a>
                     <a class="item" data-tab="exchange">Exchange Resources</a>
                     <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
+                    <a class="item" data-tab="loginscript" runat="server" id="menuLoginScript">Loginscript</a>
                     <a class="item" data-tab="rawdata">Raw Data</a>
                     <a class="item" data-tab="tasks">Tasks</a>
 <!--                    <a class="item" data-tab="statustest">Statustest</a> -->
@@ -203,6 +204,10 @@
                     <asp:Label ID="divComputerInformation" runat="server"></asp:Label>
                 </div>
                 
+                <div class="ui tab segment" data-tab="loginscript" id="divLoginscript">
+                            <h2>Loginscript</h2>
+                            <asp:Label ID="labelLoginscript" runat="server"></asp:Label>
+                </div>
 
                 <div class="ui tab segment" data-tab="rawdata">
                     <h2>Raw Data</h2>

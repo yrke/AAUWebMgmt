@@ -10,6 +10,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Management;
 using Microsoft.Exchange.WebServices.Data;
+using ITSWebMgmt.Functions;
 
 namespace ITSWebMgmt
 {
@@ -573,6 +574,7 @@ namespace ITSWebMgmt
                 buildWarningSegment(userDE);
                 buildGroupsSegments(userDE);
                 buildCalAgenda(userDE);
+                buildLoginscript(userDE);
 
                 await System.Threading.Tasks.Task.WhenAll(task1, task2);
 
@@ -931,5 +933,23 @@ namespace ITSWebMgmt
         }
 
 
+
+        protected void buildLoginscript(DirectoryEntry user)
+        {
+
+            menuLoginScript.Visible = false;
+
+            var loginscripthelper = new Loginscript();
+
+            var script = loginscripthelper.getLoginScript(user);
+
+            if (script != null) {
+                menuLoginScript.Visible = true;
+                labelLoginscript.Text = loginscripthelper.parseAndDisplayLoginScript(script);
+            }
+            
+
+
+        }
     }
 }
