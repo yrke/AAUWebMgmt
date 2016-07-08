@@ -464,7 +464,13 @@ namespace ITSWebMgmt
                         configPC = "AAU PC";
                     }else if (collectionID.Equals("AA100087")){
                         configPC = "AAU8 PC";
-                    }else if (collectionID.Equals("AA100027"))
+                    }
+                    else if (collectionID.Equals("AA1000BC"))
+                    {
+                        configPC = "AAU10 PC";
+                        configExtra = "True"; // Hardcode AAU10 is bitlocker enabled
+                    }
+                    else if (collectionID.Equals("AA100027"))
                     {
                         configPC = "Administrativ PC";
                     }
