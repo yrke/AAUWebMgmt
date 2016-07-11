@@ -29,12 +29,18 @@ namespace ITSWebMgmt.Functions
                 //Get DCpath
                 //\\adm.aau.dk\SYSVOL\adm.aau.dk\scripts
 
+                //Some script does not include the .bat ending
+                if (!scriptName.Contains(".")) {
+                    scriptName += ".bat";
+                }
+
                 var split = user.Path.Split(',');
                 var dc = split.Where<string>(s => s.StartsWith("DC=")).ToArray<string>();
                 var domain = String.Join<string>(".", dc).Replace("DC=", "");
              
                 var scriptpath = String.Format("\\\\{0}\\SYSVOL\\{0}\\scripts\\{1}", domain, scriptName);
 
+                //XXX exception handling !!! 
                 string scriptText = System.IO.File.ReadAllText(scriptpath);
 
 
