@@ -135,6 +135,7 @@
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Properties\PublishProfiles\a.pubxml" />
     <None Include="Properties\PublishProfiles\Webmgmt.pubxml" />
     <None Include="Properties\PublishProfiles\WebMgmt01.pubxml" />
     <None Include="Web.Debug.config">
@@ -167,6 +168,7 @@
     <Compile Include="CallManager.aspx.designer.cs">
       <DependentUpon>CallManager.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Functions\Loginscript.cs" />
     <Compile Include="Helpers\HTMLEncodingHelper.cs" />
     <Compile Include="Helpers\HTMLTableHelper.cs" />
     <Compile Include="ComputerInfo.aspx.cs">

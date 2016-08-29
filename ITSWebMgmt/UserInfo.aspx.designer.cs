@@ -103,6 +103,15 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label UserNameLabel;
         
         /// <summary>
+        /// menuLoginScript control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor menuLoginScript;
+        
+        /// <summary>
         /// displayName control.
         /// </summary>
         /// <remarks>
@@ -227,6 +236,15 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label divComputerInformation;
+        
+        /// <summary>
+        /// labelLoginscript control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelLoginscript;
         
         /// <summary>
         /// labelRawdata control.
