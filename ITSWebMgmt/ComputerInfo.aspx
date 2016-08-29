@@ -51,6 +51,7 @@
                             <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
                             <a class="item" data-tab="groups">Groups</a>
                             <a class="item" data-tab="sccmInfo">SCCM Info</a>
+                            <a class="item" data-tab="sccmInventory">Inventory</a>
                             <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
                             <a class="item" data-tab="rawdata">Raw Data</a>
                             <a class="item" data-tab="tasks">Tasks</a>
@@ -127,6 +128,14 @@
                             <h3>Collections</h3>
                             <asp:Label runat="server" ID="labelSCCMCollections" />
                         </div>
+
+                        <div class="ui tab segment" data-tab="sccmInventory">
+                            <h2>SCCM Info</h2>
+                            <h3>Collections</h3>
+                            <asp:Label runat="server" ID="labelSCCMInventory" />
+                        </div>
+                        
+
                         <div class="ui tab segment" data-tab="groups">
                             <h2>Groups</h2>
                             <asp:Label runat="server" ID="groupssegmentLabel" />

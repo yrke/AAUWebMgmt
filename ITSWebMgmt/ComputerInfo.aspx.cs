@@ -247,7 +247,13 @@ namespace ITSWebMgmt
             ResultLabelRaw.Text = rawbuilder.buildRawSegment(resultLocal.GetDirectoryEntry());
 
             buildBasicInfo(resultLocal.GetDirectoryEntry());
-            buildSCCMInfo(computername);
+
+            var resourceID = getSCCMResourceIDFromComputerName(computername); //XXX use ad path to get right object in sccm, also dont get obsolite
+            //XXX check resourceID 
+            buildSCCMInfo(resourceID);
+            buildSCCMInventory(resourceID);
+
+
             buildGroupsSegments(resultLocal.GetDirectoryEntry());
            
             ResultDiv.Visible = true;
@@ -415,7 +421,51 @@ namespace ITSWebMgmt
         }
 
 
-        protected void buildSCCMInfo(string computername)
+        protected void buildSCCMInventory(string resourceID)
+        {
+            // labelSCCMInventory
+            // SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=16780075
+
+            var sb = new StringBuilder();
+
+            var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
+            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=" + resourceID);
+            var searcher = new ManagementObjectSearcher(ms, wqlq);
+
+            ManagementObject obj = new ManagementObject();
+            var results = searcher.Get();
+
+
+            var o = results.OfType<ManagementObject>().FirstOrDefault();
+                
+
+
+            foreach (var property in o.Properties)
+            {
+                string key = property.Name;
+                object value = property.Value;
+
+                int i = 0;
+                if (value != null && value.GetType().IsArray)
+                {
+                    var arry = (string[])value;
+                    foreach (string f in arry)
+                    {
+                        sb.Append(string.Format("{0}[{2}]: {1}<br />", key, f, i));
+                        i++;
+                    }
+                }
+                else
+                {
+                    sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
+                }
+
+            }
+
+            labelSCCMInventory.Text = sb.ToString();
+
+        }
+        protected void buildSCCMInfo(string resourceID)
         {
             /*
              *     strQuery = "SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID="& computerID 
@@ -429,11 +479,11 @@ namespace ITSWebMgmt
              */
 
 
+
             //XXX: remeber to filter out computers that are obsolite in sccm (not active)
             var sb = new StringBuilder();
 
-            var resourceID = getSCCMResourceIDFromComputerName(computername);
-            
+
             var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID=" + resourceID);
             var searcher = new ManagementObjectSearcher(ms, wqlq);
