@@ -225,6 +225,33 @@ namespace ITSWebMgmt
 
         }
 
+        protected async Task<string> getIncidentTest(string IRid, string authkey)
+        {
+
+            WebRequest request = WebRequest.Create(webserviceURL + "/api/V3/Projection/GetProjection?id=" + IRid + " +&typeProjectionId=2d460edd-d5db-bc8c-5be7-45b050cba652");
+            request.Method = "Get";
+            request.ContentType = "text/json";
+            request.ContentType = "application/json; charset=utf-8";
+
+
+            request.Headers.Add("Authorization", "Token " + authkey);
+
+            var response = await request.GetResponseAsync();
+            var responseSteam = response.GetResponseStream();
+
+            var streamReader = new StreamReader(responseSteam);
+
+            var responseText = streamReader.ReadToEnd();
+
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            dynamic json = js.Deserialize<dynamic>(responseText);
+            
+            
+            return responseText;
+
+        }
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -238,8 +265,11 @@ namespace ITSWebMgmt
             string authkey = await getAuthKey();
             //string uuid = getUserUUIDByUPN("kyrke@its.aau.dk", authkey);
             //string s = doAction(uuid);
-            string s = await lookupUserByUUID("008f492b-df58-6e9c-47c5-bd4ae81028af", authkey);
-            
+            //string s = await lookupUserByUUID("008f492b-df58-6e9c-47c5-bd4ae81028af", authkey);
+
+            string s = await getIncidentTest("IR408927", authkey);
+
+
             responseLbl.Text = s;
 
         }

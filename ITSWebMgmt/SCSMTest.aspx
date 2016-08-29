@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SCSMTest.aspx.cs" Inherits="ITSWebMgmt.SCSMTest" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SCSMTest.aspx.cs" Inherits="ITSWebMgmt.SCSMTest" Async="true" %>
 
 <!DOCTYPE html>
 
