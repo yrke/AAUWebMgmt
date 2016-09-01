@@ -110,18 +110,17 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ADMdbtest.aspx" />
-    <Content Include="CallManager.aspx" />
+    <Content Include="Connectors\ADMdbtest.aspx" />
     <Content Include="ComputerInfo.aspx" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
-    <Content Include="CreateWorkItem.aspx" />
+    <Content Include="Connectors\CreateWorkItem.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="GroupsInfo.aspx" />
-    <Content Include="PDStest.aspx" />
+    <Content Include="Connectors\PDStest.aspx" />
     <Content Include="Redirector.aspx" />
-    <Content Include="SCSMTest.aspx" />
+    <Content Include="Connectors\SCSMTest.aspx" />
     <Content Include="Site.Master" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
@@ -146,7 +145,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="FindLocalAdminPassword.aspx" />
+    <Content Include="Connectors\FindLocalAdminPassword.aspx" />
     <Content Include="test.aspx" />
     <Content Include="UserInfo.aspx" />
     <Content Include="Web.config">
@@ -154,19 +153,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ADMdbtest.aspx.cs">
+    <Compile Include="Connectors\ADMdbtest.aspx.cs">
       <DependentUpon>ADMdbtest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ADMdbtest.aspx.designer.cs">
+    <Compile Include="Connectors\ADMdbtest.aspx.designer.cs">
       <DependentUpon>ADMdbtest.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="CallManager.aspx.cs">
-      <DependentUpon>CallManager.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="CallManager.aspx.designer.cs">
-      <DependentUpon>CallManager.aspx</DependentUpon>
     </Compile>
     <Compile Include="Functions\Loginscript.cs" />
     <Compile Include="Helpers\HTMLEncodingHelper.cs" />
@@ -178,11 +170,11 @@
     <Compile Include="ComputerInfo.aspx.designer.cs">
       <DependentUpon>ComputerInfo.aspx</DependentUpon>
     </Compile>
-    <Compile Include="CreateWorkItem.aspx.cs">
+    <Compile Include="Connectors\CreateWorkItem.aspx.cs">
       <DependentUpon>CreateWorkItem.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CreateWorkItem.aspx.designer.cs">
+    <Compile Include="Connectors\CreateWorkItem.aspx.designer.cs">
       <DependentUpon>CreateWorkItem.aspx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">
@@ -192,11 +184,11 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="FindLocalAdminPassword.aspx.cs">
+    <Compile Include="Connectors\FindLocalAdminPassword.aspx.cs">
       <DependentUpon>FindLocalAdminPassword.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="FindLocalAdminPassword.aspx.designer.cs">
+    <Compile Include="Connectors\FindLocalAdminPassword.aspx.designer.cs">
       <DependentUpon>FindLocalAdminPassword.aspx</DependentUpon>
     </Compile>
     <Compile Include="GroupsInfo.aspx.cs">
@@ -206,11 +198,11 @@
     <Compile Include="GroupsInfo.aspx.designer.cs">
       <DependentUpon>GroupsInfo.aspx</DependentUpon>
     </Compile>
-    <Compile Include="PDStest.aspx.cs">
+    <Compile Include="Connectors\PDStest.aspx.cs">
       <DependentUpon>PDStest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="PDStest.aspx.designer.cs">
+    <Compile Include="Connectors\PDStest.aspx.designer.cs">
       <DependentUpon>PDStest.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -222,11 +214,11 @@
     <Compile Include="Redirector.aspx.designer.cs">
       <DependentUpon>Redirector.aspx</DependentUpon>
     </Compile>
-    <Compile Include="SCSMTest.aspx.cs">
+    <Compile Include="Connectors\SCSMTest.aspx.cs">
       <DependentUpon>SCSMTest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="SCSMTest.aspx.designer.cs">
+    <Compile Include="Connectors\SCSMTest.aspx.designer.cs">
       <DependentUpon>SCSMTest.aspx</DependentUpon>
     </Compile>
     <Compile Include="Site.Master.cs">
