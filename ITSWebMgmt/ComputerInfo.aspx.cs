@@ -407,7 +407,7 @@ namespace ITSWebMgmt
                 var split = adpath.Split(',');
                 var groupname = split[0].Replace("CN=", "");
 
-                sb.Append(String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname));
+                sb.Append(String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname));
          
             }
 
@@ -588,9 +588,14 @@ namespace ITSWebMgmt
                         object value = property.Value;
 
                         int i = 0;
+                        string[] arry = null;
                         if (value != null && value.GetType().IsArray)
                         {
-                            var arry = (string[])value;
+                            if (value is string[]){ 
+                                arry = (string[])value;
+                            } else {
+                                arry = new string[]{ "none-string value" }; //XXX get the byte value
+                            }
                             foreach (string f in arry)
                             {
                                 sb.Append(string.Format("{0}[{2}]: {1}<br />", key, f, i));
