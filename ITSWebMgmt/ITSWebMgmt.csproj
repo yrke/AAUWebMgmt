@@ -118,7 +118,6 @@
     <Content Include="CreateWorkItem.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="GroupsInfo.aspx" />
-    <Content Include="Connectors\PDStest.aspx" />
     <Content Include="Redirector.aspx" />
     <Content Include="Connectors\SCSMTest.aspx" />
     <Content Include="Site.Master" />
@@ -160,6 +159,7 @@
     <Compile Include="Connectors\ADMdbtest.aspx.designer.cs">
       <DependentUpon>ADMdbtest.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Connectors\PDSConnector.cs" />
     <Compile Include="Functions\Loginscript.cs" />
     <Compile Include="Helpers\HTMLEncodingHelper.cs" />
     <Compile Include="Helpers\HTMLTableHelper.cs" />
@@ -197,13 +197,6 @@
     </Compile>
     <Compile Include="GroupsInfo.aspx.designer.cs">
       <DependentUpon>GroupsInfo.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Connectors\PDStest.aspx.cs">
-      <DependentUpon>PDStest.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Connectors\PDStest.aspx.designer.cs">
-      <DependentUpon>PDStest.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\RawADGridGenerator.cs" />

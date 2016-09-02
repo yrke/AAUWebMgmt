@@ -11,6 +11,7 @@ using System.Web.UI.WebControls;
 using System.Management;
 using Microsoft.Exchange.WebServices.Data;
 using ITSWebMgmt.Functions;
+using ITSWebMgmt.Connectors;
 
 namespace ITSWebMgmt
 {
@@ -634,7 +635,7 @@ namespace ITSWebMgmt
             {
                 string empID = result.Properties["aauStaffID"].Value.ToString();
 
-                var pds = new PDStest(empID);
+                var pds = new PDSConnector(empID);
                 lblbasicInfoDepartmentPDS.Text = pds.Department;
                 lblbasicInfoOfficePDS.Text = pds.OfficeAddress;
             }

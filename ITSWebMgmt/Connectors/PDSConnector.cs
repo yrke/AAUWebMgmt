@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,10 +9,11 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ITSWebMgmt
+namespace ITSWebMgmt.Connectors
 {
-    public partial class PDStest : System.Web.UI.Page
+    public class PDSConnector
     {
+
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -38,13 +40,13 @@ namespace ITSWebMgmt
         {
             get { return streetAddress + " (" + extendedAddress.Trim() + ")"; }
         }
-        public PDStest()
+        public PDSConnector()
         {
 
         }
-        public PDStest(string empID)
+        public PDSConnector(string empID)
         {
-            
+
             //string empID = "115928";
             string url = "http://personprofil.aau.dk/" + empID + "?lang=en";
 
@@ -82,9 +84,10 @@ namespace ITSWebMgmt
                     locality = adr.SelectSingleNode("span[5]").InnerText;
                     countryName = adr.SelectSingleNode("span[6]").InnerText;
                 }
-                catch (NullReferenceException e) {
-                //Do nothing, just value missing, default value empty
-                }    
+                catch (NullReferenceException e)
+                {
+                    //Do nothing, just value missing, default value empty
+                }
 
 
             }
