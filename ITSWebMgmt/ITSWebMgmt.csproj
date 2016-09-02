@@ -115,7 +115,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
-    <Content Include="Connectors\CreateWorkItem.aspx" />
+    <Content Include="CreateWorkItem.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="GroupsInfo.aspx" />
     <Content Include="Connectors\PDStest.aspx" />
@@ -170,11 +170,11 @@
     <Compile Include="ComputerInfo.aspx.designer.cs">
       <DependentUpon>ComputerInfo.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Connectors\CreateWorkItem.aspx.cs">
+    <Compile Include="CreateWorkItem.aspx.cs">
       <DependentUpon>CreateWorkItem.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Connectors\CreateWorkItem.aspx.designer.cs">
+    <Compile Include="CreateWorkItem.aspx.designer.cs">
       <DependentUpon>CreateWorkItem.aspx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">

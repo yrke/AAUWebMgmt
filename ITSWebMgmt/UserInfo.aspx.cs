@@ -18,13 +18,6 @@ namespace ITSWebMgmt
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        string username = "kyrke@its.aau.dk";
-        public string UserName
-        {
-            get { return username; }
-            set { username = value; }
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -37,7 +30,7 @@ namespace ITSWebMgmt
                 String search = Request.QueryString["search"];
                 if (search != null)
                 {
-                    UserName = search.Trim();
+                    
 
                     lookupUser(search.Trim());
                     return;
@@ -46,7 +39,7 @@ namespace ITSWebMgmt
                 String username = Request.QueryString["username"];
                 if (username != null)
                 {
-                    UserName = username;
+                    
                     
                     buildUserLookupFromUsername(username);
                     return;
@@ -55,7 +48,7 @@ namespace ITSWebMgmt
                 String phoneNr = Request.QueryString["phone"];
                 if (phoneNr != null)
                 {
-                    UserName = phoneNr;
+                    
                     buildUserLookupFromPhone(phoneNr);
                     return;
 
@@ -67,18 +60,18 @@ namespace ITSWebMgmt
         protected void lookupUser(string username)
         {
 
-            UserName = username.Trim();
+            
             int val;
-            if (UserName.Length == 4 && int.TryParse(UserName, out val))
+            if (username.Length == 4 && int.TryParse(username, out val))
             {
-                buildUserLookupFromPhone(UserName);
+                buildUserLookupFromPhone(username);
 
             }
             else {
 
-                UserNameLabel.Text = UserName;
+                UserNameLabel.Text = username;
 
-                buildUserLookupFromUsername(UserName);
+                buildUserLookupFromUsername(username);
             }
             
         }
@@ -596,6 +589,7 @@ namespace ITSWebMgmt
             divServiceManager.Text = await scsmtest.getActiveIncidents((string)result.Properties["userPrincipalName"][0], (string)result.Properties["displayName"][0]);
             var userID = scsmtest.userID;
             Session["scsmuserID"] = userID;
+            Session["scsmuserUPN"] = (string)result.Properties["userPrincipalName"][0];
             watch.Stop();
             System.Diagnostics.Debug.WriteLine("BuildSCSMSegment took: " + watch.ElapsedMilliseconds);
 
@@ -928,8 +922,9 @@ namespace ITSWebMgmt
         protected void createNewIRSR_Click(object sender, EventArgs e)
         {
             string userID = (string)Session["scsmuserID"];
+            string upn = (string)Session["scsmuserUPN"];
 
-            Response.Redirect("/CreateWorkItem.aspx?userID=" + userID + "&userDisplayName=" + UserName);
+            Response.Redirect("/CreateWorkItem.aspx?userID=" + userID + "&userDisplayName=" + upn);
         }
 
 
