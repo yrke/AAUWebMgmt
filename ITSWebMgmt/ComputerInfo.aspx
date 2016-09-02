@@ -23,7 +23,7 @@
             Computername: 
         <div class="ui action input">
 
-            <input name="computername" class="ui input focus" value="<% =ComputerName %>" />
+            <input name="computername" class="ui input focus" value="ITS\AAU804396" />
 
             <input type="submit" value="Search" onclick='$("#loader > div").show("fast");'>
         </div>
