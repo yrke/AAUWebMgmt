@@ -11,13 +11,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ITSWebMgmt
+namespace ITSWebMgmt.Connectors
 {
-
-
-
-
-    public partial class ADMdbtest : System.Web.UI.Page
+    public class ADMdbConnector
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -45,7 +41,7 @@ namespace ITSWebMgmt
             {"plan","https://tools.ist.aau.dk/plan/i20/adm_db/adm.pl" },
             {"bio","https://tools.ist.aau.dk/bio/i18/adm_db/adm.pl" },
             {"hst","https://tools.ist.aau.dk/hst/i21/adm_db/adm.pl" }
-            
+
 
         };
         Dictionary<string, string> month = new Dictionary<string, string>(){
@@ -64,13 +60,14 @@ namespace ITSWebMgmt
             {"dec","12"}
         };
 
-        public async Task<string> loadUserExpiredate(string domain, string username, string firstName, string lastName) {
+        public async Task<string> loadUserExpiredate(string domain, string username, string firstName, string lastName)
+        {
             var url = admdburl[domain.ToLower()]; //Throws exception on wrong domain
-            
+
             WebRequest request = WebRequest.Create(url);
 
             string secret = File.ReadAllText(@"C:\webmgmtlog\webmgmtsecret-admdb.txt");
-            
+
 
             String wsusername = "svc_webmgmt-admdb@srv.aau.dk";
             String wspassword = secret;
@@ -110,24 +107,27 @@ namespace ITSWebMgmt
             else
             {
 
-                try { 
-                HtmlDocument doc = new HtmlDocument();
-                doc.LoadHtml(responseText);
+                try
+                {
+                    HtmlDocument doc = new HtmlDocument();
+                    doc.LoadHtml(responseText);
 
-                var selectElements = doc.DocumentNode.Descendants("select");
-                
-                var selectEmployeesEndDay = selectElements.Where(node => node.GetAttributeValue("name", "").EndsWith(".end_day")).First();
-                var selectEmployeesEndMonth = selectElements.Where(node => node.GetAttributeValue("name", "").EndsWith(".end_month")).First();
-                var selectEmployeesEndYear = selectElements.Where(node => node.GetAttributeValue("name", "").EndsWith(".end_year")).First();
+                    var selectElements = doc.DocumentNode.Descendants("select");
+
+                    var selectEmployeesEndDay = selectElements.Where(node => node.GetAttributeValue("name", "").EndsWith(".end_day")).First();
+                    var selectEmployeesEndMonth = selectElements.Where(node => node.GetAttributeValue("name", "").EndsWith(".end_month")).First();
+                    var selectEmployeesEndYear = selectElements.Where(node => node.GetAttributeValue("name", "").EndsWith(".end_year")).First();
 
 
-                string endday = selectEmployeesEndDay.Element("option").GetAttributeValue("value", "");
-                string endMonth = selectEmployeesEndMonth.Element("option").GetAttributeValue("value", "");
-                string endYear = selectEmployeesEndYear.Element("option").GetAttributeValue("value", "");
+                    string endday = selectEmployeesEndDay.Element("option").GetAttributeValue("value", "");
+                    string endMonth = selectEmployeesEndMonth.Element("option").GetAttributeValue("value", "");
+                    string endYear = selectEmployeesEndYear.Element("option").GetAttributeValue("value", "");
 
-                return "" + endYear + "-" + month[endMonth.ToLower()]  + "-" + endday;
-                } catch (Exception e) {
-                    logger.Debug("User not found on key username: " + domain+"\\"+username);
+                    return "" + endYear + "-" + month[endMonth.ToLower()] + "-" + endday;
+                }
+                catch (Exception e)
+                {
+                    logger.Debug("User not found on key username: " + domain + "\\" + username);
                     return "UserInfo Error on Lookup";
                 }
 
@@ -145,7 +145,7 @@ namespace ITSWebMgmt
             {
                 labelResult.Text = "user expired";
             }*/
-            
+
         }
     }
 }

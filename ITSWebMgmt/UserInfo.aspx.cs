@@ -719,7 +719,7 @@ namespace ITSWebMgmt
 
             labelBasicInfoTable.Text = sb.ToString();
 
-            var admdb = new ADMdbtest();
+            var admdb = new ADMdbConnector();
 
             String upn = (string)result.Properties["userPrincipalName"][0];
 
