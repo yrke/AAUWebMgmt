@@ -37,9 +37,9 @@ namespace ITSWebMgmt
                 String search = Request.QueryString["search"];
                 if (search != null)
                 {
-                    UserName = search;
+                    UserName = search.Trim();
 
-                    lookupUser(search);
+                    lookupUser(search.Trim());
                     return;
                 }
 
@@ -67,7 +67,7 @@ namespace ITSWebMgmt
         protected void lookupUser(string username)
         {
 
-            UserName = username;
+            UserName = username.Trim();
             int val;
             if (UserName.Length == 4 && int.TryParse(UserName, out val))
             {

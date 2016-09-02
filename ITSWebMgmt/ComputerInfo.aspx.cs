@@ -38,8 +38,8 @@ namespace ITSWebMgmt
                 
                 if (computername != null)
                 {
-                    ComputerName = computername;
-                    buildlookupComputer(computername);
+                    ComputerName = computername.Trim();
+                    buildlookupComputer(computername.Trim());
                 }
             }
             else
