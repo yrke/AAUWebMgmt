@@ -118,7 +118,6 @@
     <Content Include="Default.aspx" />
     <Content Include="GroupsInfo.aspx" />
     <Content Include="Redirector.aspx" />
-    <Content Include="Connectors\SCSMTest.aspx" />
     <Content Include="Site.Master" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
@@ -153,6 +152,7 @@
   <ItemGroup>
     <Compile Include="Connectors\ADMdbConnector.cs" />
     <Compile Include="Connectors\PDSConnector.cs" />
+    <Compile Include="Connectors\SCSMConnector.cs" />
     <Compile Include="Functions\Loginscript.cs" />
     <Compile Include="Helpers\HTMLEncodingHelper.cs" />
     <Compile Include="Helpers\HTMLTableHelper.cs" />
@@ -199,13 +199,6 @@
     </Compile>
     <Compile Include="Redirector.aspx.designer.cs">
       <DependentUpon>Redirector.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Connectors\SCSMTest.aspx.cs">
-      <DependentUpon>SCSMTest.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Connectors\SCSMTest.aspx.designer.cs">
-      <DependentUpon>SCSMTest.aspx</DependentUpon>
     </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>

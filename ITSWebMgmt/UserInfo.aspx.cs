@@ -586,7 +586,7 @@ namespace ITSWebMgmt
         private async System.Threading.Tasks.Task  BuildSCSMSegment(DirectoryEntry result)
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            var scsmtest = new SCSMTest();
+            var scsmtest = new SCSMConnector();
             divServiceManager.Text = await scsmtest.getActiveIncidents((string)result.Properties["userPrincipalName"][0], (string)result.Properties["displayName"][0]);
             var userID = scsmtest.userID;
             Session["scsmuserID"] = userID;

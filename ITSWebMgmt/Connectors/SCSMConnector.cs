@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Script.Serialization;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
-namespace ITSWebMgmt
+namespace ITSWebMgmt.Connectors
 {
-    public partial class SCSMTest : System.Web.UI.Page
+    public class SCSMConnector
     {
         string webserviceURL = "https://service.aau.dk";
         //string webserviceURL = "http://scsm-tms1.srv.aau.dk";
@@ -23,7 +17,7 @@ namespace ITSWebMgmt
         protected async Task<string> getAuthKey()
         {
 
-            WebRequest request = WebRequest.Create(webserviceURL+"/api/V3/Authorization/GetToken");
+            WebRequest request = WebRequest.Create(webserviceURL + "/api/V3/Authorization/GetToken");
             request.Method = "POST";
             request.ContentType = "text/json";
 
@@ -39,16 +33,16 @@ namespace ITSWebMgmt
             requestSteam.Write(json);
             requestSteam.Flush();
             requestSteam.Close();
-            
+
             var response = await request.GetResponseAsync();
-            var responseSteam =  response.GetResponseStream();
+            var responseSteam = response.GetResponseStream();
 
             var streamReader = new StreamReader(responseSteam);
 
             var responseText = streamReader.ReadToEnd();
-           
+
             //responseLbl.Text = responseText;
-            return responseText.Replace("\"","");
+            return responseText.Replace("\"", "");
         }
 
         protected string doAction(string userjson)
@@ -68,16 +62,17 @@ namespace ITSWebMgmt
 
             sb.Append("<br /><br />" + string.Format("<a href=\"{0}{1}\">Servie Portal User Info</a>", "https://service.aau.dk/user/UserRelatedInfoById/", userID) + "<br/>");
 
-            
+
             sb.Append("<h1>Open Requests</h1><br />");
 
             var helper = new HTMLTableHelper(4);
             sb.Append(helper.printStart());
-            sb.Append(helper.printRow(new string[]{"ID","Title", "Status", "Last Change" }, true));
+            sb.Append(helper.printRow(new string[] { "ID", "Title", "Status", "Last Change" }, true));
 
             for (int i = 0; i < json["MyRequest"].Length; i++)
             {
-                if (!"Closed".Equals(json["MyRequest"][i]["Status"]["Name"])) {
+                if (!"Closed".Equals(json["MyRequest"][i]["Status"]["Name"]))
+                {
                     string id = json["MyRequest"][i]["Id"];
                     string link;
                     if (id.StartsWith("IR"))
@@ -92,7 +87,7 @@ namespace ITSWebMgmt
                     string sTitle = json["MyRequest"][i]["Title"];
                     string sStatus = json["MyRequest"][i]["Status"]["Name"];
                     string tmp = json["MyRequest"][i]["LastModified"];
-                    string sLastChange = Convert.ToDateTime(tmp).ToString(); 
+                    string sLastChange = Convert.ToDateTime(tmp).ToString();
 
                     sb.Append(helper.printRow(new String[] { sID, sTitle, sStatus, sLastChange }));
                     //sb.Append("<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["Id"] + " - " + json["MyRequest"][i]["Title"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
@@ -104,7 +99,7 @@ namespace ITSWebMgmt
             sb.Append(helper.printStart());
             sb.Append(helper.printRow(new string[] { "ID", "Title", "Status", "Last Change" }, true));
 
-            
+
             for (int i = 0; i < json["MyRequest"].Length; i++)
             {
                 if ("Closed".Equals(json["MyRequest"][i]["Status"]["Name"]))
@@ -144,10 +139,11 @@ namespace ITSWebMgmt
 
 
         //returns json string for uuid
-        protected async Task<string> lookupUserByUUID(string uuid, string authkey) {
+        protected async Task<string> lookupUserByUUID(string uuid, string authkey)
+        {
 
             //WebRequest request = WebRequest.Create(webserviceURL+"api/V3/User/GetUserRelatedInfoByUserId/?userid=352b43f6-9ff4-a36f-0342-6ce1ae283e37");
-            WebRequest request = WebRequest.Create(webserviceURL+"/api/V3/User/GetUserRelatedInfoByUserId/?userid="+uuid);
+            WebRequest request = WebRequest.Create(webserviceURL + "/api/V3/User/GetUserRelatedInfoByUserId/?userid=" + uuid);
             request.Method = "Get";
             //request.ContentType = "text/json";
             request.Headers.Add("Authorization", "Token " + authkey);
@@ -161,14 +157,14 @@ namespace ITSWebMgmt
             var responseText = streamReader.ReadToEnd();
 
             //string sMatchUPN = ",\\\"UPN\\\":\\\"(.)*\\\",";
-            
+
             JavaScriptSerializer js = new JavaScriptSerializer();
             js.MaxJsonLength = Int32.MaxValue;
             dynamic jsonString = js.Deserialize<dynamic>(responseText);
 
             //dynamic json = js.Deserialize<dynamic>((string)jsonString);
             return jsonString;
-            
+
         }
 
 
@@ -245,8 +241,8 @@ namespace ITSWebMgmt
 
             JavaScriptSerializer js = new JavaScriptSerializer();
             dynamic json = js.Deserialize<dynamic>(responseText);
-            
-            
+
+
             return responseText;
 
         }
@@ -255,8 +251,8 @@ namespace ITSWebMgmt
         protected void Page_Load(object sender, EventArgs e)
         {
 
-            
-            
+
+
 
         }
 
@@ -270,11 +266,12 @@ namespace ITSWebMgmt
             string s = await getIncidentTest("IR408927", authkey);
 
 
-            responseLbl.Text = s;
+            //responseLbl.Text = s;
 
         }
 
-        public async Task<string> getActiveIncidents(string upn, string displayName){
+        public async Task<string> getActiveIncidents(string upn, string displayName)
+        {
             string authkey = await getAuthKey();
             string uuid = await getUserUUIDByUPN(upn, displayName, authkey);
             return doAction(uuid);
