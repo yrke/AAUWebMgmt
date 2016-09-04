@@ -1,13 +1,10 @@
 ﻿using NLog;
-using SimpleImpersonation;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
 using System.Text;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Management;
 using Microsoft.Exchange.WebServices.Data;
 using ITSWebMgmt.Functions;
