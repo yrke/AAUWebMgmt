@@ -147,7 +147,6 @@ namespace ITSWebMgmt
             Session["adpath"] = null;
             var tmpName = computername;
 
-
             string domain = null;
             if (tmpName.Contains("\\")) {
                 var tmp = tmpName.Split('\\');
@@ -427,7 +426,7 @@ namespace ITSWebMgmt
             var o = results.OfType<ManagementObject>().FirstOrDefault();
                 
 
-
+            if (o != null) { 
             foreach (var property in o.Properties)
             {
                 string key = property.Name;
@@ -448,6 +447,10 @@ namespace ITSWebMgmt
                     sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
                 }
 
+            }
+            }else
+            {
+                sb.Append("No inventory data");
             }
 
             labelSCCMInventory.Text = sb.ToString();

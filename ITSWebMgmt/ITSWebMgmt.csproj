@@ -142,6 +142,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SoftwareManager.aspx" />
     <Content Include="test.aspx" />
     <Content Include="UserInfo.aspx" />
     <Content Include="Web.config">
@@ -198,6 +199,13 @@
     </Compile>
     <Compile Include="Site.Master.designer.cs">
       <DependentUpon>Site.Master</DependentUpon>
+    </Compile>
+    <Compile Include="SoftwareManager.aspx.cs">
+      <DependentUpon>SoftwareManager.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SoftwareManager.aspx.designer.cs">
+      <DependentUpon>SoftwareManager.aspx</DependentUpon>
     </Compile>
     <Compile Include="test.aspx.cs">
       <DependentUpon>test.aspx</DependentUpon>
