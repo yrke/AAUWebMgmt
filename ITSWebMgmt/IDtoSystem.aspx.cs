@@ -43,7 +43,7 @@ namespace ITSWebMgmt
             resultstring.Append("<br/>");
             resultstring.Append("<b> End dato:</b>  " +reader["Slut"].ToString());
             resultstring.Append("<br/>");
-            resultstring.Append("<b>Ansvarlig:</b> "reader["Ansvarlig"].ToString());
+            resultstring.Append("<b>Ansvarlig:</b> " + reader["Ansvarlig"].ToString());
 
             result.Text = resultstring.ToString();
 
