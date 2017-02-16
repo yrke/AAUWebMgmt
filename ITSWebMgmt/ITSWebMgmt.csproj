@@ -117,6 +117,7 @@
     <Content Include="CreateWorkItem.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="GroupsInfo.aspx" />
+    <Content Include="IDtoSystem.aspx" />
     <Content Include="Redirector.aspx" />
     <Content Include="Site.Master" />
     <Content Include="packages.config">
@@ -183,6 +184,13 @@
     </Compile>
     <Compile Include="GroupsInfo.aspx.designer.cs">
       <DependentUpon>GroupsInfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IDtoSystem.aspx.cs">
+      <DependentUpon>IDtoSystem.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IDtoSystem.aspx.designer.cs">
+      <DependentUpon>IDtoSystem.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\RawADGridGenerator.cs" />
