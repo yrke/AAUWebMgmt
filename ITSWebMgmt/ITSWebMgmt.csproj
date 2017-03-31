@@ -86,8 +86,8 @@
       <HintPath>..\packages\NLog.4.3.1\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimpleImpersonation, Version=1.1.0.34390, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleImpersonation.1.1.0\lib\net40-Client\SimpleImpersonation.dll</HintPath>
+    <Reference Include="SimpleImpersonation, Version=2.0.1.27158, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleImpersonation.2.0.1\lib\net40-Client\SimpleImpersonation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
@@ -153,6 +153,7 @@
   <ItemGroup>
     <Compile Include="Connectors\ADMdbConnector.cs" />
     <Compile Include="Connectors\PDSConnector.cs" />
+    <Compile Include="Connectors\PrintConnector.cs" />
     <Compile Include="Connectors\SCSMConnector.cs" />
     <Compile Include="Functions\Loginscript.cs" />
     <Compile Include="Helpers\HTMLEncodingHelper.cs" />

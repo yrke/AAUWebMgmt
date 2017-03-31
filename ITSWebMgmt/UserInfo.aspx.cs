@@ -566,6 +566,7 @@ namespace ITSWebMgmt
                 buildGroupsSegments(userDE);
                 buildCalAgenda(userDE);
                 buildLoginscript(userDE);
+                buildPrint(userDE); // XXX make async? 
 
                 await System.Threading.Tasks.Task.WhenAll(task1, task2);
 
@@ -925,7 +926,18 @@ namespace ITSWebMgmt
             Response.Redirect("/CreateWorkItem.aspx?userID=" + userID + "&userDisplayName=" + upn);
         }
 
+        protected void buildPrint(DirectoryEntry user)
+        {
 
+            //lblPrint.Text = "Hello World";
+
+            PrintConnector printConnector = new PrintConnector(user.Guid.ToString());
+
+            lblPrint.Text = printConnector.doStuff();
+
+            
+
+        }
 
         protected void buildLoginscript(DirectoryEntry user)
         {

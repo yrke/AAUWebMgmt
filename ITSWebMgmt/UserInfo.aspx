@@ -123,6 +123,7 @@
                     <a class="item" data-tab="exchange">Exchange Resources</a>
                     <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
                     <a class="item" data-tab="loginscript" runat="server" id="menuLoginScript">Loginscript</a>
+                    <a class="item" data-tab="print" runat="server" id="menuPrint">Print</a>
                     <a class="item" data-tab="rawdata">Raw Data</a>
                     <a class="item" data-tab="tasks">Tasks</a>
 <!--                    <a class="item" data-tab="statustest">Statustest</a> -->
@@ -166,6 +167,10 @@
                 </div>
                 <div class="ui tab segment" data-tab="advancedinfo">
                     advanced
+                </div>
+                 <div class="ui tab segment" data-tab="print">
+                    <h2>Print</h2>
+                    <asp:Label ID="lblPrint" runat="server"></asp:Label>
                 </div>
                 <div class="ui tab segment" data-tab="groups">
                     <h2>Groups</h2>
