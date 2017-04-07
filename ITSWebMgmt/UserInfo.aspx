@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="Home Page" Language="C#" AutoEventWireup="true" CodeBehind="UserInfo.aspx.cs" Inherits="ITSWebMgmt.UserInfo" MasterPageFile="~/Site.Master" Async="true" %>
+<%@ Register TagPrefix="uc" TagName="Changes" Src="~/Controls/ActiveChanges.ascx" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -60,6 +61,8 @@
             <asp:Label ID="ResultErrorLabel" runat="server"></asp:Label>
         </div>
 
+        <uc:Changes id="changes" runat="server" />
+
         <div runat="server" id="ResultDiv">
         
             
@@ -102,8 +105,10 @@
               This might not be a problem. User can be affected by non-stadard group policy. User can be a service user or admin account.  
             </div>
                
+            
 
         </div>
+            
             
 
         <form runat="server">
