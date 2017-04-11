@@ -41,7 +41,7 @@ namespace ITSWebMgmt.Helpers
                 foreach (DbDataRecord r in reader)
                 {
                     hasValues = true;
-                    sb.Append("Active Change: " + r["ChangeID"].ToString() + ": " + r["Navn"].ToString() + "<br/>");
+                    sb.Append(r["ChangeID"].ToString() + ": " + r["Navn"].ToString() + "<br/>");
                 }
             }
 
