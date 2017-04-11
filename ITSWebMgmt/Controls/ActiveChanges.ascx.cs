@@ -41,7 +41,8 @@ namespace ITSWebMgmt.Helpers
                 foreach (DbDataRecord r in reader)
                 {
                     hasValues = true;
-                    sb.Append(r["ChangeID"].ToString() + ": " + r["Navn"].ToString() + "<br/>");
+                    string changeid = r["ChangeID"].ToString();
+                    sb.Append("<a href=\"https://srv-webmgmt01.srv.aau.dk/IDtoSystem.aspx?id=" + changeid + "\">" + changeid + "</a>: " + r["Navn"].ToString() + "<br/>");
                 }
             }
 
