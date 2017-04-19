@@ -29,8 +29,8 @@ namespace ITSWebMgmt
 
             StringBuilder resultstring = new StringBuilder();
 
-
-            resultstring.Append("<h1>Change "+ reader["ChangeID"].ToString() + "</h1>");
+            string changeID = reader["ChangeID"].ToString();
+            resultstring.Append("<h1>Change "+ changeID + "</h1>");
 
             
             resultstring.Append("");
@@ -44,6 +44,21 @@ namespace ITSWebMgmt
             resultstring.Append("<b> End dato:</b>  " +reader["Slut"].ToString());
             resultstring.Append("<br/>");
             resultstring.Append("<b>Ansvarlig:</b> " + reader["Ansvarlig"].ToString());
+            resultstring.Append("<br/>");
+
+            /*
+            //Excel Link: file://its.aau.dk\fileshares\aau-its\CAB\Ændringer2016.xlsm#Ændringer!J5 
+            //Calculate Cell In Excel 
+
+            var numberPart = Int32.Parse(changeID.Split('-')[1]);
+            //Start Cell = 5, First ID = 634
+            var cellNumber = numberPart - 634 + 5;
+
+            resultstring.Append("<b>Link:</b> " + "<a href=\"ms-excel:ofv|u|file://///its.aau.dk/fileshares/aau-its/CAB/Ændringer2016.xlsm#Ændringer!J" + cellNumber + "\">Open i Excel</a>");
+            //XXX: ms-excel will only work for files on http/https, see https://msdn.microsoft.com/en-us/library/office/dn906146.aspx 
+            */
+
+
 
             result.Text = resultstring.ToString();
 
