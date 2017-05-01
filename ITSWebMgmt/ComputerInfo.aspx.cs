@@ -340,7 +340,22 @@ namespace ITSWebMgmt
             }
             else
             {
-                ResultLabel.Text = "<code>" + passwordRetuned + "</code><br /> Password will expire in 4 hours";
+                Func<string, string, string> appendColor = (string x, string color) => { return "<font color=\"" + color + "\">" + x + "</font>"; };
+
+                string passwordWithColor = "";
+                foreach (char c in passwordRetuned)
+                {
+                    var color = "green";
+                    if (char.IsNumber(c))
+                    {
+                        color = "blue";
+                    }
+
+                    passwordWithColor += appendColor(c.ToString(), color);
+
+                }
+
+                ResultLabel.Text = "<code>" + passwordWithColor + "</code><br /> Password will expire in 4 hours";
             }
 
             ResultGetPassword.Visible = false;
