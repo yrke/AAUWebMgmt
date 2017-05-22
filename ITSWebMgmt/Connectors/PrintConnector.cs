@@ -35,7 +35,13 @@ namespace ITSWebMgmt.Connectors
                 // do whatever you want as this user.
 
                 SqlConnection myConnection = new SqlConnection("Data Source = ad-sql1-i13.aau.dk\\sqlequitrac; Database = eqcas; Integrated Security=SSPI");
-                myConnection.Open();
+
+                try { 
+                    myConnection.Open();
+                }catch (SqlException e) {
+                    sb.Append("Error connection to equitrac database.");
+                    return sb.ToString();
+                }
 
                 string adguid = "AD:{" + userGuid + "}";
 
