@@ -1,11 +1,18 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ITSWebMgmt.Default" MasterPageFile="~/Site.Master" %>
+<%@ Register TagPrefix="uc" TagName="Changes" Src="~/Controls/ActiveChanges.ascx" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
+
+<uc:Changes id="changes" runat="server" />
     
     <div class="ui segment">
           <div class="ui right internal attached rail" style="margin-top:50px;">
     <div class="ui segment" style="">
       <h3>Nyheder</h3>
+        <li>2017-03-31 -  More print information from EquiTrac
+        <br /><br />
+        <li>2017-02-27 -  Userinfo now shows information about print form EquiTrac
+        <br /><br />
         <li>2016-07-08 -  Userinfo now shows loginscript (only for users with login script)
         <br /><br />
         <li>2016-07-08 -  Added action to start bomgar session directly from user info

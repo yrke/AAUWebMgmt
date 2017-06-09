@@ -10,15 +10,24 @@
 namespace ITSWebMgmt {
     
     
-    public partial class Default {
+    public partial class SoftwareManager {
         
         /// <summary>
-        /// changes control.
+        /// test control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ITSWebMgmt.Helpers.ActiveChanges changes;
+        protected global::System.Web.UI.WebControls.Label test;
+        
+        /// <summary>
+        /// fisk control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label fisk;
     }
 }

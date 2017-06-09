@@ -31,6 +31,15 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label ResultErrorLabel;
         
         /// <summary>
+        /// changes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ITSWebMgmt.Helpers.ActiveChanges changes;
+        
+        /// <summary>
         /// ResultDiv control.
         /// </summary>
         /// <remarks>
@@ -112,6 +121,15 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.HtmlControls.HtmlAnchor menuLoginScript;
         
         /// <summary>
+        /// menuPrint control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor menuPrint;
+        
+        /// <summary>
         /// displayName control.
         /// </summary>
         /// <remarks>
@@ -173,6 +191,15 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label labelBasicInfoRomaing;
+        
+        /// <summary>
+        /// lblPrint control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPrint;
         
         /// <summary>
         /// groupssegmentLabel control.

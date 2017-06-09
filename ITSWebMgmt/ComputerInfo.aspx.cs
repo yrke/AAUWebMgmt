@@ -147,7 +147,6 @@ namespace ITSWebMgmt
             Session["adpath"] = null;
             var tmpName = computername;
 
-
             string domain = null;
             if (tmpName.Contains("\\")) {
                 var tmp = tmpName.Split('\\');
@@ -341,7 +340,22 @@ namespace ITSWebMgmt
             }
             else
             {
-                ResultLabel.Text = "<code>" + passwordRetuned + "</code><br /> Password will expire in 4 hours";
+                Func<string, string, string> appendColor = (string x, string color) => { return "<font color=\"" + color + "\">" + x + "</font>"; };
+
+                string passwordWithColor = "";
+                foreach (char c in passwordRetuned)
+                {
+                    var color = "green";
+                    if (char.IsNumber(c))
+                    {
+                        color = "blue";
+                    }
+
+                    passwordWithColor += appendColor(c.ToString(), color);
+
+                }
+
+                ResultLabel.Text = "<code>" + passwordWithColor + "</code><br /> Password will expire in 4 hours";
             }
 
             ResultGetPassword.Visible = false;
@@ -427,7 +441,7 @@ namespace ITSWebMgmt
             var o = results.OfType<ManagementObject>().FirstOrDefault();
                 
 
-
+            if (o != null) { 
             foreach (var property in o.Properties)
             {
                 string key = property.Name;
@@ -448,6 +462,10 @@ namespace ITSWebMgmt
                     sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
                 }
 
+            }
+            }else
+            {
+                sb.Append("No inventory data");
             }
 
             labelSCCMInventory.Text = sb.ToString();

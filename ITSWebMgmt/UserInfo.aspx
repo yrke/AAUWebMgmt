@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="Home Page" Language="C#" AutoEventWireup="true" CodeBehind="UserInfo.aspx.cs" Inherits="ITSWebMgmt.UserInfo" MasterPageFile="~/Site.Master" Async="true" %>
+<%@ Register TagPrefix="uc" TagName="Changes" Src="~/Controls/ActiveChanges.ascx" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -60,6 +61,8 @@
             <asp:Label ID="ResultErrorLabel" runat="server"></asp:Label>
         </div>
 
+        <uc:Changes id="changes" runat="server" />
+
         <div runat="server" id="ResultDiv">
         
             
@@ -102,8 +105,10 @@
               This might not be a problem. User can be affected by non-stadard group policy. User can be a service user or admin account.  
             </div>
                
+            
 
         </div>
+            
             
 
         <form runat="server">
@@ -123,6 +128,7 @@
                     <a class="item" data-tab="exchange">Exchange Resources</a>
                     <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
                     <a class="item" data-tab="loginscript" runat="server" id="menuLoginScript">Loginscript</a>
+                    <a class="item" data-tab="print" runat="server" id="menuPrint">Print</a>
                     <a class="item" data-tab="rawdata">Raw Data</a>
                     <a class="item" data-tab="tasks">Tasks</a>
 <!--                    <a class="item" data-tab="statustest">Statustest</a> -->
@@ -166,6 +172,10 @@
                 </div>
                 <div class="ui tab segment" data-tab="advancedinfo">
                     advanced
+                </div>
+                 <div class="ui tab segment" data-tab="print">
+                    <h2>Print</h2>
+                    <asp:Label ID="lblPrint" runat="server"></asp:Label>
                 </div>
                 <div class="ui tab segment" data-tab="groups">
                     <h2>Groups</h2>

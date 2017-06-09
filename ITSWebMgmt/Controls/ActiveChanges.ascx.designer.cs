@@ -7,18 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ITSWebMgmt {
+namespace ITSWebMgmt.Helpers {
     
     
-    public partial class Default {
+    public partial class ActiveChanges {
         
         /// <summary>
-        /// changes control.
+        /// result control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ITSWebMgmt.Helpers.ActiveChanges changes;
+        protected global::System.Web.UI.WebControls.Label result;
     }
 }
