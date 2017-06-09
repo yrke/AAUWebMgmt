@@ -149,6 +149,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connectors\Active Directory\ADHelpers.cs" />
     <Compile Include="Connectors\ADMdbConnector.cs" />
     <Compile Include="Connectors\PDSConnector.cs" />
     <Compile Include="Connectors\SCSMConnector.cs" />
@@ -218,7 +219,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Connectors\Active Directory\" />
     <Folder Include="Controls\" />
     <Folder Include="DynamicData\FieldTemplates\" />
   </ItemGroup>
