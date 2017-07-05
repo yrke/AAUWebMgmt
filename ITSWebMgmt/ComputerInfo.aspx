@@ -123,8 +123,9 @@
                             <div id="MoveComputerOUdiv" runat="server">
                                 <asp:Button ID="MoveComputerOU" runat="server" value="" Text="Move computer to OU Clients" OnClick="MoveOU_Click" CssClass="ui button" />
                                 Only do this if you know what you are doing!
-
                             </div>
+
+
 
                         </div>
                         <div class="ui tab segment" data-tab="sccmInfo">
