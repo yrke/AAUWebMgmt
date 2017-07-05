@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using ITSWebMgmt.Connectors.Active_Directory;
+using NLog;
 using System;
 using System.DirectoryServices;
 using System.Linq;
@@ -260,7 +261,7 @@ namespace ITSWebMgmt
             if (de.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
             {
                
-                DateTime? expireDate = UserInfo.convertADTimeToDateTime(de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value);
+                DateTime? expireDate = ADHelpers.convertADTimeToDateTime(de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value);
                 labelPwdExpireDate.Text = expireDate.ToString();
             }
             else

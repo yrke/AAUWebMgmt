@@ -10,6 +10,7 @@ using Microsoft.Exchange.WebServices.Data;
 using ITSWebMgmt.Functions;
 using ITSWebMgmt.Connectors;
 using System.Web.UI.WebControls;
+using ITSWebMgmt.Connectors.Active_Directory;
 
 namespace ITSWebMgmt
 {
@@ -402,20 +403,7 @@ namespace ITSWebMgmt
         }
 
 
-        public static DateTime? convertADTimeToDateTime(object adsLargeInteger)
-        {
-
-            var highPart = (Int32)adsLargeInteger.GetType().InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
-            var lowPart = (Int32)adsLargeInteger.GetType().InvokeMember("LowPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
-            var result = highPart * ((Int64)UInt32.MaxValue + 1) + lowPart;
-
-            if (result == 9223372032559808511)
-            {
-                return null;
-            }
-
-            return DateTime.FromFileTime(result);
-        }
+ 
 
         protected void button_toggle_userprofile(object sender, EventArgs e)
         {
@@ -656,7 +644,7 @@ namespace ITSWebMgmt
                 {
                     if (dateFields.Contains(k))
                     {
-                        sb.Append(String.Format("<td>{0}</td>", convertADTimeToDateTime(result.Properties[k].Value)));
+                        sb.Append(String.Format("<td>{0}</td>", ADHelpers.convertADTimeToDateTime(result.Properties[k].Value)));
                     }
                     else
                     {
@@ -700,9 +688,7 @@ namespace ITSWebMgmt
             //    basicInfoPasswordExpired.Text = "True";
             }
 
-            // Never expire = 9223372036854775807 
-
-            DateTime? expireDate = convertADTimeToDateTime(result.Properties["msDS-UserPasswordExpiryTimeComputed"].Value);
+            DateTime? expireDate = ADHelpers.convertADTimeToDateTime(result.Properties["msDS-UserPasswordExpiryTimeComputed"].Value);
             if (expireDate == null)
             {
                 basicInfoPasswordExpireDate.Text = "Never";
