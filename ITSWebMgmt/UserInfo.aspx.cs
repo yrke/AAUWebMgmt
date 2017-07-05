@@ -29,28 +29,22 @@ namespace ITSWebMgmt
                 String search = Request.QueryString["search"];
                 if (search != null)
                 {
-                    
-
                     lookupUser(search.Trim());
                     return;
                 }
 
                 String username = Request.QueryString["username"];
                 if (username != null)
-                {
-                    
-                    
+                {                
                     buildUserLookupFromUsername(username);
                     return;
                 }
 
                 String phoneNr = Request.QueryString["phone"];
                 if (phoneNr != null)
-                {
-                    
+                {               
                     buildUserLookupFromPhone(phoneNr);
                     return;
-
                 }
 
             }
@@ -64,12 +58,10 @@ namespace ITSWebMgmt
             if (username.Length == 4 && int.TryParse(username, out val))
             {
                 buildUserLookupFromPhone(username);
-
             }
-            else {
-
+            else
+            {
                 UserNameLabel.Text = username;
-
                 buildUserLookupFromUsername(username);
             }
             
@@ -133,41 +125,48 @@ namespace ITSWebMgmt
             sb.Append(helper.printStart());
             sb.Append(helper.printRow(new string[]{"Domain", "Name"}, true));
 
-            Array.Sort(groupsList);
-            var skiped = new List<string>();
+            var groupsAsList = groupsList.ToList<string>();
 
-            foreach (string adpath in groupsList)
+            Func<string[], string, bool> startsWith = delegate (string[] prefix, string value)
             {
-                if (!(adpath.StartsWith("CN=MBX_") || adpath.StartsWith("CN=ACL_"))) //if not fileshare or mailbox
-                {
-                    var split = adpath.Split(',');
-                    var groupname = split[0].Replace("CN=", "");
-                    var domain = split.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
-                    var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname);
-
-                    sb.Append(helper.printRow(new string[] { domain, name }));
-                }
-                else
-                {
-                    skiped.Add(adpath);
-                }
-            }
-
-            foreach (string adpath in skiped)
+                return prefix.Any<string>(x => value.StartsWith(x));
+            };
+            string[] prefixMBX_ACL = { "CN=MBX_", "CN=ACL_" };
+            Func<string, bool> startsWithMBXorACL = (string value) => startsWith(prefixMBX_ACL, value);
+            
+            //Sort MBX and ACL Last
+            groupsAsList.Sort((a, b) =>
             {
-                
-                    var split = adpath.Split(',');
-                    var groupname = split[0].Replace("CN=", "");
-                    var domain = split.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
-                    var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname);
+                if (startsWithMBXorACL(a) && startsWithMBXorACL(b))
+                {
+                    return a.CompareTo(b);
+                } else if (startsWithMBXorACL(a))
+                {
+                    return 1;
+                } else if (startsWithMBXorACL(b))
+                {
+                    return -1;
+                } else
+                {
+                    return a.CompareTo(b);
+                }
+            });
 
-                    sb.Append(helper.printRow(new string[] { domain, name }));
-                
+            foreach (string adpath in groupsAsList)
+            {
+
+                var split = adpath.Split(',');
+                var groupname = split[0].Replace("CN=", "");
+                var domain = split.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
+                var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname);
+
+                sb.Append(helper.printRow(new string[] { domain, name }));
+
             }
 
             sb.Append(helper.printEnd());
             output.Text = sb.ToString();
-           
+
         }
 
         protected void buildExchangeLabel(String[] groupsList, bool isTransitiv)
