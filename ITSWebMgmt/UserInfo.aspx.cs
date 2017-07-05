@@ -402,7 +402,7 @@ namespace ITSWebMgmt
         }
 
 
-        public DateTime? convertADTimeToDateTime(object adsLargeInteger)
+        public static DateTime? convertADTimeToDateTime(object adsLargeInteger)
         {
 
             var highPart = (Int32)adsLargeInteger.GetType().InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
@@ -609,12 +609,6 @@ namespace ITSWebMgmt
 
             buildgroupssegmentLabel(groupListConvert, groupssegmentLabel);
             buildgroupssegmentLabel(groupsListAllConverted, groupsAllsegmentLabel);
-
-            
-
-            
-            
-           
 
             if (groupsListAllConverted.Length > 0)
             {

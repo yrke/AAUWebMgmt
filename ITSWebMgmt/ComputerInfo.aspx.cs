@@ -253,20 +253,6 @@ namespace ITSWebMgmt
 
         }
 
-        public DateTime? convertADTimeToDateTime(object adsLargeInteger)
-        {
-
-            var highPart = (Int32)adsLargeInteger.GetType().InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
-            var lowPart = (Int32)adsLargeInteger.GetType().InvokeMember("LowPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
-            var result = highPart * ((Int64)UInt32.MaxValue + 1) + lowPart;
-
-            if (result == 9223372032559808511)
-            {
-                return null;
-            }
-
-            return DateTime.FromFileTime(result);
-        }
 
         protected void buildBasicInfo(DirectoryEntry de)
         {
@@ -274,7 +260,7 @@ namespace ITSWebMgmt
             if (de.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
             {
                
-                DateTime? expireDate = convertADTimeToDateTime(de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value);
+                DateTime? expireDate = UserInfo.convertADTimeToDateTime(de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value);
                 labelPwdExpireDate.Text = expireDate.ToString();
             }
             else
