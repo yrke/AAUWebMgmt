@@ -8,7 +8,9 @@
     <div class="ui segment">
           <div class="ui right internal attached rail" style="margin-top:50px;">
     <div class="ui segment" style="">
-      <h3>Nyheder</h3>
+      <h3>Nyheder</h3
+        <li>2017-07-05 -  Groups now shows direct and recursive memberships 
+        <br /><br />
         <li>2017-03-31 -  More print information from EquiTrac
         <br /><br />
         <li>2017-02-27 -  Userinfo now shows information about print form EquiTrac
@@ -16,12 +18,6 @@
         <li>2016-07-08 -  Userinfo now shows loginscript (only for users with login script)
         <br /><br />
         <li>2016-07-08 -  Added action to start bomgar session directly from user info
-        <br /><br />
-        <li>2016-07-08 -  Bugfix - computerinfo now show config AAU10 correctly
-        <br /><br />
-        <li>2016-04-15 -  Some small speed and bug fixes
-        <br /><br />
-        <li>2016-04-05 - Improved search time for phone number search
         <br /><br />
 
         

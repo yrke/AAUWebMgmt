@@ -9,6 +9,7 @@ using System.Management;
 using Microsoft.Exchange.WebServices.Data;
 using ITSWebMgmt.Functions;
 using ITSWebMgmt.Connectors;
+using System.Web.UI.WebControls;
 
 namespace ITSWebMgmt
 {
@@ -124,7 +125,7 @@ namespace ITSWebMgmt
 
         }
 
-        protected void buildgroupssegmentLabel(String[] groupsList)
+        protected void buildgroupssegmentLabel(String[] groupsList, Label output)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -165,8 +166,8 @@ namespace ITSWebMgmt
             }
 
             sb.Append(helper.printEnd());
-            groupssegmentLabel.Text = sb.ToString();
-
+            output.Text = sb.ToString();
+           
         }
 
         protected void buildExchangeLabel(String[] groupsList, bool isTransitiv)
@@ -603,12 +604,17 @@ namespace ITSWebMgmt
 
             var b = groupsList.Cast<string>();
             var groupListConvert = b.ToArray<string>();
-            buildgroupssegmentLabel(groupListConvert);
 
             var groupsListAll = result.Properties["msds-memberOfTransitive"];
+            var groupsListAllConverted = groupsListAll.Cast<string>().ToArray<string>();
+
+            buildgroupssegmentLabel(groupListConvert, groupssegmentLabel);
+            buildgroupssegmentLabel(groupsListAllConverted, groupsAllsegmentLabel);
 
             
-            var groupsListAllConverted = groupsListAll.Cast<string>().ToArray<string>();
+
+            
+            
            
 
             if (groupsListAllConverted.Length > 0)
