@@ -768,7 +768,7 @@ namespace ITSWebMgmt
             }
             else
             {
-                basicInfoPasswordExpireDate.Text = expireDate.ToString();
+                basicInfoPasswordExpireDate.Text = String.Format("{0:yyyy-MM-dd HH':'mm}", expireDate);
             }
 
 
