@@ -11,6 +11,7 @@ using ITSWebMgmt.Functions;
 using ITSWebMgmt.Connectors;
 using System.Web.UI.WebControls;
 using ITSWebMgmt.Connectors.Active_Directory;
+using ITSWebMgmt;
 
 namespace ITSWebMgmt
 {
@@ -223,23 +224,20 @@ namespace ITSWebMgmt
 
             lblexchange.Text = sb.ToString();
         }
-        protected void buildFilesharessegmentLabel(String[] groupsList, bool isTransitiv)
+
+        class Fileshare
         {
-            StringBuilder sb = new StringBuilder();
+            public string Fileshareraw { get; }
+            public string Domain { get; }
+            public string Type { get; }
+            public string Name { get; }
+            public string Access { get; }
 
-            if (!isTransitiv)
+            public Fileshare(string value)
             {
-                sb.Append("<h3>NB: Listen viser kun direkte medlemsskaber, kunne ikke finde fuld liste på denne Domain Controller eller domæne</h3>");
-            }
+                this.Fileshareraw = value;
 
-            var helper = new HTMLTableHelper(4);
-            sb.Append(helper.printStart());
-            sb.Append(helper.printRow(new string[] { "Type", "Domain", "Name", "Access" }, true));
-
-            foreach (string group in groupsList)
-            {
-
-                var split = group.Split(',');
+                var split = value.Split(',');
                 var oupath = split.Where<string>(s => s.StartsWith("OU=")).ToArray<string>();
                 int count = oupath.Count();
 
@@ -268,26 +266,64 @@ namespace ITSWebMgmt
                         {
                             nameString = groupNameSplit[i];
                         }
-                        else { 
+                        else
+                        {
                             nameString = nameString + "_" + groupNameSplit[i];
                         }
                     }
-                    
-                    var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + group), nameString);
-                    var access = groupNameSplit[groupNameSplit.Length-1];
 
-                    sb.Append(helper.printRow(new string[] { type, domain, name, access }));
 
+                    var access = groupNameSplit[groupNameSplit.Length - 1];
+
+                    this.Name = nameString;
+                    this.Domain = domain;
+                    this.Type = type;
+                    this.Access = access;
 
                 }
-            }
-            sb.Append(helper.printEnd());
+                else
+                {
+                    throw new FormatException("invalid location for filesharegroup");
+                }
 
+            }
+
+        };
+
+        protected void buildFilesharessegmentLabel(String[] groupsList, bool isTransitiv)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (!isTransitiv)
+            {
+                sb.Append("<h3>NB: Listen viser kun direkte medlemsskaber, kunne ikke finde fuld liste på denne Domain Controller eller domæne</h3>");
+            }
+
+            var helper = new HTMLTableHelper(4);
+            sb.Append(helper.printStart());
+            sb.Append(helper.printRow(new string[] { "Type", "Domain", "Name", "Access" }, true));
+
+            //Filter fileshare groups and convert to Fileshare Objects
+            var fileshareList = groupsList.Where<string>((string value)=> {
+                var split = value.Split(',');
+                var oupath = split.Where<string>(s => s.StartsWith("OU=")).ToArray<string>();
+                int count = oupath.Count();
+
+                return ((count == 3 && oupath[count - 1].Equals("OU=Groups") && oupath[count - 2].Equals("OU=Resource Access")));
+            }).Select(x => new Fileshare(x));
+
+            foreach (Fileshare f in fileshareList)
+            {
+                var nameWithLink = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + f.Fileshareraw), f.Name);
+                sb.Append(helper.printRow(new string[] { f.Type, f.Domain, nameWithLink, f.Access }));
+            }
+        
+            sb.Append(helper.printEnd());
             filesharessegmentLabel.Text = sb.ToString();
 
         }
 
-        protected bool userIsInRightOU(DirectoryEntry de)
+    protected bool userIsInRightOU(DirectoryEntry de)
         {
 
             String dn = (string)de.Properties["distinguishedName"][0];
