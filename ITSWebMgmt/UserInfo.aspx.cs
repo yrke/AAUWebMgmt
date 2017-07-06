@@ -37,14 +37,14 @@ namespace ITSWebMgmt
 
                 String username = Request.QueryString["username"];
                 if (username != null)
-                {                
+                {
                     buildUserLookupFromUsername(username);
                     return;
                 }
 
                 String phoneNr = Request.QueryString["phone"];
                 if (phoneNr != null)
-                {               
+                {
                     buildUserLookupFromPhone(phoneNr);
                     return;
                 }
@@ -55,7 +55,7 @@ namespace ITSWebMgmt
         protected void lookupUser(string username)
         {
 
-            
+
             int val;
             if (username.Length == 4 && int.TryParse(username, out val))
             {
@@ -66,7 +66,7 @@ namespace ITSWebMgmt
                 UserNameLabel.Text = username;
                 buildUserLookupFromUsername(username);
             }
-            
+
         }
 
         //Searhces on a phone numer (internal or external), and returns a upn (later ADsPath) to a use or null if not found
@@ -110,7 +110,7 @@ namespace ITSWebMgmt
             if (r != null)
             {
                 //return r.Properties["ADsPath"][0].ToString(); //XXX handle if result is 0 (null exception)
-                return r.Properties["ADsPath"][0].ToString().Replace("GC:","LDAP:").Replace("aau.dk/","");
+                return r.Properties["ADsPath"][0].ToString().Replace("GC:", "LDAP:").Replace("aau.dk/", "");
             }
             else
             {
@@ -125,7 +125,7 @@ namespace ITSWebMgmt
 
             var helper = new HTMLTableHelper(2);
             sb.Append(helper.printStart());
-            sb.Append(helper.printRow(new string[]{"Domain", "Name"}, true));
+            sb.Append(helper.printRow(new string[] { "Domain", "Name" }, true));
 
             var groupsAsList = groupsList.ToList<string>();
 
@@ -176,6 +176,57 @@ namespace ITSWebMgmt
 
         }
 
+        class ExchangeMailboxGroup
+        {
+            public string RawValue {get;}
+
+            public string Type { get; }
+            public string Domain { get; }
+            public string Name { get; }
+            public string Access { get; }
+
+            public ExchangeMailboxGroup(string group)
+            {
+                RawValue = group;
+                if (group.StartsWith("CN=MBX_"))
+                {
+                    var adpathsplit = group.Split(',');
+                    var nameSplit = adpathsplit[0].Split('_');
+
+                    if (nameSplit.Length == 5)
+                    {
+                        //A normal exchange resource group
+                        Type = nameSplit[2];
+                        Domain = nameSplit[1];
+                        Name = nameSplit[3];
+                        Access = nameSplit[4];
+                    } //XXX: if Length == 4 this a all resources group
+                    else if (nameSplit.Length == 4)
+                    {
+                        Type = nameSplit[2];
+                        Domain = nameSplit[1];
+                        Name = nameSplit[2];
+                        Access = nameSplit[3];   
+                    } else if (nameSplit.Length > 5)
+                    {
+                        var len = nameSplit.Length;
+                        Type = nameSplit[2];
+                        Domain = nameSplit[1];
+                        Name = String.Join("_", nameSplit.Skip(3).Reverse().Skip(1).Reverse());
+                        Access = nameSplit[len-1];
+                    } else
+                    {
+                        throw new NotImplementedException("not implemented support for MBX group with less than 4 sections: " + group);
+                    }
+                }else
+                {
+                    throw new FormatException("Mbx group must start with \"MBX_\"");
+                }
+
+
+            }
+
+        }
         protected void buildExchangeLabel(String[] groupsList, bool isTransitiv)
         {
             var sb = new StringBuilder();
@@ -190,34 +241,19 @@ namespace ITSWebMgmt
             sb.Append(helper.printStart());
             sb.Append(helper.printRow(new string[] { "Type", "Domain", "Name", "Access" }, true));
 
-            foreach (string group in groupsList)
+            //Select Exchange groups and convert to list of ExchangeMailboxGroup
+            var exchangeMailboxGroupList = groupsList.Where<string>(group => (group.StartsWith("CN=MBX_"))).Select(x => new ExchangeMailboxGroup(x));       
+
+            foreach (ExchangeMailboxGroup e in exchangeMailboxGroupList)
             {
-                if (group.StartsWith("CN=MBX_"))
+
                 {
-                    var adpathsplit = group.Split(',');
-                    var nameSplit = adpathsplit[0].Split('_');
+                    var type = e.Type;
+                    var domain = e.Domain;
+                    var nameFormated = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + e.RawValue), e.Name);
+                    var access = e.Access;
+                    sb.Append(helper.printRow(new string[] { type, domain, nameFormated, access }));
 
-                    if (nameSplit.Length == 5)
-                    {
-                        //A normal exchange resource group
-
-                        var type = nameSplit[2];
-                        var domain = nameSplit[1];
-                        var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + group), nameSplit[3]);
-                        var access = nameSplit[4];
-                        sb.Append(helper.printRow(new string[] { type, domain, name, access }));
-
-
-                    } //XXX: if Length == 4 this a all resources group
-                    else if (nameSplit.Length == 4)
-                    {
-
-                        var type = nameSplit[2];
-                        var domain = nameSplit[1];
-                        var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + group), nameSplit[2]);
-                        var access = nameSplit[3];
-                        sb.Append(helper.printRow(new string[] { domain, type, name, access }));
-                    }
                 }
             }
             sb.Append(helper.printEnd());
