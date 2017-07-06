@@ -603,16 +603,12 @@ namespace ITSWebMgmt
             buildgroupssegmentLabel(groupListConvert, groupssegmentLabel);
             buildgroupssegmentLabel(groupsListAllConverted, groupsAllsegmentLabel);
 
-            if (groupsListAllConverted.Length > 0)
-            {
-                buildExchangeLabel(groupsListAllConverted, true);
-                buildFilesharessegmentLabel(groupsListAllConverted, true);
-            }
-            else
-            {   //If we dont have transitive data
-                buildExchangeLabel(groupListConvert, false);
-                buildFilesharessegmentLabel(groupListConvert, false);
-            }
+            //Group all has data? 
+            bool hasTransitiveDate = (groupsListAllConverted.Length > 0);
+
+            buildExchangeLabel(groupsListAllConverted, hasTransitiveDate);
+            buildFilesharessegmentLabel(groupsListAllConverted, hasTransitiveDate);
+
         }
 
         private async System.Threading.Tasks.Task buildBasicInfoSegment(DirectoryEntry result)
