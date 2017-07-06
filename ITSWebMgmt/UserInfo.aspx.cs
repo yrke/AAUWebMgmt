@@ -138,9 +138,7 @@ namespace ITSWebMgmt
 
             bool StartsWith(string[] prefix, string value) => prefix.Any(value.StartsWith);
             string[] prefixMBX_ACL = { "CN=MBX_", "CN=ACL_" };
-            Func<string, bool> startsWithMBXorACL = value => StartsWith(prefixMBX_ACL, value);
-
-            
+            bool startsWithMBXorACL(string value) => StartsWith(prefixMBX_ACL, value);
 
             //Sort MBX and ACL Last
             groupsAsList.Sort((a, b) =>
