@@ -359,7 +359,7 @@ namespace ITSWebMgmt
 
         }
 
-    protected bool userIsInRightOU(DirectoryEntry de)
+        protected bool userIsInRightOU(DirectoryEntry de)
         {
 
             String dn = (string)de.Properties["distinguishedName"][0];
@@ -453,7 +453,6 @@ namespace ITSWebMgmt
             return true;
         }
 
-
         protected void toggle_userprofile(String adpath)
         {
 
@@ -478,9 +477,6 @@ namespace ITSWebMgmt
                 de.CommitChanges();
             }
         }
-
-
- 
 
         protected void button_toggle_userprofile(object sender, EventArgs e)
         {
