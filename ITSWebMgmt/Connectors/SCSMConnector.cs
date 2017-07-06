@@ -100,6 +100,8 @@ namespace ITSWebMgmt.Connectors
             sb.Append(helper.printRow(new string[] { "ID", "Title", "Status", "Last Change" }, true));
 
 
+            string idForConvertedToSR = "d283d1f2-5660-d28e-f0a3-225f621394a9";
+
             for (int i = 0; i < json["MyRequest"].Length; i++)
             {
                 if ("Closed".Equals(json["MyRequest"][i]["Status"]["Name"]))
@@ -109,6 +111,12 @@ namespace ITSWebMgmt.Connectors
                     if (id.StartsWith("IR"))
                     {
                         link = "https://service.aau.dk/Incident/Edit/" + id;
+
+                        //Filter away if its closed as converted to SR
+                        if ((idForConvertedToSR.Equals(json["MyRequest"][i]["ResolutionCategory"]["Id"])))
+                        {
+                            continue;
+                        }
                     }
                     else //if (id.StartsWith("SR"))
                     {
