@@ -721,7 +721,7 @@ namespace ITSWebMgmt
                 {
                     if (dateFields.Contains(k))
                     {
-                        sb.Append(String.Format("<td>{0}</td>", ADHelpers.convertADTimeToDateTime(result.Properties[k].Value)));
+                        sb.Append(String.Format("<td>{0:yyyy-MM-dd HH':'mm}</td>", ADHelpers.convertADTimeToDateTime(result.Properties[k].Value)));
                     }
                     else
                     {
