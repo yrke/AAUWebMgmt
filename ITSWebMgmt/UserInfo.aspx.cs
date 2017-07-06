@@ -128,13 +128,20 @@ namespace ITSWebMgmt
 
             var groupsAsList = groupsList.ToList<string>();
 
-            Func<string[], string, bool> startsWith = delegate (string[] prefix, string value)
+            /*Func<string[], string, bool> startsWith = delegate (string[] prefix, string value)
             {
                 return prefix.Any<string>(x => value.StartsWith(x));
             };
             string[] prefixMBX_ACL = { "CN=MBX_", "CN=ACL_" };
-            Func<string, bool> startsWithMBXorACL = (string value) => startsWith(prefixMBX_ACL, value);
+            Func<string, bool> startsWithMBXorACL = (string value) => startsWith(prefixMBX_ACL, value);*/
+
+
+            bool StartsWith(string[] prefix, string value) => prefix.Any(value.StartsWith);
+            string[] prefixMBX_ACL = { "CN=MBX_", "CN=ACL_" };
+            Func<string, bool> startsWithMBXorACL = value => StartsWith(prefixMBX_ACL, value);
+
             
+
             //Sort MBX and ACL Last
             groupsAsList.Sort((a, b) =>
             {
