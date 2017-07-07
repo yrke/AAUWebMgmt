@@ -21,7 +21,6 @@ namespace ITSWebMgmt
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
             if (!IsPostBack)
             {
 
@@ -48,14 +47,11 @@ namespace ITSWebMgmt
                     buildUserLookupFromPhone(phoneNr);
                     return;
                 }
-
             }
         }
 
         protected void lookupUser(string username)
         {
-
-
             int val;
             if (username.Length == 4 && int.TryParse(username, out val))
             {
@@ -66,7 +62,6 @@ namespace ITSWebMgmt
                 UserNameLabel.Text = username;
                 buildUserLookupFromUsername(username);
             }
-
         }
 
         //Searhces on a phone numer (internal or external), and returns a upn (later ADsPath) to a use or null if not found
@@ -116,7 +111,6 @@ namespace ITSWebMgmt
             {
                 return null;
             }
-
         }
 
         protected void buildgroupssegmentLabel(String[] groupsList, Label output)
@@ -173,7 +167,6 @@ namespace ITSWebMgmt
 
             sb.Append(helper.printEnd());
             output.Text = sb.ToString();
-
         }
 
         class ExchangeMailboxGroup
@@ -222,11 +215,10 @@ namespace ITSWebMgmt
                 {
                     throw new FormatException("Mbx group must start with \"MBX_\"");
                 }
-
-
             }
 
         }
+
         protected void buildExchangeLabel(String[] groupsList, bool isTransitiv)
         {
             var sb = new StringBuilder();
@@ -321,9 +313,7 @@ namespace ITSWebMgmt
                 {
                     throw new FormatException("invalid location for filesharegroup");
                 }
-
             }
-
         };
 
         protected void buildFilesharessegmentLabel(String[] groupsList, bool isTransitiv)
@@ -356,7 +346,6 @@ namespace ITSWebMgmt
         
             sb.Append(helper.printEnd());
             filesharessegmentLabel.Text = sb.ToString();
-
         }
 
         protected bool userIsInRightOU(DirectoryEntry de)
@@ -389,7 +378,6 @@ namespace ITSWebMgmt
                 return false;
             }
             return true;
-
         }
 
         protected bool fixUserOu(String adpath)
@@ -482,14 +470,11 @@ namespace ITSWebMgmt
         {
             String adpath = (String)Session["adpath"];
 
-
             //XXX log what the new value of profile is :)
             logger.Info("User {0} toggled romaing profile for user  {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
-
-
+            
             toggle_userprofile(adpath);
-
-
+            
             //Set value
             //DirectoryEntry de = result.GetDirectoryEntry();
             //de.Properties["TelephoneNumber"].Clear();
@@ -582,7 +567,6 @@ namespace ITSWebMgmt
                 //We got ADPATH lets build the GUI
                 return adpath;
             }
-
         }
 
 
@@ -595,8 +579,6 @@ namespace ITSWebMgmt
             ResultErrorLabel.Text = builder.ToString();
             ResultDiv.Visible = false;
             errordiv.Visible = true;
-
-
         }
 
         protected async void buildUserLookup(string adpath)
@@ -638,7 +620,6 @@ namespace ITSWebMgmt
                 watch.Stop();
                 System.Diagnostics.Debug.WriteLine("buildUserLookup took: "+  watch.ElapsedMilliseconds);
             }
-
         }
 
 
@@ -652,7 +633,6 @@ namespace ITSWebMgmt
             Session["scsmuserUPN"] = (string)result.Properties["userPrincipalName"][0];
             watch.Stop();
             System.Diagnostics.Debug.WriteLine("BuildSCSMSegment took: " + watch.ElapsedMilliseconds);
-
         }
 
         private void buildGroupsSegments(DirectoryEntry result)
@@ -771,8 +751,6 @@ namespace ITSWebMgmt
                 basicInfoPasswordExpireDate.Text = String.Format("{0:yyyy-MM-dd HH':'mm}", expireDate);
             }
 
-
-
             labelBasicInfoTable.Text = sb.ToString();
 
             var admdb = new ADMdbConnector();
@@ -784,7 +762,6 @@ namespace ITSWebMgmt
 
             var tmp = upn.Split('@');
             var domain = tmp[1].Split('.')[0];
-
 
             //Make lookup in ADMdb
             var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -800,9 +777,6 @@ namespace ITSWebMgmt
             }
 
             //Password Expire date "PasswordExpirationDate"
-
-
-
         }
         private void buildCalAgenda(DirectoryEntry result)
         {
@@ -813,8 +787,6 @@ namespace ITSWebMgmt
             service.Url = new System.Uri("https://mail.aau.dk/EWS/exchange.asmx");
 
             List<AttendeeInfo> attendees = new List<AttendeeInfo>();
-
-
 
             attendees.Add(new AttendeeInfo()
             {
@@ -866,7 +838,6 @@ namespace ITSWebMgmt
                 }
             }
 
-
             lblcalAgenda.Text = sb.ToString();
         }
 
@@ -899,7 +870,6 @@ namespace ITSWebMgmt
             }
             sb.Append(helper.printEnd());
             divComputerInformation.Text = sb.ToString();
-
         }
         private void buildWarningSegment(DirectoryEntry result)
         {
@@ -916,7 +886,6 @@ namespace ITSWebMgmt
             {
                 errorUserDisabled.Style.Clear();
             }
-
 
             //Accont is locked
 
@@ -938,7 +907,6 @@ namespace ITSWebMgmt
             }
 
             //Missing Attributes 
-
             if (!(result.Properties.Contains("aauUserClassification") && result.Properties.Contains("aauUserStatus") && (result.Properties.Contains("aauStaffID") || result.Properties.Contains("aauStudentID"))))
             {
                 errorMissingAAUAttr.Style.Clear();
@@ -953,9 +921,7 @@ namespace ITSWebMgmt
             {
                 divFixuserOU.Visible = false;
             }
-
             //Password is expired and warning before expire (same timeline as windows displays warning)
-
         }
 
         protected void unlockUserAccountButton_Click(object sender, EventArgs e)
@@ -986,15 +952,11 @@ namespace ITSWebMgmt
 
         protected void buildPrint(DirectoryEntry user)
         {
-
             //lblPrint.Text = "Hello World";
 
             PrintConnector printConnector = new PrintConnector(user.Guid.ToString());
 
             lblPrint.Text = printConnector.doStuff();
-
-            
-
         }
 
         protected void buildLoginscript(DirectoryEntry user)
@@ -1010,9 +972,6 @@ namespace ITSWebMgmt
                 menuLoginScript.Visible = true;
                 labelLoginscript.Text = loginscripthelper.parseAndDisplayLoginScript(script);
             }
-            
-
-
         }
     }
 }
