@@ -245,7 +245,6 @@ namespace ITSWebMgmt
                     var nameFormated = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + e.RawValue), e.Name);
                     var access = e.Access;
                     sb.Append(helper.printRow(new string[] { type, domain, nameFormated, access }));
-
                 }
             }
             sb.Append(helper.printEnd());
@@ -299,7 +298,6 @@ namespace ITSWebMgmt
                             nameString = nameString + "_" + groupNameSplit[i];
                         }
                     }
-
 
                     var access = groupNameSplit[groupNameSplit.Length - 1];
 
@@ -382,9 +380,7 @@ namespace ITSWebMgmt
 
         protected bool fixUserOu(String adpath)
         {
-
             DirectoryEntry de = new DirectoryEntry(adpath);
-
 
             if (userIsInRightOU(de)) { return false; }
 
@@ -443,11 +439,9 @@ namespace ITSWebMgmt
 
         protected void toggle_userprofile(String adpath)
         {
-
             DirectoryEntry de = new DirectoryEntry(adpath);
 
             //String profilepath = (string)(de.Properties["profilePath"])[0];
-
 
             if (de.Properties.Contains("profilepath"))
             {
@@ -582,11 +576,9 @@ namespace ITSWebMgmt
         }
 
         protected async void buildUserLookup(string adpath)
-        {
-            
+        {          
             if (adpath != null)
             {
-
                 var watch = System.Diagnostics.Stopwatch.StartNew();
 
                 //Get the AD object 

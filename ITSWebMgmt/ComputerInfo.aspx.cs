@@ -270,7 +270,21 @@ namespace ITSWebMgmt
             }
 
 
-            
+            //Managed By
+            labelManagedBy.Text = "none";
+
+            if (de.Properties.Contains("managedBy"))
+            {
+                string managerVal = de.Properties["managedBy"].Value.ToString();
+
+                if (!string.IsNullOrWhiteSpace(managerVal))
+                {
+                    string email = ADHelpers.DistinguishedNameToUPN(managerVal);
+                    labelManagedBy.Text = email;
+                }
+            }
+
+
 
             //builder.Append((string)Session["adpath"]);
 
@@ -527,11 +541,6 @@ namespace ITSWebMgmt
                         configExtra = "True";
                     }
 
-                    if (collectionID.Equals("AA100069") || collectionID.Equals("AA100066") || collectionID.Equals("AA100065") || collectionID.Equals("AA100064") || collectionID.Equals("AA100063") || collectionID.Equals("AA100083"))
-                    {
-                        getsTestUpdates = "True";
-                    }
-
                     var pathString = "\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1" + ":SMS_Collection.CollectionID=\"" + collectionID + "\"";
                     ManagementPath path = new ManagementPath(pathString);
 
@@ -548,7 +557,7 @@ namespace ITSWebMgmt
 
             labelBasicInfoPCConfig.Text = configPC;
             labelBasicInfoExtraConfig.Text = configExtra;
-            labelBasicInfoTestUpdates.Text = getsTestUpdates;
+            
 
             //Basal Info
             var wqlqSystem = new WqlObjectQuery("SELECT * FROM SMS_R_System WHERE ResourceId=" + resourceID);

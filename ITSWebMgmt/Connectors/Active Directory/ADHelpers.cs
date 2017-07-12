@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.DirectoryServices;
-
+using System.Linq;
 
 namespace ITSWebMgmt.Connectors.Active_Directory
 {
@@ -84,6 +84,19 @@ namespace ITSWebMgmt.Connectors.Active_Directory
             }
 
             return DateTime.FromFileTime(result);
+        }
+
+        public static string DistinguishedNameToUPN(string dn)
+        {
+            //format CN=kyrke,OU=test,OU=Staff,OU=People,DC=its,DC=aau,DC=dk 
+            //to kyrke@its.aau.dk
+
+            string[] dnSplit = dn.Split(',');
+            string cn = dnSplit[0].ToLower().Replace("cn=", "");
+            string domain = String.Join(".", dnSplit.Where(x => x.ToLower().StartsWith("dc=")).Select(x => x.ToLower().Replace("dc=", "")));
+
+            return $"{cn}@{domain}";
+
         }
 
     }

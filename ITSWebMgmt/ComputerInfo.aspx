@@ -93,9 +93,9 @@
                                             <asp:Label runat="server" ID="labelBasicInfoExtraConfig" /></td>
                                     </tr>
                                     <tr>
-                                        <td>Modtager test updates:</td>
+                                        <td>Managed By:</td>
                                         <td>
-                                            <asp:Label runat="server" ID="labelBasicInfoTestUpdates" /></td>
+                                            <asp:Label runat="server" ID="labelManagedBy" /></td>
                                     </tr>
                                 </tbody>
                             </table>

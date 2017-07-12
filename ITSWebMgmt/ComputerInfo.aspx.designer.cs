@@ -85,13 +85,13 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label labelBasicInfoExtraConfig;
         
         /// <summary>
-        /// labelBasicInfoTestUpdates control.
+        /// labelManagedBy control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label labelBasicInfoTestUpdates;
+        protected global::System.Web.UI.WebControls.Label labelManagedBy;
         
         /// <summary>
         /// ResultGetPassword2 control.
