@@ -87,7 +87,7 @@ namespace ITSWebMgmt.Connectors
                     string sTitle = json["MyRequest"][i]["Title"];
                     string sStatus = json["MyRequest"][i]["Status"]["Name"];
                     string tmp = json["MyRequest"][i]["LastModified"];
-                    string sLastChange = Convert.ToDateTime(tmp).ToString();
+                    string sLastChange = Convert.ToDateTime(tmp).ToString("yyyy-MM-dd HH:mm");
 
                     sb.Append(helper.printRow(new String[] { sID, sTitle, sStatus, sLastChange }));
                     //sb.Append("<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["Id"] + " - " + json["MyRequest"][i]["Title"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
@@ -126,7 +126,7 @@ namespace ITSWebMgmt.Connectors
                     string sTitle = json["MyRequest"][i]["Title"];
                     string sStatus = json["MyRequest"][i]["Status"]["Name"];
                     string tmp = json["MyRequest"][i]["LastModified"];
-                    string sLastChange = Convert.ToDateTime(tmp).ToString();
+                    string sLastChange = Convert.ToDateTime(tmp).ToString("yyyy-MM-dd HH:mm");
 
                     sb.Append(helper.printRow(new String[] { sID, sTitle, sStatus, sLastChange }));
                 }
