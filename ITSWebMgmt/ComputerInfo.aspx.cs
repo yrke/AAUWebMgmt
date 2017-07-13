@@ -13,6 +13,14 @@ namespace ITSWebMgmt
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
+
+        protected string ComputerName = "ITS\\AAU804396";
+
+        public void Page_Init(object o, EventArgs e)
+        {
+            
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             ResultGetPassword.Visible = false;
@@ -28,12 +36,13 @@ namespace ITSWebMgmt
                 
                 if (computername != null)
                 {
+                    ComputerName = HttpUtility.HtmlEncode(computername);
                     buildlookupComputer(computername.Trim());
                 }
             }
             else
             {
-
+                
             }
 
         }

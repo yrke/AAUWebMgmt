@@ -19,6 +19,8 @@ namespace ITSWebMgmt
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
+        protected string UserName = "kyrke@its.aau.dk";
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -30,6 +32,7 @@ namespace ITSWebMgmt
                 String search = Request.QueryString["search"];
                 if (search != null)
                 {
+                    UserName = HttpUtility.HtmlEncode(search);
                     lookupUser(search.Trim());
                     return;
                 }
@@ -37,6 +40,7 @@ namespace ITSWebMgmt
                 String username = Request.QueryString["username"];
                 if (username != null)
                 {
+                    UserName = HttpUtility.HtmlEncode(username);
                     buildUserLookupFromUsername(username);
                     return;
                 }
@@ -44,6 +48,7 @@ namespace ITSWebMgmt
                 String phoneNr = Request.QueryString["phone"];
                 if (phoneNr != null)
                 {
+                    UserName = HttpUtility.HtmlEncode(phoneNr);
                     buildUserLookupFromPhone(phoneNr);
                     return;
                 }
