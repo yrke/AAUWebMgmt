@@ -14,6 +14,8 @@ namespace ITSWebMgmt.Connectors
 
         public string userID = "";
 
+        static readonly string idForConvertedToSR = "d283d1f2-5660-d28e-f0a3-225f621394a9";
+
         protected async Task<string> getAuthKey()
         {
 
@@ -63,48 +65,38 @@ namespace ITSWebMgmt.Connectors
             sb.Append("<br /><br />" + string.Format("<a href=\"{0}{1}\">Servie Portal User Info</a>", "https://service.aau.dk/user/UserRelatedInfoById/", userID) + "<br/>");
 
 
+            //Open Cases
             sb.Append("<h1>Open Requests</h1><br />");
+            bool isOpenFilter(string status) => !("Closed".Equals(status));
+            sb.Append(PrintTableOfCases((object)json, isOpenFilter));
 
+            //Closed Cases
+            sb.Append("<br /><br /><h3>Closed Requests</h3>");
+            bool isClosedFilter(string status) => "Closed".Equals(status);
+            sb.Append(PrintTableOfCases((object)json, isClosedFilter));
+
+
+            //sb.Append("<br /><br/>IsAssignedToUser<br />");
+            //foreach (dynamic s in json["IsAssignedToUser"])
+            //for (int i = 0; i < json["IsAssignedToUser"].Length; i++)
+            //{
+            //    sb.Append(json["IsAssignedToUser"][i]["Id"] + " -" + json["IsAssignedToUser"][i]["DisplayName"] + " - " + json["IsAssignedToUser"][i]["Status"]["Name"] + "<br/>");
+            //}
+
+            return sb.ToString();
+        }
+
+        private static StringBuilder PrintTableOfCases(object jsonO, Func<string, bool> filter)
+        {
+            dynamic json = jsonO;
+            var sb = new StringBuilder();
             var helper = new HTMLTableHelper(4);
             sb.Append(helper.printStart());
             sb.Append(helper.printRow(new string[] { "ID", "Title", "Status", "Last Change" }, true));
 
             for (int i = 0; i < json["MyRequest"].Length; i++)
             {
-                if (!"Closed".Equals(json["MyRequest"][i]["Status"]["Name"]))
-                {
-                    string id = json["MyRequest"][i]["Id"];
-                    string link;
-                    if (id.StartsWith("IR"))
-                    {
-                        link = "https://service.aau.dk/Incident/Edit/" + id;
-                    }
-                    else //if (id.StartsWith("SR"))
-                    {
-                        link = "https://service.aau.dk/ServiceRequest/Edit/" + id;
-                    }
-                    string sID = "<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["Id"] + "</a><br/>";
-                    string sTitle = json["MyRequest"][i]["Title"];
-                    string sStatus = json["MyRequest"][i]["Status"]["Name"];
-                    string tmp = json["MyRequest"][i]["LastModified"];
-                    string sLastChange = Convert.ToDateTime(tmp).ToString("yyyy-MM-dd HH:mm");
-
-                    sb.Append(helper.printRow(new String[] { sID, sTitle, sStatus, sLastChange }));
-                    //sb.Append("<a href=\"" + link + "\" target=\"_blank\">" + json["MyRequest"][i]["Id"] + " - " + json["MyRequest"][i]["Title"] + " - " + json["MyRequest"][i]["Status"]["Name"] + "</a><br/>");
-                }
-            }
-            sb.Append(helper.printEnd());
-
-            sb.Append("<br /><br /><h3>Closed Requests</h3>");
-            sb.Append(helper.printStart());
-            sb.Append(helper.printRow(new string[] { "ID", "Title", "Status", "Last Change" }, true));
-
-
-            string idForConvertedToSR = "d283d1f2-5660-d28e-f0a3-225f621394a9";
-
-            for (int i = 0; i < json["MyRequest"].Length; i++)
-            {
-                if ("Closed".Equals(json["MyRequest"][i]["Status"]["Name"]))
+                if (filter(json["MyRequest"][i]["Status"]["Name"]))
                 {
                     string id = json["MyRequest"][i]["Id"];
                     string link;
@@ -133,16 +125,7 @@ namespace ITSWebMgmt.Connectors
             }
 
             sb.Append(helper.printEnd());
-
-
-            //sb.Append("<br /><br/>IsAssignedToUser<br />");
-            //foreach (dynamic s in json["IsAssignedToUser"])
-            //for (int i = 0; i < json["IsAssignedToUser"].Length; i++)
-            //{
-            //    sb.Append(json["IsAssignedToUser"][i]["Id"] + " -" + json["IsAssignedToUser"][i]["DisplayName"] + " - " + json["IsAssignedToUser"][i]["Status"]["Name"] + "<br/>");
-            //}
-
-            return sb.ToString();
+            return sb;
         }
 
 
@@ -229,7 +212,8 @@ namespace ITSWebMgmt.Connectors
 
         }
 
-        protected async Task<string> getIncidentTest(string IRid, string authkey)
+
+        /*protected async Task<string> getIncidentTest(string IRid, string authkey)
         {
 
             WebRequest request = WebRequest.Create(webserviceURL + "/api/V3/Projection/GetProjection?id=" + IRid + " +&typeProjectionId=2d460edd-d5db-bc8c-5be7-45b050cba652");
@@ -253,30 +237,23 @@ namespace ITSWebMgmt.Connectors
 
             return responseText;
 
-        }
-
-
+        }*/
+        /*
         protected void Page_Load(object sender, EventArgs e)
         {
-
-
-
-
         }
-
-        protected async void button_Click(object sender, EventArgs e)
+        */
+        /*protected async void LoadTestData(object sender, EventArgs e)
         {
             string authkey = await getAuthKey();
             //string uuid = getUserUUIDByUPN("kyrke@its.aau.dk", authkey);
             //string s = doAction(uuid);
             //string s = await lookupUserByUUID("008f492b-df58-6e9c-47c5-bd4ae81028af", authkey);
-
             string s = await getIncidentTest("IR408927", authkey);
-
 
             //responseLbl.Text = s;
 
-        }
+        }*/
 
         public async Task<string> getActiveIncidents(string upn, string displayName)
         {
