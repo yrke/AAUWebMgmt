@@ -593,14 +593,14 @@ namespace ITSWebMgmt
                 Session["adpath"] = adpath;
 
                 //Async
-                await buildBasicInfoSegment(userDE);
-                await BuildSCSMSegment(userDE);
+                var task1 = buildBasicInfoSegment(userDE);
+                var task2 = BuildSCSMSegment(userDE);
 
                 //Build GUI
                 var rawbuilder = new RawADGridGenerator();
                 var rawsegment = rawbuilder.buildRawSegment(userDE);
                 labelRawdata.Text = rawsegment;
-                
+
                 buildComputerInformation(userDE);
                 buildWarningSegment(userDE);
                 buildGroupsSegments(userDE);
@@ -608,12 +608,14 @@ namespace ITSWebMgmt
                 buildLoginscript(userDE);
                 buildPrint(userDE); // XXX make async? 
 
+                await System.Threading.Tasks.Task.WhenAll(task1, task2);
+
                 //Save user in session
                 ResultDiv.Visible = true;
                 errordiv.Visible = false;
 
                 watch.Stop();
-                System.Diagnostics.Debug.WriteLine("buildUserLookup took: "+  watch.ElapsedMilliseconds);
+                System.Diagnostics.Debug.WriteLine("buildUserLookup took: " + watch.ElapsedMilliseconds);
             }
         }
 
