@@ -2,6 +2,7 @@
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -61,13 +62,17 @@ namespace ITSWebMgmt.Connectors
         {
             var url = admdburl[domain.ToLower()]; //Throws exception on wrong domain
 
+            //Get password for ADMdb
+            string wsusername = ConfigurationManager.AppSettings["cred:admdb:username"];
+            string wspassword = ConfigurationManager.AppSettings["cred:amdb:password"];
+
+            if (wsusername == null || wspassword == null)
+            {
+                return "missing username or password to admdb";
+            }
+
             WebRequest request = WebRequest.Create(url);
 
-            string secret = File.ReadAllText(@"C:\webmgmtlog\webmgmtsecret-admdb.txt");
-
-
-            String wsusername = "svc_webmgmt-admdb@srv.aau.dk";
-            String wspassword = secret;
             String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(wsusername + ":" + wspassword));
             request.Headers.Add("Authorization", "Basic " + encoded);
             request.Method = "POST";

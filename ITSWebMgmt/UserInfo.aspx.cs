@@ -593,8 +593,8 @@ namespace ITSWebMgmt
                 Session["adpath"] = adpath;
 
                 //Async
-                var task1 = buildBasicInfoSegment(userDE);
-                var task2 = BuildSCSMSegment(userDE);
+                await buildBasicInfoSegment(userDE);
+                await BuildSCSMSegment(userDE);
 
                 //Build GUI
                 var rawbuilder = new RawADGridGenerator();
@@ -607,8 +607,6 @@ namespace ITSWebMgmt
                 buildCalAgenda(userDE);
                 buildLoginscript(userDE);
                 buildPrint(userDE); // XXX make async? 
-
-                await System.Threading.Tasks.Task.WhenAll(task1, task2);
 
                 //Save user in session
                 ResultDiv.Visible = true;

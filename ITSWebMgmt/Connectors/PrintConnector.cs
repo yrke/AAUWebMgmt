@@ -1,6 +1,7 @@
 ﻿using SimpleImpersonation;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -25,9 +26,14 @@ namespace ITSWebMgmt.Connectors
 
             StringBuilder sb = new StringBuilder();
 
-            string domain = "srv";
-            string username = "svc_equitrac_powerbi";
-            string secret = File.ReadAllText(@"C:\webmgmtlog\webmgmtsecret-print.txt");
+            string domain = ConfigurationManager.AppSettings["cred:equitrac:domain"];
+            string username = ConfigurationManager.AppSettings["cred:equitrac:username"];
+            string secret = ConfigurationManager.AppSettings["cred:equitrac:password"];
+
+            if (domain == null || username == null || secret == null )
+            {
+                return "No valid creds for Equitrac";
+            }
 
 
             using (Impersonation.LogonUser(domain, username, secret, LogonType.NewCredentials))

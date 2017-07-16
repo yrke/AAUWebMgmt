@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -23,13 +24,21 @@ namespace ITSWebMgmt.Connectors
             request.Method = "POST";
             request.ContentType = "text/json";
 
+            string domain = ConfigurationManager.AppSettings["cred:scsm:domain"];
+            string username = ConfigurationManager.AppSettings["cred:scsm:username"];
+            string secret = ConfigurationManager.AppSettings["cred:scsm:password"];
 
-            string secret = File.ReadAllText(@"C:\webmgmtlog\webmgmtsecret.txt");
+            if (domain == null || username == null || secret == null)
+            {
+                return null;
+            }
+
             //string json = "{\"Username\": \"srv\\\\svc_webmgmt-scsm\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
             //string json = "{\"Username\": \"its\\\\kyrke\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
-            string json = "{\"Username\": \"its\\\\svc_webmgmt-scsm3\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
             //string json = "{\"Username\": \"its\\\\svc_webmgmt-scsm\",\"Domain\": \"its\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
 
+            //FOrmat string json = "{\"Username\": \"its\\\\svc_webmgmt-scsm3\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
+            string json = "{\"Username\": \""+domain +"\\\\"+username+"\",\"Password\": \"" + secret + "\",\"LanguageCode\": \"ENU\"}";
 
             var requestSteam = new StreamWriter(request.GetRequestStream());
             requestSteam.Write(json);
@@ -258,6 +267,12 @@ namespace ITSWebMgmt.Connectors
         public async Task<string> getActiveIncidents(string upn, string displayName)
         {
             string authkey = await getAuthKey();
+
+            if (authkey == null)
+            {
+                return "No creds for SCSM";
+            }
+
             string uuid = await getUserUUIDByUPN(upn, displayName, authkey);
             return doAction(uuid);
         }
