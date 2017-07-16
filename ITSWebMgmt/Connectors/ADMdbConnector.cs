@@ -64,7 +64,7 @@ namespace ITSWebMgmt.Connectors
 
             //Get password for ADMdb
             string wsusername = ConfigurationManager.AppSettings["cred:admdb:username"];
-            string wspassword = ConfigurationManager.AppSettings["cred:amdb:password"];
+            string wspassword = ConfigurationManager.AppSettings["cred:admdb:password"];
 
             if (wsusername == null || wspassword == null)
             {
