@@ -527,7 +527,7 @@ namespace ITSWebMgmt
 
                     if (collectionID.Equals("AA100015"))
                     {
-                        configPC = "AAU PC";
+                        configPC = "AAU7 PC";
                     }else if (collectionID.Equals("AA100087")){
                         configPC = "AAU8 PC";
                     }
@@ -538,7 +538,11 @@ namespace ITSWebMgmt
                     }
                     else if (collectionID.Equals("AA100027"))
                     {
-                        configPC = "Administrativ PC";
+                        configPC = "Administrativ7 PC";
+                    }
+                    else if (collectionID.Equals("AA1001BD"))
+                    {
+                        configPC = "Administrativ10 PC";
                     }
                     else if (collectionID.Equals("AA10009C"))
                     {
