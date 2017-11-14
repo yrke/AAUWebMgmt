@@ -543,6 +543,7 @@ namespace ITSWebMgmt
                     else if (collectionID.Equals("AA1001BD"))
                     {
                         configPC = "Administrativ10 PC";
+                        configExtra = "True"; // Hardcode AAU10 is bitlocker enabled
                     }
                     else if (collectionID.Equals("AA10009C"))
                     {
