@@ -21,6 +21,7 @@
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
     <UseGlobalApplicationHostFile />
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -116,6 +117,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="CreateWorkItem.aspx" />
     <Content Include="Default.aspx" />
+    <Content Include="DefendpointChallengeResponse.aspx" />
     <Content Include="GroupsInfo.aspx" />
     <Content Include="Controls\ActiveChanges.ascx" />
     <Content Include="IDtoSystem.aspx" />
@@ -158,6 +160,13 @@
     <Compile Include="Connectors\PDSConnector.cs" />
     <Compile Include="Connectors\PrintConnector.cs" />
     <Compile Include="Connectors\SCSMConnector.cs" />
+    <Compile Include="DefendpointChallengeResponse.aspx.cs">
+      <DependentUpon>DefendpointChallengeResponse.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DefendpointChallengeResponse.aspx.designer.cs">
+      <DependentUpon>DefendpointChallengeResponse.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Functions\Loginscript.cs" />
     <Compile Include="Controls\ActiveChanges.ascx.cs">
       <DependentUpon>ActiveChanges.ascx</DependentUpon>
