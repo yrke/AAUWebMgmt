@@ -74,6 +74,7 @@ automatically in just a few seconds.
                     
                     <a class="item" href="/UserInfo.aspx">User Info</a>
                     <a class="item" href="/ComputerInfo.aspx">Computer Info</a>
+                    <a class="item" href="/DefendpointChallengeResponse.aspx">Defendpoint</a>
                     <!-- 
                     <div class="divider"></div>
                     <div class="header">Header Item</div>
