@@ -30,6 +30,7 @@
 
     <a href="/UserInfo.aspx">User Info</a><br />
     <a href="/ComputerInfo.aspx">Computer Info</a><br />
+    <a class="item" href="/DefendpointChallengeResponse.aspx">Defendpoint</a><br />
         <br /><br /><br />
         <br />
         <br />
