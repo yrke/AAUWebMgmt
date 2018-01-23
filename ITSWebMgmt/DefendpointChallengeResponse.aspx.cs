@@ -34,7 +34,7 @@ namespace ITSWebMgmt
                 Regex regex = new Regex("[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]");
 
                 if (regex.IsMatch(challange)) {
-                    string argument = string.Format(@"""{0}"" ""{1}"" ""{2}""", challange, "once".Replace("\"", ""), "key".Replace("\"", ""));
+                    string argument = string.Format(@"""{0}"" ""{1}"" ""{2}""", challange, "once".Replace("\"", ""), key.Replace("\"", ""));
 
                     si.StartInfo.Arguments = argument;
                     si.StartInfo.RedirectStandardOutput = true;
