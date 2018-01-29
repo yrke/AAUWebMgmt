@@ -118,7 +118,7 @@ namespace ITSWebMgmt
             {
                 var f = (de.Properties["ms-Mcs-AdmPwd"][0]).ToString();
 
-                DateTime expiredate = (DateTime.Now).AddHours(4);
+                DateTime expiredate = (DateTime.Now).AddHours(8);
                 String value = expiredate.ToFileTime().ToString();
                 de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value = value;
                 de.CommitChanges();
@@ -365,7 +365,7 @@ namespace ITSWebMgmt
 
                 }
 
-                ResultLabel.Text = "<code>" + passwordWithColor + "</code><br /> Password will expire in 4 hours";
+                ResultLabel.Text = "<code>" + passwordWithColor + "</code><br /> Password will expire in 8 hours";
             }
 
             ResultGetPassword.Visible = false;
