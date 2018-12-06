@@ -1,6 +1,7 @@
 ﻿using ITSWebMgmt.Connectors.Active_Directory;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
 using System.Management;
@@ -247,8 +248,8 @@ namespace ITSWebMgmt
 
             var resourceID = getSCCMResourceIDFromComputerName(computername); //XXX use ad path to get right object in sccm, also dont get obsolite
             //XXX check resourceID 
-            buildSCCMInfo(resourceID);
-            buildSCCMInventory(resourceID);
+            labelSCCMCollecionsTable.Text = buildSCCMInfo(resourceID);
+            labelSSCMInventoryTable.Text = buildSCCMInventory(resourceID);
 
 
             buildGroupsSegments(resultLocal.GetDirectoryEntry());
@@ -433,12 +434,21 @@ namespace ITSWebMgmt
         }
 
 
-        protected void buildSCCMInventory(string resourceID)
+        protected string buildSCCMInventory(string resourceID)
         {
             // labelSCCMInventory
             // SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=16780075
 
             var sb = new StringBuilder();
+            var tableStringBuilder = new StringBuilder();
+
+            HTMLTableHelper inventoryTableHelper = new HTMLTableHelper(2);
+
+            List<string> interestingKeys = new List<string>();
+            interestingKeys.Add("Manufacturer");
+            interestingKeys.Add("Model");
+            interestingKeys.Add("SystemType");
+            interestingKeys.Add("Roles");
 
             var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=" + resourceID);
@@ -449,39 +459,53 @@ namespace ITSWebMgmt
 
 
             var o = results.OfType<ManagementObject>().FirstOrDefault();
-                
 
-            if (o != null) { 
-            foreach (var property in o.Properties)
-            {
-                string key = property.Name;
-                object value = property.Value;
+            tableStringBuilder.Append(inventoryTableHelper.printStart());
 
-                int i = 0;
-                if (value != null && value.GetType().IsArray)
+            if (o != null) {
+                foreach (var property in o.Properties)
                 {
-                    var arry = (string[])value;
-                    foreach (string f in arry)
+                    string key = property.Name;
+                    object value = property.Value;
+
+                    if (interestingKeys.Contains(key))
                     {
-                        sb.Append(string.Format("{0}[{2}]: {1}<br />", key, f, i));
-                        i++;
+                        if (value != null)
+                        {
+                            tableStringBuilder.Append(inventoryTableHelper.printRow(new string[] { key, value.ToString() }));
+                        }
+                        else
+                        {
+                            tableStringBuilder.Append(inventoryTableHelper.printRow(new string[] { key, "" }));
+                        }
+                    }
+
+                    int i = 0;
+                    if (value != null && value.GetType().IsArray)
+                    {
+                        var arry = (string[])value;
+                        foreach (string f in arry)
+                        {
+                            sb.Append(string.Format("{0}[{2}]: {1}<br />", key, f, i));
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
                     }
                 }
-                else
-                {
-                    sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
-                }
-
-            }
             }else
             {
                 sb.Append("No inventory data");
             }
 
-            labelSCCMInventory.Text = sb.ToString();
+            tableStringBuilder.Append(inventoryTableHelper.printEnd());
 
+            labelSCCMInventory.Text = sb.ToString();
+            return tableStringBuilder.ToString();
         }
-        protected void buildSCCMInfo(string resourceID)
+        protected string buildSCCMInfo(string resourceID)
         {
             /*
              *     strQuery = "SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID="& computerID 
@@ -498,7 +522,18 @@ namespace ITSWebMgmt
 
             //XXX: remeber to filter out computers that are obsolite in sccm (not active)
             var sb = new StringBuilder();
+            var tableStringBuilder = new StringBuilder();
 
+            HTMLTableHelper infoTableHelper = new HTMLTableHelper(2);
+
+            List<string> interestingKeys = new List<string>();
+            interestingKeys.Add("LastLogonUserName");
+            interestingKeys.Add("IPAddresses");
+            interestingKeys.Add("MACAddresses");
+            interestingKeys.Add("Build");
+            interestingKeys.Add("Config");
+
+            tableStringBuilder.Append(infoTableHelper.printStart());
 
             var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID=" + resourceID);
@@ -603,6 +638,27 @@ namespace ITSWebMgmt
                         string key = property.Name;
                         object value = property.Value;
 
+                        if (interestingKeys.Contains(key))
+                        {
+                            if(value != null)
+                            {
+                                if (value.GetType().Equals(typeof(string[])))
+                                {
+                                    string joinedValues = string.Join(", ", (string[])value);
+                                    tableStringBuilder.Append(infoTableHelper.printRow(new string[] { key, joinedValues }));
+
+                                }
+                                else
+                                {
+                                    tableStringBuilder.Append(infoTableHelper.printRow(new string[] { key, value.ToString() }));
+                                }
+                            }
+                            else
+                            {
+                                tableStringBuilder.Append(infoTableHelper.printRow(new string[] { key, "" }));
+                            }
+                        }
+
                         int i = 0;
                         string[] arry = null;
                         if (value != null && value.GetType().IsArray)
@@ -631,9 +687,10 @@ namespace ITSWebMgmt
             {
                 sb.Append("Computer not found i SCCM");
             }
-
+            tableStringBuilder.Append(infoTableHelper.printEnd());
 
             labelSCCMCollections.Text = sb.ToString();
+            return tableStringBuilder.ToString();
         }
 
 

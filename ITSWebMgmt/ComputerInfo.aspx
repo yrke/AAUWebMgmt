@@ -73,7 +73,7 @@
                             <table class="ui definition table">
                                 <tbody>
                                     <tr>
-                                        <td>Domain</td>
+                                        <td>Domain:</td>
                                         <td>
                                             <asp:Label runat="server" ID="labelDomain" /></td>
                                     </tr>
@@ -131,12 +131,14 @@
                         <div class="ui tab segment" data-tab="sccmInfo">
                             <h2>SCCM Info</h2>
                             <h3>Collections</h3>
+                            <asp:Label runat="server" ID="labelSCCMCollecionsTable" />
                             <asp:Label runat="server" ID="labelSCCMCollections" />
                         </div>
 
                         <div class="ui tab segment" data-tab="sccmInventory">
                             <h2>SCCM Info</h2>
                             <h3>Collections</h3>
+                            <asp:Label runat="server" ID="labelSSCMInventoryTable" />
                             <asp:Label runat="server" ID="labelSCCMInventory" />
                         </div>
                         
