@@ -145,7 +145,7 @@
 
                         <div class="ui tab segment" data-tab="groups">
                             <h2>Groups</h2>
-                            <asp:Label runat="server" ID="groupssegmentLabel" />
+                            <asp:Label runat="server" ID="labelGroupTable" />
                         </div>
                     </div>
                 </div>
