@@ -840,33 +840,39 @@ namespace ITSWebMgmt
 
         private void buildComputerInformation(DirectoryEntry result)
         {
-
-            string upn = (string)result.Properties["userPrincipalName"][0];
-            string[] upnsplit = upn.Split('@');
-            string domain = upnsplit[1].Split('.')[0];
-
-            string userName = String.Format("{0}\\\\{1}", domain, upnsplit[0]);
-
-            var helper = new HTMLTableHelper(2);
-
-            var sb = new StringBuilder();
-            sb.Append("<h4>Links til computerinfo kan være til maskiner i et forkert domæne, da info omkring computer domæne ikke er tilgængelig i denne søgning</h4>");
-            sb.Append(helper.printStart());
-            sb.Append(helper.printRow(new string[] { "Computername", "AAU Fjernsupport" }, true));
-
-            var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
-            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_UserMachineRelationship WHERE UniqueUserName = \"" + userName + "\"");
-            var searcher = new ManagementObjectSearcher(ms, wqlq);
-
-            foreach (ManagementObject o in searcher.Get())
+            try
             {
-                var machinename = o.Properties["ResourceName"].Value.ToString();
-                var name = "<a href=\"/computerInfo.aspx?computername=" + machinename + "\">" + machinename + "</a><br />";
-                var fjernsupport = "<a href=\"https://support.its.aau.dk/api/client_script?type=rep&operation=generate&action=start_pinned_client_session&client.hostname="+machinename + "\">Start</a>";
-                sb.Append(helper.printRow(new string[]{name, fjernsupport}));
+                string upn = (string)result.Properties["userPrincipalName"][0];
+                string[] upnsplit = upn.Split('@');
+                string domain = upnsplit[1].Split('.')[0];
+
+                string userName = String.Format("{0}\\\\{1}", domain, upnsplit[0]);
+
+                var helper = new HTMLTableHelper(2);
+
+                var sb = new StringBuilder();
+                sb.Append("<h4>Links til computerinfo kan være til maskiner i et forkert domæne, da info omkring computer domæne ikke er tilgængelig i denne søgning</h4>");
+                sb.Append(helper.printStart());
+                sb.Append(helper.printRow(new string[] { "Computername", "AAU Fjernsupport" }, true));
+
+                var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
+                var wqlq = new WqlObjectQuery("SELECT * FROM SMS_UserMachineRelationship WHERE UniqueUserName = \"" + userName + "\"");
+                var searcher = new ManagementObjectSearcher(ms, wqlq);
+
+                foreach (ManagementObject o in searcher.Get())
+                {
+                    var machinename = o.Properties["ResourceName"].Value.ToString();
+                    var name = "<a href=\"/computerInfo.aspx?computername=" + machinename + "\">" + machinename + "</a><br />";
+                    var fjernsupport = "<a href=\"https://support.its.aau.dk/api/client_script?type=rep&operation=generate&action=start_pinned_client_session&client.hostname=" + machinename + "\">Start</a>";
+                    sb.Append(helper.printRow(new string[] { name, fjernsupport }));
+                }
+                sb.Append(helper.printEnd());
+                divComputerInformation.Text = sb.ToString();
             }
-            sb.Append(helper.printEnd());
-            divComputerInformation.Text = sb.ToString();
+            catch(System.UnauthorizedAccessException e)
+            {
+                divComputerInformation.Text = "User not authorized for this action.";
+            }
         }
         private void buildWarningSegment(DirectoryEntry result)
         {
