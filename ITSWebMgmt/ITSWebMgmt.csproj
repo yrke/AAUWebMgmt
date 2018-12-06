@@ -137,6 +137,7 @@
     </None>
     <None Include="Properties\PublishProfiles\a.pubxml" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\Webmgmt.pubxml" />
     <None Include="Properties\PublishProfiles\WebMgmt01.pubxml" />
     <None Include="Web.Debug.config">

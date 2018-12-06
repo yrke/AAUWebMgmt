@@ -761,10 +761,10 @@ namespace ITSWebMgmt
             var domain = tmp[1].Split('.')[0];
 
             //Make lookup in ADMdb
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            basicInfoAdmDBExpireDate.Text = await admdb.loadUserExpiredate(domain, tmp[0], firstName, lastName);
-            watch.Stop();
-            System.Diagnostics.Debug.WriteLine("ADMdb Lookup took: " + watch.ElapsedMilliseconds);
+            //var watch = System.Diagnostics.Stopwatch.StartNew();
+            //basicInfoAdmDBExpireDate.Text = await admdb.loadUserExpiredate(domain, tmp[0], firstName, lastName);
+            //watch.Stop();
+            //System.Diagnostics.Debug.WriteLine("ADMdb Lookup took: " + watch.ElapsedMilliseconds);
 
             //Has roaming
             labelBasicInfoRomaing.Text = "false";
