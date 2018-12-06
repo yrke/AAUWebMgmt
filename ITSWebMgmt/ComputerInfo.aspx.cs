@@ -447,12 +447,13 @@ namespace ITSWebMgmt
             var tableStringBuilder = new StringBuilder();
 
             HTMLTableHelper inventoryTableHelper = new HTMLTableHelper(2);
+            string s =
+                "Manufacturer," +
+                "Model," +
+                "SystemType," +
+                "Roles";
+            List<string> interestingKeys = s.Split(',').ToList<string>();
 
-            List<string> interestingKeys = new List<string>();
-            interestingKeys.Add("Manufacturer");
-            interestingKeys.Add("Model");
-            interestingKeys.Add("SystemType");
-            interestingKeys.Add("Roles");
 
             var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=" + resourceID);
@@ -530,13 +531,14 @@ namespace ITSWebMgmt
 
             HTMLTableHelper infoTableHelper = new HTMLTableHelper(2);
 
-            List<string> interestingKeys = new List<string>();
+            string s =
+                "LastLogonUserName," +
+                "IPAddresses," +
+                "MACAddresses," +
+                "Build," +
+                "Config";
+            List<string> interestingKeys = s.Split(',').ToList<string>();
            
-            interestingKeys.Add("LastLogonUserName");
-            interestingKeys.Add("IPAddresses");
-            interestingKeys.Add("MACAddresses");
-            interestingKeys.Add("Build");
-            interestingKeys.Add("Config");
 
             tableStringBuilder.Append(infoTableHelper.printStart());
 
