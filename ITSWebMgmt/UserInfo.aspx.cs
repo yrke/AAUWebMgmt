@@ -676,8 +676,8 @@ namespace ITSWebMgmt
             }
 
             //Other fileds
-            var attrToDisplay =   "userPrincipalName, aauUserStatus, aauStaffID, aauStudentID, aauUserClassification, telephoneNumber, lastLogon";
-            var attrDisplayName = "UserName, UserStatus, StaffID, StudentID, UserClassification, Telephone, LastLogon (approx.)";
+            var attrToDisplay =   "userPrincipalName, aauAAUID, aauUUID, aauUserStatus, aauStaffID, aauStudentID, aauUserClassification, telephoneNumber, lastLogon";
+            var attrDisplayName = "UserName, AAU-ID, AAU-UUID, UserStatus, StaffID, StudentID, UserClassification, Telephone, LastLogon (approx.)";
             var attrArry = attrToDisplay.Replace(" ", "").Split(',');
             var dispArry = attrDisplayName.Split(',');
             string[] dateFields = { "lastLogon", "badPasswordTime" };
