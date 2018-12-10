@@ -436,12 +436,12 @@ namespace ITSWebMgmt
             var results = searcher.Get();
 
 
-            var o = results.OfType<ManagementObject>().FirstOrDefault();
+            var mo = results.OfType<ManagementObject>().FirstOrDefault();
 
             tableStringBuilder.Append(inventoryTableHelper.printStart());
 
-            if (o != null) {
-                foreach (var property in o.Properties)
+            if (mo != null) {
+                foreach (var property in mo.Properties)
                 {
                     string key = property.Name;
                     object value = property.Value;
@@ -476,6 +476,86 @@ namespace ITSWebMgmt
             }else
             {
                 sb.Append("No inventory data");
+            }
+
+            //Software Info
+            /*
+            [DisplayName("Installed Software"), dynamic: ToInstance, provider("ExtnProv")]
+            class SMS_G_System_INSTALLED_SOFTWARE : SMS_G_System_Current
+            {
+                [ResDLL("SMS_RXPL.dll"), ResID(15)] uint32 ResourceID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(16)] uint32 GroupID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(17)] uint32 RevisionID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(12)] datetime TimeStamp = NULL;
+                string ARPDisplayName;
+                string ChannelCode;
+                string ChannelID;
+                string CM_DSLID;
+                string EvidenceSource;
+                datetime InstallDate;
+                uint32 InstallDirectoryValidation;
+                string InstalledLocation;
+                string InstallSource;
+                uint32 InstallType;
+                uint32 Language;
+                string LocalPackage;
+                string MPC;
+                uint32 OsComponent;
+                string PackageCode;
+                string ProductID;
+                string ProductName;
+                string ProductVersion;
+                string Publisher;
+                string RegisteredUser;
+                string ServicePack;
+                string SoftwareCode;
+                string SoftwarePropertiesHash;
+                string SoftwarePropertiesHashEx;
+                string UninstallString;
+                string UpgradeCode;
+                uint32 VersionMajor;
+                uint32 VersionMinor;
+            };
+            */
+            var wqlqSoftware = new WqlObjectQuery("SELECT * FROM SMS_G_System_INSTALLED_SOFTWARE WHERE ResourceID=" + resourceID);
+            var searcherSoftware = new ManagementObjectSearcher(ms, wqlqSoftware);
+
+            ManagementObject objSoftware = new ManagementObject();
+            var resultsSoftware = searcherSoftware.Get();
+
+            bool hasValues = false;
+            try
+            {
+                var t2 = resultsSoftware.Count;
+                hasValues = true;
+            }
+            catch (ManagementException e) { }
+
+            sb.Append("<h3>Software Details</h3>");
+
+
+            if (hasValues)
+            {
+                HTMLTableHelper SWTableHelper = new HTMLTableHelper(4);
+                var SWsb = new StringBuilder();
+                SWsb.Append(SWTableHelper.printStart());
+                SWsb.Append(SWTableHelper.printRow(new string[] { "Product ID", "Name", "Version", "Install date" }, true));
+
+                foreach (ManagementObject o in resultsSoftware) //Has one!
+                {
+                    string productID = o.Properties["SoftwareCode"].Value.ToString();
+                    string productName = o.Properties["ProductName"].Value.ToString();
+                    string productVersion = o.Properties["ProductVersion"].Value.ToString();
+                    string installDate = o.Properties["TimeStamp"].Value.ToString();
+                    SWsb.Append(SWTableHelper.printRow(new string[] { productID, productName, productVersion, installDate }));
+                }
+
+                SWsb.Append(SWTableHelper.printEnd());
+                sb.Append(SWsb);
+            }
+            else
+            {
+                sb.Append("Software information not found");
             }
 
             tableStringBuilder.Append(inventoryTableHelper.printEnd());
