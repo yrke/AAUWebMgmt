@@ -132,6 +132,7 @@
                             <h2>SCCM Info</h2>
                             <h3>Collections</h3>
                             <asp:Label runat="server" ID="labelSCCMCollecionsTable" />
+                            <asp:Label runat="server" ID="labelSCCMComputers" />
                             <asp:Label runat="server" ID="labelSCCMCollections" />
                         </div>
 
@@ -141,15 +142,24 @@
                             <asp:Label runat="server" ID="labelSSCMInventoryTable" />
                             <asp:Label runat="server" ID="labelSCCMInventory" />
                         </div>
-                        
 
-                        <div class="ui tab segment" data-tab="groups">
+                         <div class="ui tab segment" data-tab="groups">
                             <h2>Groups</h2>
-                            <asp:Label runat="server" ID="groupssegmentLabel" />
-                        </div>
-                    </div>
-                </div>
+                            <div class="ui two item menu">
+                                <a data-tab="groups-direct" class="item">Direct Groups</a> 
+                                <a data-tab="groups-all" class="item"> Recursive groups</a>
+                            </div>
 
+                            <div class="ui active tab segment" data-tab="groups-direct">
+                                <asp:Label ID="groupssegmentLabel" runat="server"></asp:Label>
+                                </div>
+
+                            <div class="ui tab segment" data-tab="groups-all">
+                                <asp:Label ID="groupsAllsegmentLabel" runat="server"></asp:Label>
+                            </div>
+                          </div>
+                     </div>
+                </div>
             </div>
         </form>
     </div>

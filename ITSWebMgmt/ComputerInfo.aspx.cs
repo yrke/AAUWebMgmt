@@ -7,6 +7,7 @@ using System.Linq;
 using System.Management;
 using System.Text;
 using System.Web;
+using System.Web.UI.WebControls;
 
 namespace ITSWebMgmt
 {
@@ -403,34 +404,10 @@ namespace ITSWebMgmt
 
         }
 
-
-
         private void buildGroupsSegments(DirectoryEntry result)
         {
             //XXX is memeber of an attribute
-            var groupsList = result.Properties["memberOf"];
-            var b = groupsList.Cast<string>();
-            var groupListConvert = b.ToArray<string>();
-
-            var sb = new StringBuilder();
-
-            foreach (string adpath in groupsList)
-            {
-         
-                var split = adpath.Split(',');
-                var groupname = split[0].Replace("CN=", "");
-
-                sb.Append(String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname));
-         
-            }
-
-
-            groupssegmentLabel.Text = sb.ToString();
-         
-
-
-
-
+            Helpers.GroupTableGenerator.BuildGroupsSegments(result, groupssegmentLabel, groupsAllsegmentLabel);
         }
 
 
@@ -443,12 +420,13 @@ namespace ITSWebMgmt
             var tableStringBuilder = new StringBuilder();
 
             HTMLTableHelper inventoryTableHelper = new HTMLTableHelper(2);
+            string s =
+                "Manufacturer," +
+                "Model," +
+                "SystemType," +
+                "Roles";
+            List<string> interestingKeys = s.Split(',').ToList<string>();
 
-            List<string> interestingKeys = new List<string>();
-            interestingKeys.Add("Manufacturer");
-            interestingKeys.Add("Model");
-            interestingKeys.Add("SystemType");
-            interestingKeys.Add("Roles");
 
             var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=" + resourceID);
@@ -526,12 +504,14 @@ namespace ITSWebMgmt
 
             HTMLTableHelper infoTableHelper = new HTMLTableHelper(2);
 
-            List<string> interestingKeys = new List<string>();
-            interestingKeys.Add("LastLogonUserName");
-            interestingKeys.Add("IPAddresses");
-            interestingKeys.Add("MACAddresses");
-            interestingKeys.Add("Build");
-            interestingKeys.Add("Config");
+            string s =
+                "LastLogonUserName," +
+                "IPAddresses," +
+                "MACAddresses," +
+                "Build," +
+                "Config";
+            List<string> interestingKeys = s.Split(',').ToList<string>();
+           
 
             tableStringBuilder.Append(infoTableHelper.printStart());
 
@@ -555,8 +535,15 @@ namespace ITSWebMgmt
 
             if (hasValues)
             {
+                HTMLTableHelper groupTableHelper = new HTMLTableHelper(1);
+                var PCsb = new StringBuilder();
+                PCsb.Append(groupTableHelper.printRow(new string[] { "Group Names" }, true));
+
+                PCsb.Append(groupTableHelper.printStart());
                 foreach (ManagementObject o in results)
                 {
+                    configPC = "Unknown";
+                    configExtra = "False";
                     //o.Properties["ResourceID"].Value.ToString();
                     var collectionID = o.Properties["CollectionID"].Value.ToString();
 
@@ -595,9 +582,11 @@ namespace ITSWebMgmt
 
                     obj.Path = path;
                     obj.Get();
-
-                    sb.Append(string.Format("{0}<br/>", obj["Name"]));
+                    
+                    PCsb.Append(groupTableHelper.printRow(new string[] { obj["Name"].ToString() }));
                 }
+                PCsb.Append(groupTableHelper.printEnd());
+                sb.Append(PCsb);
             }
             else
             {
