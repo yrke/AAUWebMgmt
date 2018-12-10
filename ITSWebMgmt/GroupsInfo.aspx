@@ -60,11 +60,33 @@
                     </div>
                     <div class="ui tab segment" data-tab="members">
                         <h2>Members</h2>
-                        <asp:Label runat="server" ID="lblMembers" />
+                        <div class="ui two item menu">
+                            <a data-tab="groups-direct" class="item">Direct Groups</a> 
+                            <a data-tab="groups-all" class="item"> Recursive groups</a>
+                        </div>
+
+                        <div class="ui active tab segment" data-tab="groups-direct">
+                            <asp:Label ID="groupssegmentLabel" runat="server"></asp:Label>
+                            </div>
+
+                        <div class="ui tab segment" data-tab="groups-all">
+                            <asp:Label ID="groupsAllsegmentLabel" runat="server"></asp:Label>
+                        </div>
                     </div>
                     <div class="ui tab segment" data-tab="memberOf">
                         <h2>Member Of</h2>
-                        <asp:Label runat="server" ID="lblMemberOf" />
+                        <div class="ui two item menu">
+                            <a data-tab="groups-direct" class="item">Direct Groups</a> 
+                            <a data-tab="groups-all" class="item"> Recursive groups</a>
+                        </div>
+
+                        <div class="ui active tab segment" data-tab="groups-direct">
+                            <asp:Label ID="groupofsegmentLabel" runat="server"></asp:Label>
+                            </div>
+
+                        <div class="ui tab segment" data-tab="groups-all">
+                            <asp:Label ID="groupofAllsegmentLabel" runat="server"></asp:Label>
+                        </div>
                     </div>
                     <div class="ui tab segment" data-tab="rawData">
                         <h2>Raw Data</h2>

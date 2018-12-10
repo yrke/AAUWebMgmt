@@ -407,7 +407,7 @@ namespace ITSWebMgmt
         private void buildGroupsSegments(DirectoryEntry result)
         {
             //XXX is memeber of an attribute
-            Helpers.GroupTableGenerator.BuildGroupsSegments(result, groupssegmentLabel, groupsAllsegmentLabel);
+            Helpers.GroupTableGenerator.BuildGroupsSegments("memberOf", result, groupssegmentLabel, groupsAllsegmentLabel);
         }
 
 

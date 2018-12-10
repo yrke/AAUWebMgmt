@@ -71,10 +71,10 @@ namespace ITSWebMgmt.Helpers
             return CreateGroupTable(groupsAsList);
         }
         
-        public static Tuple<String[], String[]> BuildGroupsSegments(DirectoryEntry result, Label groupssegmentLabel, Label groupsAllsegmentLabel)
+        public static Tuple<String[], String[]> BuildGroupsSegments(string name, DirectoryEntry result, Label groupssegmentLabel, Label groupsAllsegmentLabel)
         {
             // Names of items in tuple is c# 7 feature: (String[] groupListConvert, String[] groupsListAllConverted)
-            var groupsList = result.Properties["memberOf"];
+            var groupsList = result.Properties[name];
             string attName = "msds-memberOfTransitive";
             result.RefreshCache(attName.Split(','));
 
