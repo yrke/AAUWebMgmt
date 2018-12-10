@@ -546,7 +546,8 @@ namespace ITSWebMgmt
                     string productID = o.Properties["SoftwareCode"].Value.ToString();
                     string productName = o.Properties["ProductName"].Value.ToString();
                     string productVersion = o.Properties["ProductVersion"].Value.ToString();
-                    string installDate = o.Properties["TimeStamp"].Value.ToString();
+                    
+                    string installDate = ManagementDateTimeConverter.ToDateTime(o.Properties["TimeStamp"].Value.ToString()).ToString();
                     SWsb.Append(SWTableHelper.printRow(new string[] { productID, productName, productVersion, installDate }));
                 }
 
