@@ -542,8 +542,7 @@ namespace ITSWebMgmt
                 PCsb.Append(groupTableHelper.printStart());
                 foreach (ManagementObject o in results)
                 {
-                    configPC = "Unknown";
-                    configExtra = "False";
+                    
                     //o.Properties["ResourceID"].Value.ToString();
                     var collectionID = o.Properties["CollectionID"].Value.ToString();
 
