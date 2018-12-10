@@ -49,22 +49,40 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label lblBasicInfo;
         
         /// <summary>
-        /// lblMembers control.
+        /// groupssegmentLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMembers;
+        protected global::System.Web.UI.WebControls.Label groupssegmentLabel;
         
         /// <summary>
-        /// lblMemberOf control.
+        /// groupsAllsegmentLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMemberOf;
+        protected global::System.Web.UI.WebControls.Label groupsAllsegmentLabel;
+        
+        /// <summary>
+        /// groupofsegmentLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label groupofsegmentLabel;
+        
+        /// <summary>
+        /// groupofAllsegmentLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label groupofAllsegmentLabel;
         
         /// <summary>
         /// labelRawData control.

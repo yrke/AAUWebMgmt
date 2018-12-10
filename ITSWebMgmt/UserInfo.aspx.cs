@@ -578,7 +578,7 @@ namespace ITSWebMgmt
 
         private void buildGroupsSegments(DirectoryEntry result)
         {
-            var temp = Helpers.GroupTableGenerator.BuildGroupsSegments(result, groupssegmentLabel, groupsAllsegmentLabel);
+            var temp = Helpers.GroupTableGenerator.BuildGroupsSegments("memberOf", result, groupssegmentLabel, groupsAllsegmentLabel);
             var groupsListAllConverted = temp.Item1;
             var groupListConvert = temp.Item2;
 

@@ -82,43 +82,12 @@ namespace ITSWebMgmt
 
         private void buildMemberOf(DirectoryEntry group)
         {
-            var sb = new StringBuilder();
-
-
-            var memberlist = group.Properties["memberOf"];
-
-            foreach (var pvs in memberlist)
-            {
-                //TODO on hover display full AD name
-                var ldapSplit = pvs.ToString().Split(',');
-                var name = ldapSplit[0].Replace("CN=", "");
-                var domain = ldapSplit.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=","");
-
-                sb.Append(string.Format("<a href=\"/GroupsInfo.aspx?grouppath={1}\">{0}</a><br/>", domain +"\\"+name, HttpUtility.HtmlEncode("LDAP://" + pvs.ToString())));
-            }
-
-
-            lblMemberOf.Text = sb.ToString();
+            Helpers.GroupTableGenerator.BuildGroupsSegments("memberOf", group, groupofsegmentLabel, groupofAllsegmentLabel);
         }
 
         private void buildMembers(DirectoryEntry group)
         {
-            var sb = new StringBuilder();
-
-
-            var memberlist = group.Properties["member"];
-
-            foreach (var pvs in memberlist)
-            {
-                var ldapSplit = pvs.ToString().Split(',');
-                var name = ldapSplit[0].Replace("CN=", "");
-                var domain = ldapSplit.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
-
-                sb.Append(string.Format("<a href=\"/Redirector.aspx?adpath={1}\">{0}</a><br/>", domain + "\\" + name, HttpUtility.HtmlEncode("LDAP://" + pvs.ToString())));
-            }
-
-
-            lblMembers.Text = sb.ToString();
+            Helpers.GroupTableGenerator.BuildGroupsSegments("member", group, groupssegmentLabel, groupsAllsegmentLabel);
         }
 
         private void buildBasicInfo(DirectoryEntry group)
