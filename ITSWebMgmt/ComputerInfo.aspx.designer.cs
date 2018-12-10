@@ -157,6 +157,15 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label labelSCCMCollecionsTable;
         
         /// <summary>
+        /// labelSCCMComputers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMComputers;
+        
+        /// <summary>
         /// labelSCCMCollections control.
         /// </summary>
         /// <remarks>
@@ -184,15 +193,6 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label labelSCCMInventory;
         
         /// <summary>
-        /// labelGroupTable control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label labelGroupTable;
-
-        /// <summary>
         /// groupssegmentLabel control.
         /// </summary>
         /// <remarks>
@@ -200,7 +200,7 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label groupssegmentLabel;
-
+        
         /// <summary>
         /// groupsAllsegmentLabel control.
         /// </summary>

@@ -535,8 +535,15 @@ namespace ITSWebMgmt
 
             if (hasValues)
             {
+                HTMLTableHelper groupTableHelper = new HTMLTableHelper(1);
+                var PCsb = new StringBuilder();
+                PCsb.Append(groupTableHelper.printRow(new string[] { "Group Names" }, true));
+
+                PCsb.Append(groupTableHelper.printStart());
                 foreach (ManagementObject o in results)
                 {
+                    configPC = "Unknown";
+                    configExtra = "False";
                     //o.Properties["ResourceID"].Value.ToString();
                     var collectionID = o.Properties["CollectionID"].Value.ToString();
 
@@ -575,9 +582,11 @@ namespace ITSWebMgmt
 
                     obj.Path = path;
                     obj.Get();
-
-                    sb.Append(string.Format("{0}<br/>", obj["Name"]));
+                    
+                    PCsb.Append(groupTableHelper.printRow(new string[] { obj["Name"].ToString() }));
                 }
+                PCsb.Append(groupTableHelper.printEnd());
+                sb.Append(PCsb);
             }
             else
             {
