@@ -184,17 +184,13 @@
                         <a data-tab="groups-direct" class="item">Direct Groups</a> 
                         <a data-tab="groups-all" class="item"> Recursive groups</a>
                     </div>
-                 
-
-                    
-                        <div class="ui active tab segment" data-tab="groups-direct">
-                            <asp:Label ID="groupssegmentLabel" runat="server"></asp:Label>
-                         </div>
-
-                        <div class="ui tab segment" data-tab="groups-all">
-                            <asp:Label ID="groupsAllsegmentLabel" runat="server"></asp:Label>
+                    <div class="ui active tab segment" data-tab="groups-direct">
+                        <asp:Label ID="groupssegmentLabel" runat="server"></asp:Label>
                         </div>
-                    
+
+                    <div class="ui tab segment" data-tab="groups-all">
+                        <asp:Label ID="groupsAllsegmentLabel" runat="server"></asp:Label>
+                    </div>
                 </div>
                 <div class="ui tab segment" data-tab="fileshares">
                     <h2>Fileshares</h2>

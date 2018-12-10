@@ -7,6 +7,7 @@ using System.Linq;
 using System.Management;
 using System.Text;
 using System.Web;
+using System.Web.UI.WebControls;
 
 namespace ITSWebMgmt
 {
@@ -403,13 +404,10 @@ namespace ITSWebMgmt
 
         }
 
-
-
         private void buildGroupsSegments(DirectoryEntry result)
         {
             //XXX is memeber of an attribute
-            var groupsList = result.Properties["memberOf"];
-            labelGroupTable.Text = Helpers.GroupTableGenerator.CreateGroupTable(groupsList.Cast<string>().ToList());
+            Helpers.GroupTableGenerator.BuildGroupsSegments(result, groupssegmentLabel, groupsAllsegmentLabel);
         }
 
 
