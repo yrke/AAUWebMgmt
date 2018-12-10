@@ -409,32 +409,7 @@ namespace ITSWebMgmt
         {
             //XXX is memeber of an attribute
             var groupsList = result.Properties["memberOf"];
-            var b = groupsList.Cast<string>();
-            var groupListConvert = b.ToArray<string>();
-
-            HTMLTableHelper groupTableHelper = new HTMLTableHelper(2);
-            var groupStringBuilder = new StringBuilder();
-
-            groupStringBuilder.Append(groupTableHelper.printStart());
-            groupStringBuilder.Append(groupTableHelper.printRow(new string[] {"Domæne", "Gruppe" }, true));
-
-            foreach (string adpath in groupsList)
-            {
-                var split = adpath.Split(',');
-                var groupname = split[0].Replace("CN=", "");
-                var domain = split.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
-                var linkToGroup = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname);
-                groupStringBuilder.Append(groupTableHelper.printRow(new string[] { domain, linkToGroup }));
-         
-            }
-
-            groupStringBuilder.Append(groupTableHelper.printEnd());
-            labelGroupTable.Text = groupStringBuilder.ToString();
-         
-
-
-
-
+            labelGroupTable.Text = Helpers.GroupTableGenerator.CreateGroupTable(groupsList.Cast<string>().ToList());
         }
 
 

@@ -120,13 +120,7 @@ namespace ITSWebMgmt
 
         protected void buildgroupssegmentLabel(String[] groupsList, Label output)
         {
-            StringBuilder sb = new StringBuilder();
-
-            var helper = new HTMLTableHelper(2);
-            sb.Append(helper.printStart());
-            sb.Append(helper.printRow(new string[] { "Domain", "Name" }, true));
-
-            var groupsAsList = groupsList.ToList<string>();
+            var groupsAsList = groupsList.ToList();
 
             /*Func<string[], string, bool> startsWith = delegate (string[] prefix, string value)
             {
@@ -134,7 +128,6 @@ namespace ITSWebMgmt
             };
             string[] prefixMBX_ACL = { "CN=MBX_", "CN=ACL_" };
             Func<string, bool> startsWithMBXorACL = (string value) => startsWith(prefixMBX_ACL, value);*/
-
 
             bool StartsWith(string[] prefix, string value) => prefix.Any(value.StartsWith);
             string[] prefixMBX_ACL = { "CN=MBX_", "CN=ACL_" };
@@ -158,20 +151,7 @@ namespace ITSWebMgmt
                 }
             });
 
-            foreach (string adpath in groupsAsList)
-            {
-
-                var split = adpath.Split(',');
-                var groupname = split[0].Replace("CN=", "");
-                var domain = split.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
-                var name = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname);
-
-                sb.Append(helper.printRow(new string[] { domain, name }));
-
-            }
-
-            sb.Append(helper.printEnd());
-            output.Text = sb.ToString();
+            output.Text = Helpers.GroupTableGenerator.CreateGroupTable(groupsAsList);
         }
 
         class ExchangeMailboxGroup
