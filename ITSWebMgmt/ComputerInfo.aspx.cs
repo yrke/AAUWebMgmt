@@ -596,7 +596,7 @@ namespace ITSWebMgmt
             List<string> interestingKeys = s.Split(',').ToList<string>();
            
 
-            tableStringBuilder.Append(infoTableHelper.printStart());
+
 
             var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID=" + resourceID);
@@ -620,9 +620,10 @@ namespace ITSWebMgmt
             {
                 HTMLTableHelper groupTableHelper = new HTMLTableHelper(1);
                 var PCsb = new StringBuilder();
-                PCsb.Append(groupTableHelper.printRow(new string[] { "Group Names" }, true));
-
                 PCsb.Append(groupTableHelper.printStart());
+                PCsb.Append(groupTableHelper.printRow(new string[] { "Collection Name" }, true));
+
+
                 foreach (ManagementObject o in results)
                 {
                     
@@ -668,7 +669,7 @@ namespace ITSWebMgmt
                     PCsb.Append(groupTableHelper.printRow(new string[] { obj["Name"].ToString() }));
                 }
                 PCsb.Append(groupTableHelper.printEnd());
-                sb.Append(PCsb);
+                tableStringBuilder.Append(PCsb);
             }
             else
             {
@@ -694,7 +695,8 @@ namespace ITSWebMgmt
             }
             catch (ManagementException e) {}
 
-            sb.Append("<h3>Computer Details</h3>");
+            tableStringBuilder.Append("<h3>Computer Details</h3>");
+            tableStringBuilder.Append(infoTableHelper.printStart());
 
             if (hasValues)
             {
