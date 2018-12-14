@@ -478,6 +478,9 @@ namespace ITSWebMgmt
                 sb.Append("No inventory data");
             }
 
+            tableStringBuilder.Append(inventoryTableHelper.printEnd());
+
+
             //Software Info
             /*
             [DisplayName("Installed Software"), dynamic: ToInstance, provider("ExtnProv")]
@@ -531,7 +534,7 @@ namespace ITSWebMgmt
             }
             catch (ManagementException e) { }
 
-            sb.Append("<h3>Software Details</h3>");
+            tableStringBuilder.Append("<h3>Software Details</h3>");
 
 
             if (hasValues)
@@ -552,14 +555,13 @@ namespace ITSWebMgmt
                 }
 
                 SWsb.Append(SWTableHelper.printEnd());
-                sb.Append(SWsb);
+                tableStringBuilder.Append(SWsb);
             }
             else
             {
-                sb.Append("Software information not found");
+                tableStringBuilder.Append("Software information not found");
             }
 
-            tableStringBuilder.Append(inventoryTableHelper.printEnd());
 
             labelSCCMInventory.Text = sb.ToString();
             return tableStringBuilder.ToString();
