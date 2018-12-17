@@ -542,7 +542,7 @@ namespace ITSWebMgmt
                 HTMLTableHelper SWTableHelper = new HTMLTableHelper(4);
                 var SWsb = new StringBuilder();
                 SWsb.Append(SWTableHelper.printStart());
-                SWsb.Append(SWTableHelper.printRow(new string[] { "Product ID", "Name", "Version", "Install date" }, true));
+                SWsb.Append(SWTableHelper.printRow(new string[] { "Product ID", "Name", "Version", "Time Stamp" }, true));
 
                 foreach (ManagementObject o in resultsSoftware) //Has one!
                 {
