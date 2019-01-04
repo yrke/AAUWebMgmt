@@ -5,60 +5,53 @@ namespace ITSWebMgmt
 {
     public class HTMLTableHelper
     {
+        private StringBuilder table = new StringBuilder();
+        private bool tableEnded = false;
+        private int colums;
 
-        int colums;
-        public HTMLTableHelper(int colums)
+        public HTMLTableHelper(int columbs)
         {
-            this.colums = colums;
+            colums = columbs;
+            table.Append("<table class=\"ui celled table\">");
         }
 
-        public string printStart()
+        public HTMLTableHelper(string[] headers)
         {
-            return "<table class=\"ui celled table\">";
+            colums = headers.Length;
+            table.Append("<table class=\"ui celled table\">");
+
+            table.Append("<thead>");
+            AddRow(headers);
+            table.Append("</thead>");
         }
 
-        public string printRow(string[] args, bool isHeader) {
-
-            if (!(args.Length == this.colums)) { throw new ArgumentOutOfRangeException(); };
-            
-            if (isHeader)
-            {
-                var sb = new StringBuilder();
-                sb.Append("<thead>");
-                sb.Append(printRow(args));
-                sb.Append("</thead>");
-                return sb.ToString();
-            }
-            else
-            {
-                return printRow(args);
-            }
-        
-        }
-        
-
-        public string printRow(params string[] args)
+        public void AddRow(string[] args)
         {
-            var sb = new StringBuilder();
-            if (!(args.Length == this.colums)) { throw new ArgumentOutOfRangeException(); };
-            sb.Append("<tr>");
+            if (!(args.Length == colums)) { throw new ArgumentOutOfRangeException(); };
+
+            table.Append("<tr>");
 
             foreach (string s in args)
             {
-                sb.Append("<td>");
-                sb.Append(s);
-                sb.Append("</td>");
+                table.Append("<td>");
+                table.Append(s);
+                table.Append("</td>");
             }
 
-            sb.Append("</tr>");
-            return sb.ToString();
+            table.Append("</tr>");
         }
 
-        public string printEnd()
+        public void EndTable()
         {
-            return "</table>";
+            if (!tableEnded)
+                table.Append("</table>");
         }
 
-
+        public string GetTable()
+        {
+            if (!tableEnded)
+                EndTable();
+            return table.ToString();    
+        }
     }
 }

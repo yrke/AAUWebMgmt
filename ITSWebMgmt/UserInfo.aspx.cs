@@ -12,6 +12,7 @@ using ITSWebMgmt.Connectors;
 using System.Web.UI.WebControls;
 using ITSWebMgmt.Connectors.Active_Directory;
 using ITSWebMgmt;
+using ITSWebMgmt.Helpers;
 
 namespace ITSWebMgmt
 {
@@ -170,17 +171,14 @@ namespace ITSWebMgmt
 
         protected void buildExchangeLabel(String[] groupsList, bool isTransitiv)
         {
-            var sb = new StringBuilder();
+            string transitiv = "";
 
             if (!isTransitiv)
             {
-                sb.Append("<h3>NB: Listen viser kun direkte medlemsskaber, kunne ikke finde fuld liste på denne Domain Controller eller domæne</h3>");
+                transitiv = "<h3>NB: Listen viser kun direkte medlemsskaber, kunne ikke finde fuld liste på denne Domain Controller eller domæne</h3>";
             }
             
-            var helper = new HTMLTableHelper(4);
-
-            sb.Append(helper.printStart());
-            sb.Append(helper.printRow(new string[] { "Type", "Domain", "Name", "Access" }, true));
+            var helper = new HTMLTableHelper(new string[] { "Type", "Domain", "Name", "Access" });
 
             //Select Exchange groups and convert to list of ExchangeMailboxGroup
             var exchangeMailboxGroupList = groupsList.Where<string>(group => (group.StartsWith("CN=MBX_"))).Select(x => new ExchangeMailboxGroup(x));       
@@ -193,12 +191,11 @@ namespace ITSWebMgmt
                     var domain = e.Domain;
                     var nameFormated = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + e.RawValue), e.Name);
                     var access = e.Access;
-                    sb.Append(helper.printRow(new string[] { type, domain, nameFormated, access }));
+                    helper.AddRow(new string[] { type, domain, nameFormated, access });
                 }
             }
-            sb.Append(helper.printEnd());
 
-            lblexchange.Text = sb.ToString();
+            lblexchange.Text = transitiv + helper.GetTable();
         }
 
         class Fileshare
@@ -265,16 +262,14 @@ namespace ITSWebMgmt
 
         protected void buildFilesharessegmentLabel(String[] groupsList, bool isTransitiv)
         {
-            StringBuilder sb = new StringBuilder();
+            string transitiv = "";
 
             if (!isTransitiv)
             {
-                sb.Append("<h3>NB: Listen viser kun direkte medlemsskaber, kunne ikke finde fuld liste på denne Domain Controller eller domæne</h3>");
+                transitiv = "<h3>NB: Listen viser kun direkte medlemsskaber, kunne ikke finde fuld liste på denne Domain Controller eller domæne</h3>";
             }
 
-            var helper = new HTMLTableHelper(4);
-            sb.Append(helper.printStart());
-            sb.Append(helper.printRow(new string[] { "Type", "Domain", "Name", "Access" }, true));
+            var helper = new HTMLTableHelper(new string[] { "Type", "Domain", "Name", "Access" });
 
             //Filter fileshare groups and convert to Fileshare Objects
             var fileshareList = groupsList.Where<string>((string value)=> {
@@ -288,11 +283,10 @@ namespace ITSWebMgmt
             foreach (Fileshare f in fileshareList)
             {
                 var nameWithLink = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + f.Fileshareraw), f.Name);
-                sb.Append(helper.printRow(new string[] { f.Type, f.Domain, nameWithLink, f.Access }));
+                helper.AddRow(new string[] { f.Type, f.Domain, nameWithLink, f.Access });
             }
         
-            sb.Append(helper.printEnd());
-            filesharessegmentLabel.Text = sb.ToString();
+            filesharessegmentLabel.Text = transitiv + helper.GetTable();
         }
 
         protected bool userIsInRightOU(DirectoryEntry de)
@@ -646,7 +640,6 @@ namespace ITSWebMgmt
             }
 
             //Email
-            var helper = new HTMLTableHelper(2);
             var proxyAddressesAD = result.Properties["proxyAddresses"];
             var proxyAddresses = proxyAddressesAD.Cast<string>().ToArray<string>();
             string email = "";
@@ -656,8 +649,7 @@ namespace ITSWebMgmt
                     email += string.Format("<a href=\"mailto:{0}\">{0}</a><br/>", tmp2);
                 }
             }
-            sb.Append(helper.printRow(new string[] { "E-mails", email }));
-            
+            sb.Append($"<tr><td>E-mails</td><td>{email}</td></tr>");
 
             string attName = "msDS-UserPasswordExpiryTimeComputed,msDS-User-Account-Control-Computed";
             result.RefreshCache(attName.Split(','));
@@ -782,26 +774,18 @@ namespace ITSWebMgmt
 
                 string userName = String.Format("{0}\\\\{1}", domain, upnsplit[0]);
 
-                var helper = new HTMLTableHelper(2);
+                var helper = new HTMLTableHelper(new string[] { "Computername", "AAU Fjernsupport" });
 
-                var sb = new StringBuilder();
-                sb.Append("<h4>Links til computerinfo kan være til maskiner i et forkert domæne, da info omkring computer domæne ikke er tilgængelig i denne søgning</h4>");
-                sb.Append(helper.printStart());
-                sb.Append(helper.printRow(new string[] { "Computername", "AAU Fjernsupport" }, true));
-
-                var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
                 var wqlq = new WqlObjectQuery("SELECT * FROM SMS_UserMachineRelationship WHERE UniqueUserName = \"" + userName + "\"");
-                var searcher = new ManagementObjectSearcher(ms, wqlq);
 
-                foreach (ManagementObject o in searcher.Get())
+                foreach (ManagementObject o in DatabaseGetter.getResults(wqlq))
                 {
                     var machinename = o.Properties["ResourceName"].Value.ToString();
                     var name = "<a href=\"/computerInfo.aspx?computername=" + machinename + "\">" + machinename + "</a><br />";
                     var fjernsupport = "<a href=\"https://support.its.aau.dk/api/client_script?type=rep&operation=generate&action=start_pinned_client_session&client.hostname=" + machinename + "\">Start</a>";
-                    sb.Append(helper.printRow(new string[] { name, fjernsupport }));
+                    helper.AddRow(new string[] { name, fjernsupport });
                 }
-                sb.Append(helper.printEnd());
-                divComputerInformation.Text = sb.ToString();
+                divComputerInformation.Text = "<h4>Links til computerinfo kan være til maskiner i et forkert domæne, da info omkring computer domæne ikke er tilgængelig i denne søgning</h4>" + helper.GetTable();
             }
             catch(System.UnauthorizedAccessException e)
             {

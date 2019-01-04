@@ -1,4 +1,5 @@
 ﻿using ITSWebMgmt.Connectors.Active_Directory;
+using ITSWebMgmt.Helpers;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -249,9 +250,10 @@ namespace ITSWebMgmt
 
             var resourceID = getSCCMResourceIDFromComputerName(computername); //XXX use ad path to get right object in sccm, also dont get obsolite
             //XXX check resourceID 
-            labelSCCMCollecionsTable.Text = buildSCCMInfo(resourceID);
-            labelSSCMInventoryTable.Text = buildSCCMInventory(resourceID);
-
+            buildSCCMInfo(resourceID);
+            buildSCCMInventory(resourceID);
+            buildSCCMAntivirus(resourceID);
+            biuldSCCMHardware(resourceID);
 
             buildGroupsSegments(resultLocal.GetDirectoryEntry());
            
@@ -388,20 +390,14 @@ namespace ITSWebMgmt
               Next
 
               computerNameToID = computerResourceID */
-            
-            var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
-            var wqlq = new WqlObjectQuery("select ResourceID from SMS_CM_RES_COLL_SMS00001 where name like '" + computername + "'");
-            var searcher = new ManagementObjectSearcher(ms, wqlq);
 
             string resourceID=null;
-            foreach (ManagementObject o in searcher.Get())
+            foreach (ManagementObject o in DatabaseGetter.getResults(new WqlObjectQuery("select ResourceID from SMS_CM_RES_COLL_SMS00001 where name like '" + computername + "'")))
             {
                 resourceID = o.Properties["ResourceID"].Value.ToString();
                 break;
             }
             return resourceID;
-            
-
         }
 
         private void buildGroupsSegments(DirectoryEntry result)
@@ -411,77 +407,13 @@ namespace ITSWebMgmt
         }
 
 
-        protected string buildSCCMInventory(string resourceID)
+        protected void buildSCCMInventory(string resourceID)
         {
             // labelSCCMInventory
             // SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=16780075
+            List<string> interestingKeys = new List<string>() {"Manufacturer", "Model", "SystemType", "Roles"};
 
-            var sb = new StringBuilder();
-            var tableStringBuilder = new StringBuilder();
-
-            HTMLTableHelper inventoryTableHelper = new HTMLTableHelper(2);
-            string s =
-                "Manufacturer," +
-                "Model," +
-                "SystemType," +
-                "Roles";
-            List<string> interestingKeys = s.Split(',').ToList<string>();
-
-
-            var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
-            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=" + resourceID);
-            var searcher = new ManagementObjectSearcher(ms, wqlq);
-
-            ManagementObject obj = new ManagementObject();
-            var results = searcher.Get();
-
-
-            var mo = results.OfType<ManagementObject>().FirstOrDefault();
-
-            tableStringBuilder.Append(inventoryTableHelper.printStart());
-
-            if (mo != null) {
-                foreach (var property in mo.Properties)
-                {
-                    string key = property.Name;
-                    object value = property.Value;
-
-                    if (interestingKeys.Contains(key))
-                    {
-                        if (value != null)
-                        {
-                            tableStringBuilder.Append(inventoryTableHelper.printRow(new string[] { key, value.ToString() }));
-                        }
-                        else
-                        {
-                            tableStringBuilder.Append(inventoryTableHelper.printRow(new string[] { key, "" }));
-                        }
-                    }
-
-                    int i = 0;
-                    if (value != null && value.GetType().IsArray)
-                    {
-                        var arry = (string[])value;
-                        foreach (string f in arry)
-                        {
-                            sb.Append(string.Format("{0}[{2}]: {1}<br />", key, f, i));
-                            i++;
-                        }
-                    }
-                    else
-                    {
-                        sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
-                    }
-                }
-            }else
-            {
-                sb.Append("No inventory data");
-            }
-
-            tableStringBuilder.Append(inventoryTableHelper.printEnd());
-
-
-            //Software Info
+            #region Software Info class
             /*
             [DisplayName("Installed Software"), dynamic: ToInstance, provider("ExtnProv")]
             class SMS_G_System_INSTALLED_SOFTWARE : SMS_G_System_Current
@@ -520,53 +452,21 @@ namespace ITSWebMgmt
                 uint32 VersionMinor;
             };
             */
+            #endregion
+
+            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=" + resourceID);
             var wqlqSoftware = new WqlObjectQuery("SELECT * FROM SMS_G_System_INSTALLED_SOFTWARE WHERE ResourceID=" + resourceID);
-            var searcherSoftware = new ManagementObjectSearcher(ms, wqlqSoftware);
 
-            ManagementObject objSoftware = new ManagementObject();
-            var resultsSoftware = searcherSoftware.Get();
-
-            bool hasValues = false;
-            try
-            {
-                var t2 = resultsSoftware.Count;
-                hasValues = true;
-            }
-            catch (ManagementException e) { }
-
-            tableStringBuilder.Append("<h3>Software Details</h3>");
-
-
-            if (hasValues)
-            {
-                HTMLTableHelper SWTableHelper = new HTMLTableHelper(4);
-                var SWsb = new StringBuilder();
-                SWsb.Append(SWTableHelper.printStart());
-                SWsb.Append(SWTableHelper.printRow(new string[] { "Product ID", "Name", "Version", "Time Stamp" }, true));
-
-                foreach (ManagementObject o in resultsSoftware) //Has one!
-                {
-                    string productID = o.Properties["SoftwareCode"].Value.ToString();
-                    string productName = o.Properties["ProductName"].Value.ToString();
-                    string productVersion = o.Properties["ProductVersion"].Value.ToString();
-                    
-                    string installDate = ManagementDateTimeConverter.ToDateTime(o.Properties["TimeStamp"].Value.ToString()).ToString();
-                    SWsb.Append(SWTableHelper.printRow(productID, productName, productVersion, installDate ));
-                }
-
-                SWsb.Append(SWTableHelper.printEnd());
-                tableStringBuilder.Append(SWsb);
-            }
-            else
-            {
-                tableStringBuilder.Append("Software information not found");
-            }
-
-
-            labelSCCMInventory.Text = sb.ToString();
-            return tableStringBuilder.ToString();
+            var tableAndList = DatabaseGetter.CreateTableAndRawFromDatabase(wqlq, interestingKeys, "No inventory data");
+            labelSSCMInventoryTable.Text = tableAndList.Item1; //Table
+            labelSCCMCollecionsSoftware.Text = DatabaseGetter.CreateTableFromDatabase(wqlqSoftware,
+                new List<string>() { "SoftwareCode", "ProductName", "ProductVersion", "TimeStamp" },
+                new List<string>() { "Product ID", "Name", "Version", "Install date" },
+                "Software information not found");
+            labelSCCMInventory.Text += tableAndList.Item2; //List
         }
-        protected string buildSCCMInfo(string resourceID)
+
+        protected void buildSCCMInfo(string resourceID)
         {
             /*
              *     strQuery = "SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID="& computerID 
@@ -579,51 +479,19 @@ namespace ITSWebMgmt
              * 
              */
 
-
-
             //XXX: remeber to filter out computers that are obsolite in sccm (not active)
             var sb = new StringBuilder();
-            var tableStringBuilder = new StringBuilder();
-
-            HTMLTableHelper infoTableHelper = new HTMLTableHelper(2);
-
-            string s =
-                "LastLogonUserName," +
-                "IPAddresses," +
-                "MACAddresses," +
-                "Build," +
-                "Config";
-            List<string> interestingKeys = s.Split(',').ToList<string>();
            
-
-
-
-            var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
-            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID=" + resourceID);
-            var searcher = new ManagementObjectSearcher(ms, wqlq);
-
             ManagementObject obj = new ManagementObject();
-            var results = searcher.Get();
-
-            bool hasValues=false;
-            try
-            {
-                var t = results.Count;
-                hasValues=true;
-            }catch (ManagementException e){}
+            var results = DatabaseGetter.getResults(new WqlObjectQuery("SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID=" + resourceID));
 
             string configPC = "Unknown";
             string configExtra = "False";
             string getsTestUpdates = "False";
 
-            if (hasValues)
+            HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Collection Name" });
+            if (DatabaseGetter.HasValues(results))
             {
-                HTMLTableHelper groupTableHelper = new HTMLTableHelper(1);
-                var PCsb = new StringBuilder();
-                PCsb.Append(groupTableHelper.printStart());
-                PCsb.Append(groupTableHelper.printRow(new string[] { "Collection Name" }, true));
-
-
                 foreach (ManagementObject o in results)
                 {
                     
@@ -666,10 +534,8 @@ namespace ITSWebMgmt
                     obj.Path = path;
                     obj.Get();
                     
-                    PCsb.Append(groupTableHelper.printRow(new string[] { obj["Name"].ToString() }));
+                    groupTableHelper.AddRow(new string[] { obj["Name"].ToString() });
                 }
-                PCsb.Append(groupTableHelper.printEnd());
-                tableStringBuilder.Append(PCsb);
             }
             else
             {
@@ -678,94 +544,420 @@ namespace ITSWebMgmt
 
             labelBasicInfoPCConfig.Text = configPC;
             labelBasicInfoExtraConfig.Text = configExtra;
-            
 
             //Basal Info
-            var wqlqSystem = new WqlObjectQuery("SELECT * FROM SMS_R_System WHERE ResourceId=" + resourceID);
-            var searcherSystem = new ManagementObjectSearcher(ms, wqlqSystem);
+            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_R_System WHERE ResourceId=" + resourceID);
+            List<string> interestingKeys = new List<string>() { "LastLogonUserName", "IPAddresses", "MACAddresses", "Build", "Config" };
+            var tableAndList = DatabaseGetter.CreateTableAndRawFromDatabase(wqlq, interestingKeys, "Computer not found i SCCM");
 
-            ManagementObject objSystem = new ManagementObject();
-            var resultsSystem = searcherSystem.Get();
+            labelSCCMComputers.Text = sb.ToString() + groupTableHelper.GetTable();
+            labelSCCMCollecionsTable.Text = tableAndList.Item1; //Table
+            labelSCCMCollections.Text = tableAndList.Item2; //List
+        }
 
-            hasValues = false;
-            try
-            {
-                var t2 = resultsSystem.Count;
-                hasValues = true;
-            }
-            catch (ManagementException e) {}
-
-            tableStringBuilder.Append("<h3>Computer Details</h3>");
-            tableStringBuilder.Append(infoTableHelper.printStart());
-
-            if (hasValues)
-            {
-
-                
-                foreach (ManagementObject o in resultsSystem) //Has one!
+        protected void buildSCCMAntivirus(string resourceID)
+        {
+            #region Antivirus Info class
+            /*             
+                instance of SMS_G_System_Threats
                 {
-                    //OperatingSystemNameandVersion = Microsoft Windows NT Workstation 6.1
+                    ActionSuccess = TRUE;
+                    ActionTime = "20181206092351.150000+***";
+                    Category = "";
+                    CategoryID = 27;
+                    CleaningAction = 2;
+                    DetectionID = "{04155F79-EB84-4828-9CEC-AC0749C4EDA6}";
+                    DetectionSource = 3;
+                    DetectionTime = "20181206092345.703000+***";
+                    ErrorCode = -2142207965;
+                    ExecutionStatus = 1;
+                *    Path = "file:_C:\\OneDriveTemp\\S-1-5-21-1950982312-1110734968-986239597-1661\\2ce71f67d80e4f848ce20184ec987e52-8c19be29fc224df0aa8af25df55650dd-33f2835be60c42e1812107e28db565e3-d250bdce6b36dbf4e5459435ccabee25f9b05e46.temp";
+                *    PendingActions = 0;
+                *    Process = "C:\\Users\\lat\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe";
+                    ProductVersion = "4.18.1810.5";
+                    ResourceID = 16787705;
+                    Severity = "";
+                *    SeverityID = 5;
+                    ThreatID = "227086";
+                *    ThreatName = "PUA:Win32/Reimage";
+                *    UserName = "ET\\lat";
+                };
+            */
+            #endregion
 
-                    foreach (var property in o.Properties)
-                    {
-                        string key = property.Name;
-                        object value = property.Value;
+            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_Threats WHERE ResourceID=" + resourceID);
+            //DetectionID is requaired for UserName (SELECT * FROM SMS_G_System_Threats WHERE DetectionID='{04155F79-EB84-4828-9CEC-AC0749C4EDA6}' AND ResourceID=16787705)
+            //Only few computers with data, one them is AAU112782
+            labelSCCMAV.Text = DatabaseGetter.CreateTableFromDatabase(wqlq,
+                new List<string>() { "ThreatName", "PendingActions", "Process", "SeverityID", "Path" },
+                "Antivirus information not found");
+        }
 
-                        if (interestingKeys.Contains(key))
-                        {
-                            if(value != null)
-                            {
-                                if (value.GetType().Equals(typeof(string[])))
-                                {
-                                    string joinedValues = string.Join(", ", (string[])value);
-                                    tableStringBuilder.Append(infoTableHelper.printRow(new string[] { key, joinedValues }));
+        protected void biuldSCCMHardware(string resourceID)
+        {
+            #region Logical Disk
+            /*
+             * [DisplayName("Logical Disk"), dynamic: ToInstance, provider("ExtnProv")]
+            class SMS_G_System_LOGICAL_DISK : SMS_G_System_Current
+            {
+                [ResDLL("SMS_RXPL.dll"), ResID(15)] uint32 ResourceID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(16)] uint32 GroupID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(17)] uint32 RevisionID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(12)] datetime TimeStamp = NULL;
+                uint32 Access;
+                uint32 Availability;
+                uint64 BlockSize;
+                string Caption;
+                uint32 Compressed;
+                uint32 ConfigManagerErrorCode;
+                uint32 ConfigManagerUserConfig;
+                string Description;
+            *    string DeviceID;
+                uint32 DriveType;
+                uint32 ErrorCleared;
+                string ErrorDescription;
+                string ErrorMethodology;
+            *    string FileSystem;
+            *    uint64 FreeSpace;
+                datetime InstallDate;
+                uint32 LastErrorCode;
+                uint32 MaximumComponentLength;
+                uint32 MediaType;
+                string Name;
+                string NumberOfBlocks;
+                string PNPDeviceID;
+                string PowerManagementCapabilities;
+                uint32 PowerManagementSupported;
+                string ProviderName;
+                string Purpose;
+            *    uint64 Size;
+                string Status;
+                uint32 StatusInfo;
+                uint32 SupportsFileBasedCompression;
+                string SystemName;
+                string VolumeName;
+                string VolumeSerialNumber;
+            };
+           */
+            #endregion
 
-                                }
-                                else
-                                {
-                                    tableStringBuilder.Append(infoTableHelper.printRow(new string[] { key, value.ToString() }));
-                                }
-                            }
-                            else
-                            {
-                                tableStringBuilder.Append(infoTableHelper.printRow(new string[] { key, "" }));
-                            }
-                        }
+            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_LOGICAL_DISK WHERE ResourceID=" + resourceID);
+            labelSCCMLD.Text = DatabaseGetter.CreateVerticalTableFromDatabase(wqlq,
+                new List<string>() { "DeviceID", "FileSystem", "Size", "FreeSpace" },
+                new List<string>() { "DeviceID", "File system", "Size (GB)", "FreeSpace (GB)" },
+                "Disk information not found");
 
-                        int i = 0;
-                        string[] arry = null;
-                        if (value != null && value.GetType().IsArray)
-                        {
-                            if (value is string[]){ 
-                                arry = (string[])value;
-                            } else {
-                                arry = new string[]{ "none-string value" }; //XXX get the byte value
-                            }
-                            foreach (string f in arry)
-                            {
-                                sb.Append(string.Format("{0}[{2}]: {1}<br />", key, f, i));
-                                i++;
-                            }
-                        }
-                        else
-                        {
-                            sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
-                        }
-                        
-                    }
+            #region RAM
+            /*
+            SELECT * FROM SMS_G_System_PHYSICAL_MEMORY WHERE ResourceID=16787049
+            instance of SMS_G_System_PHYSICAL_MEMORY
+            {
+                BankLabel = "";
+            *    Capacity = "4096";
+                Caption = "Physical Memory";
+                CreationClassName = "Win32_PhysicalMemory";
+                DataWidth = 64;
+                Description = "Physical Memory";
+                DeviceLocator = "PROC 2 DIMM 1D";
+                FormFactor = 8;
+                GroupID = 7;
+                MemoryType = 0;
+                Name = "Physical Memory";
+                ResourceID = 16779367;
+                RevisionID = 1;
+                Speed = 1333;
+                Tag = "Physical Memory 6";
+                TimeStamp = "20141107155847.000000+***";
+                TotalWidth = 72;
+                TypeDetail = 128;
+            };
+            */
+            #endregion
 
+            wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_PHYSICAL_MEMORY WHERE ResourceID=" + resourceID);
+            var results = DatabaseGetter.getResults(wqlq);
+
+            if (DatabaseGetter.HasValues(results))
+            {
+                int total = 0;
+                int count = 0;
+
+                foreach (ManagementObject o in results) //Has one!
+                {
+                    total += int.Parse(o.Properties["Capacity"].Value.ToString()) / 1024;
+                    count++;
                 }
+
+                labelSCCMRAM.Text = $"{total} GB RAM in {count} slot(s)";
             }
             else
             {
-                sb.Append("Computer not found i SCCM");
+                labelSCCMRAM.Text = "Disk information not found";
             }
-            tableStringBuilder.Append(infoTableHelper.printEnd());
 
-            labelSCCMCollections.Text = sb.ToString();
-            return tableStringBuilder.ToString();
+
+            #region BIOS
+            /*
+            [DisplayName("BIOS"), dynamic: ToInstance, provider("ExtnProv")]
+            class SMS_G_System_PC_BIOS : SMS_G_System_Current
+            {
+                [ResDLL("SMS_RXPL.dll"), ResID(15)] uint32 ResourceID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(16)] uint32 GroupID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(17)] uint32 RevisionID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(12)] datetime TimeStamp = NULL;
+                string BiosCharacteristics;
+            *    string BIOSVersion;
+                string BuildNumber;
+                string Caption;
+                string CodeSet;
+                string CurrentLanguage;
+            *    string Description;
+                string IdentificationCode;
+                uint32 InstallableLanguages;
+                datetime InstallDate;
+                string LanguageEdition;
+                string ListOfLanguages;
+            *    string Manufacturer;
+            *    string Name;
+                string OtherTargetOS;
+                uint32 PrimaryBIOS;
+                datetime ReleaseDate;
+                string SerialNumber;
+            *    string SMBIOSBIOSVersion;
+            *    uint32 SMBIOSMajorVersion;
+            *    uint32 SMBIOSMinorVersion;
+                uint32 SMBIOSPresent;
+                string SoftwareElementID;
+                uint32 SoftwareElementState;
+                string Status;
+                uint32 TargetOperatingSystem;
+                string Version;
+            };
+            */
+            #endregion
+
+            wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_PC_BIOS WHERE ResourceID=" + resourceID);
+            //Minor and Major not exist
+            labelSCCMBIOS.Text = DatabaseGetter.CreateVerticalTableFromDatabase(wqlq,
+                new List<string>() { "BIOSVersion", "Description", "Manufacturer", "Name", "SMBIOSBIOSVersion"},
+                "BIOS information not found");
+
+            #region Video controller
+            /*
+            class SMS_G_System_VIDEO_CONTROLLER : SMS_G_System_Current
+            {
+                [ResDLL("SMS_RXPL.dll"), ResID(15)] uint32 ResourceID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(16)] uint32 GroupID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(17)] uint32 RevisionID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(12)] datetime TimeStamp = NULL;
+                string AcceleratorCapabilities;
+                string AdapterCompatibility;
+                string AdapterDACType;
+            *    uint32 AdapterRAM;
+                uint32 Availability;
+                string CapabilityDescriptions;
+                string Caption;
+                uint32 ColorTableEntries;
+                uint32 ConfigManagerErrorCode;
+                uint32 ConfigManagerUserConfig;
+                uint32 CurrentBitsPerPixel;
+            *    uint32 CurrentHorizontalResolution;
+                string CurrentNumberOfColors;
+                uint32 CurrentNumberOfColumns;
+                uint32 CurrentNumberOfRows;
+                uint32 CurrentRefreshRate;
+                uint32 CurrentScanMode;
+            *    uint32 CurrentVerticalResolution;
+            *    string Description;
+                string DeviceID;
+                string DeviceSpecificPens;
+                uint32 DitherType;
+            *    datetime DriverDate;
+            *    string DriverVersion;
+                uint32 ErrorCleared;
+                string ErrorDescription;
+                uint32 ICMIntent;
+                uint32 ICMMethod;
+                string InfFilename;
+                string InfSection;
+                datetime InstallDate;
+                string InstalledDisplayDrivers;
+                uint32 LastErrorCode;
+                uint32 MaxMemorySupported;
+                uint32 MaxNumberControlled;
+                uint32 MaxRefreshRate;
+                uint32 MinRefreshRate;
+                uint32 Monochrome;
+            *    string Name;
+                uint32 NumberOfColorPlanes;
+                uint32 NumberOfVideoPages;
+                string PNPDeviceID;
+                string PowerManagementCapabilities;
+                uint32 PowerManagementSupported;
+                uint32 ProtocolSupported;
+                uint32 ReservedSystemPaletteEntries;
+                uint32 SpecificationVersion;
+                string Status;
+                uint32 StatusInfo;
+                string SystemName;
+                uint32 SystemPaletteEntries;
+                datetime TimeOfLastReset;
+                uint32 VideoArchitecture;
+                uint32 VideoMemoryType;
+                uint32 VideoMode;
+                string VideoModeDescription;
+                string VideoProcessor;
+            };
+            */
+            #endregion
+
+            wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_VIDEO_CONTROLLER WHERE ResourceID=" + resourceID);
+            //Minor and Major not exist
+            labelSCCMVC.Text = DatabaseGetter.CreateVerticalTableFromDatabase(wqlq,
+                new List<string>() { "AdapterRAM", "CurrentHorizontalResolution", "CurrentVerticalResolution", "DriverDate", "DriverVersion", "Name" },
+                "Video controller information not found");
+
+            #region Processor
+            /*
+            [DisplayName("Processor"), dynamic: ToInstance, provider("ExtnProv")]
+            class SMS_G_System_PROCESSOR : SMS_G_System_Current
+            {
+                [ResDLL("SMS_RXPL.dll"), ResID(15)] uint32 ResourceID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(16)] uint32 GroupID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(17)] uint32 RevisionID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(12)] datetime TimeStamp = NULL;
+                uint32 AddressWidth;
+                uint32 Architecture;
+                uint32 Availability;
+                uint32 BrandID;
+                string Caption;
+                uint32 ConfigManagerErrorCode;
+                uint32 ConfigManagerUserConfig;
+                string CPUHash;
+                string CPUKey;
+                uint32 CpuStatus;
+                uint32 CurrentClockSpeed;
+                uint32 CurrentVoltage;
+                uint32 DataWidth;
+                string Description;
+                string DeviceID;
+                uint32 ErrorCleared;
+                string ErrorDescription;
+                uint32 ExtClock;
+                uint32 Family;
+                datetime InstallDate;
+            *    uint32 Is64Bit;
+                uint32 IsHyperthreadCapable;
+                uint32 IsHyperthreadEnabled;
+            *    uint32 IsMobile;
+                uint32 IsTrustedExecutionCapable;
+            *    uint32 IsVitualizationCapable;
+                uint32 L2CacheSize;
+                uint32 L2CacheSpeed;
+                uint32 L3CacheSize;
+                uint32 L3CacheSpeed;
+                uint32 LastErrorCode;
+                uint32 Level;
+                uint32 LoadPercentage;
+            *    string Manufacturer;
+            *    uint32 MaxClockSpeed;
+            *    string Name;
+                uint32 NormSpeed;
+            *    uint32 NumberOfCores;
+            *    uint32 NumberOfLogicalProcessors;
+                string OtherFamilyDescription;
+                uint32 PCache;
+                string PNPDeviceID;
+                string PowerManagementCapabilities;
+                uint32 PowerManagementSupported;
+                string ProcessorId;
+                uint32 ProcessorType;
+                uint32 Revision;
+                string Role;
+                string SocketDesignation;
+                string Status;
+                uint32 StatusInfo;
+                string Stepping;
+                string SystemName;
+                string UniqueId;
+                uint32 UpgradeMethod;
+                string Version;
+                uint32 VoltageCaps;
+            };
+             */
+            #endregion
+
+            wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_PROCESSOR WHERE ResourceID=" + resourceID);
+            //Minor and Major not exist
+            labelSCCMProcessor.Text = DatabaseGetter.CreateVerticalTableFromDatabase(wqlq,
+                new List<string>() { "Is64Bit", "IsMobile", "IsVitualizationCapable", "Manufacturer", "MaxClockSpeed", "Name", "NumberOfCores", "NumberOfLogicalProcessors" },
+                "Processor information not found");
+
+            #region Disk
+            /*
+            [DisplayName("Disk"), dynamic: ToInstance, provider("ExtnProv")]
+            class SMS_G_System_DISK : SMS_G_System_Current
+            {
+                [ResDLL("SMS_RXPL.dll"), ResID(15)] uint32 ResourceID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(16)] uint32 GroupID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(17)] uint32 RevisionID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(12)] datetime TimeStamp = NULL;
+                uint32 Availability;
+                uint32 BytesPerSector;
+                string Capabilities;
+                string CapabilityDescriptions;
+            *    string Caption;
+                string CompressionMethod;
+                uint32 ConfigManagerErrorCode;
+                uint32 ConfigManagerUserConfig;
+                uint64 DefaultBlockSize;
+                string Description;
+                string DeviceID;
+                uint32 ErrorCleared;
+                string ErrorDescription;
+                string ErrorMethodology;
+                uint32 Index;
+                datetime InstallDate;
+                string InterfaceType;
+                uint32 LastErrorCode;
+                string Manufacturer;
+                uint64 MaxBlockSize;
+                uint64 MaxMediaSize;
+                uint32 MediaLoaded;
+                string MediaType;
+                uint64 MinBlockSize;
+            *    string Model;
+                string Name;
+                uint32 NeedsCleaning;
+                uint32 NumberOfMediaSupported;
+            *    uint32 Partitions;
+                string PNPDeviceID;
+                string PowerManagementCapabilities;
+                uint32 PowerManagementSupported;
+                uint32 SCSIBus;
+                uint32 SCSILogicalUnit;
+                uint32 SCSIPort;
+                uint32 SCSITargetId;
+                uint32 SectorsPerTrack;
+                uint64 Size;
+                string Status;
+                uint32 StatusInfo;
+                string SystemName;
+                string TotalCylinders;
+                uint32 TotalHeads;
+                string TotalSectors;
+                string TotalTracks;
+                uint32 TracksPerCylinder;
+            };
+            */
+            #endregion
+
+            wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_DISK WHERE ResourceID=" + resourceID);
+            //Minor and Major not exist
+            labelSCCMDisk.Text = DatabaseGetter.CreateVerticalTableFromDatabase(wqlq,
+                new List<string>() { "Caption", "Model", "Partitions", "Size", "Name" },
+                "Video controller information not found");
         }
-
 
         protected void addComputerToCollection(string resourceID, string collectionID)
         {
@@ -792,7 +984,6 @@ namespace ITSWebMgmt
             rule["ResourceID"] = resourceID;
 
             obj.InvokeMethod("AddMembershipRule", new object[] { rule });
-
         }
  
         
@@ -805,10 +996,6 @@ namespace ITSWebMgmt
             var resourceID = getSCCMResourceIDFromComputerName(computerName);
             var collectionID = "AA1000B8"; //Enabled Bitlocker Encryption Collection ID
             addComputerToCollection(resourceID, collectionID);
-
         }
-
-
-
     }
 }

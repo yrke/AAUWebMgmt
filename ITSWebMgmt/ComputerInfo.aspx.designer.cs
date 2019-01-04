@@ -148,15 +148,6 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Button MoveComputerOU;
         
         /// <summary>
-        /// labelSCCMComputers control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label labelSCCMComputers;
-        
-        /// <summary>
         /// labelSCCMCollecionsTable control.
         /// </summary>
         /// <remarks>
@@ -164,6 +155,15 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label labelSCCMCollecionsTable;
+        
+        /// <summary>
+        /// labelSCCMComputers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMComputers;
         
         /// <summary>
         /// labelSCCMCollections control.
@@ -184,6 +184,15 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label labelSSCMInventoryTable;
         
         /// <summary>
+        /// labelSCCMCollecionsSoftware control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMCollecionsSoftware;
+        
+        /// <summary>
         /// labelSCCMInventory control.
         /// </summary>
         /// <remarks>
@@ -191,6 +200,69 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label labelSCCMInventory;
+        
+        /// <summary>
+        /// labelSCCMAV control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMAV;
+        
+        /// <summary>
+        /// labelSCCMRAM control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMRAM;
+        
+        /// <summary>
+        /// labelSCCMProcessor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMProcessor;
+        
+        /// <summary>
+        /// labelSCCMVC control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMVC;
+        
+        /// <summary>
+        /// labelSCCMBIOS control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMBIOS;
+        
+        /// <summary>
+        /// labelSCCMLD control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMLD;
+        
+        /// <summary>
+        /// labelSCCMDisk control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMDisk;
         
         /// <summary>
         /// groupssegmentLabel control.

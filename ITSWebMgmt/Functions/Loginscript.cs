@@ -54,7 +54,6 @@ namespace ITSWebMgmt.Functions
         //Returns a html table displaying loginscript data and raw data parition
         public string parseAndDisplayLoginScript(string loginscript)
         {
-
             var sb = new StringBuilder();
 
             var lines = loginscript.Split('\n');
@@ -63,12 +62,9 @@ namespace ITSWebMgmt.Functions
             var linesNetUse = lines.Where<string>(s => s.StartsWith("net use", StringComparison.CurrentCultureIgnoreCase)).ToArray<string>();
             var linesNetUseNotDelete = linesNetUse.Where<string>(s => !s.ToLower().Contains(" /d")).ToArray<string>();
 
-            var table = new HTMLTableHelper(2);
+            var table = new HTMLTableHelper(new string[] { "Drive Letter", "share" });
 
-            sb.Append("<h3>Networkdrives</h3>");
-
-            sb.Append(table.printStart());
-            sb.Append(table.printRow(new string[] { "Drive Letter", "share" }, true));
+            sb.Append("<h3>Networkdrives</h3>");;
 
             foreach (string line in linesNetUseNotDelete)
             {
@@ -79,16 +75,11 @@ namespace ITSWebMgmt.Functions
 
                 string drive = match.Groups["drive"].Value;
                 string share = match.Groups["share"].Value;
-
-
-                sb.Append(table.printRow(new string[] { drive, share }, true));
-
                 
+                table.AddRow(new string[] { drive, share });
             }
 
-            sb.Append(table.printEnd());
-
-
+            sb.Append(table.GetTable());
             sb.Append("<h3>Raw<h3>");
             foreach (string line in lines)
             {
@@ -97,16 +88,8 @@ namespace ITSWebMgmt.Functions
 
             }
             
-            
-
-
             return sb.ToString();
 
         }
-
-
-
-
-
     }
 }

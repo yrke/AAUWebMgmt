@@ -56,6 +56,8 @@
                             <a class="item" data-tab="groups">Groups</a>
                             <a class="item" data-tab="sccmInfo">SCCM Info</a>
                             <a class="item" data-tab="sccmInventory">Inventory</a>
+                            <a class="item" data-tab="sccmAV">Antivirus</a>
+                            <a class="item" data-tab="sccmHW">Hardware inventory</a>
                             <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
                             <a class="item" data-tab="rawdata">Raw Data</a>
                             <a class="item" data-tab="tasks">Tasks</a>
@@ -130,22 +132,48 @@
                         </div>
                         <div class="ui tab segment" data-tab="sccmInfo">
                             <h2>SCCM Info</h2>
-                            <h3>Collections</h3>
-                            
-                            <asp:Label runat="server" ID="labelSCCMComputers" />
+                            <h3>Computer Details</h3>
                             <asp:Label runat="server" ID="labelSCCMCollecionsTable" />
                             
-                            <h2>Raw data</h2>
+                            <h3>Collections</h3>
+                            <asp:Label runat="server" ID="labelSCCMComputers" />
+
+                            <h3>Raw data</h3>
                             <asp:Label runat="server" ID="labelSCCMCollections" />
                         </div>
 
                         <div class="ui tab segment" data-tab="sccmInventory">
                             <h2>SCCM Info</h2>
                             <asp:Label runat="server" ID="labelSSCMInventoryTable" />
-                            
-                            <h2>Raw</h2>
+                           
+                            <h3>Software Details</h3>
+                            <asp:Label runat="server" ID="labelSCCMCollecionsSoftware" />
+
+                            <h3>Raw</h3>
                             <asp:Label runat="server" ID="labelSCCMInventory" />
                         </div>
+
+                        <div class="ui tab segment" data-tab="sccmAV">
+                            <h2>Antivirus Info</h2>
+                            <asp:Label runat="server" ID="labelSCCMAV" />
+                        </div>
+
+                        <div class="ui tab segment" data-tab="sccmHW">
+                            <h2>Hardware Info</h2>
+                            <h3>RAM</h3>
+                            <asp:Label runat="server" ID="labelSCCMRAM" />
+                            <h3>Processor</h3>
+                            <asp:Label runat="server" ID="labelSCCMProcessor" />
+                            <h3>Video controller</h3>
+                            <asp:Label runat="server" ID="labelSCCMVC" />
+                            <h3>BIOS</h3>
+                            <asp:Label runat="server" ID="labelSCCMBIOS" />
+                            <h3>Logical Disk</h3>
+                            <asp:Label runat="server" ID="labelSCCMLD" />
+                            <h3>Disk</h3>
+                            <asp:Label runat="server" ID="labelSCCMDisk" />
+                        </div>
+
 
                          <div class="ui tab segment" data-tab="groups">
                             <h2>Groups</h2>

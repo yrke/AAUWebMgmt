@@ -176,6 +176,7 @@
     <Compile Include="Controls\ActiveChanges.ascx.designer.cs">
       <DependentUpon>ActiveChanges.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DatabaseGetter.cs" />
     <Compile Include="Helpers\GroupTableGenerator.cs" />
     <Compile Include="Helpers\HTMLEncodingHelper.cs" />
     <Compile Include="Helpers\HTMLTableHelper.cs" />
