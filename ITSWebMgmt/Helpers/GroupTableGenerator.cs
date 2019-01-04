@@ -12,11 +12,7 @@ namespace ITSWebMgmt.Helpers
     {
         private static string CreateGroupTable(List<string> groupsAsList)
         {
-            HTMLTableHelper groupTableHelper = new HTMLTableHelper(2);
-            var groupStringBuilder = new StringBuilder();
-
-            groupStringBuilder.Append(groupTableHelper.printStart());
-            groupStringBuilder.Append(groupTableHelper.printRow(new string[] { "Domain", "Name" }, true));
+            HTMLTableHelper groupTableHelper = new HTMLTableHelper(2, new string[] { "Domain", "Name" });
 
             foreach (string adpath in groupsAsList)
             {
@@ -24,12 +20,11 @@ namespace ITSWebMgmt.Helpers
                 var groupname = split[0].Replace("CN=", "");
                 var domain = split.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
                 var linkToGroup = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname);
-                groupStringBuilder.Append(groupTableHelper.printRow(new string[] { domain, linkToGroup }));
+                groupTableHelper.AddRow(new string[] { domain, linkToGroup });
 
             }
 
-            groupStringBuilder.Append(groupTableHelper.printEnd());
-            return groupStringBuilder.ToString();
+            return groupTableHelper.GetTable();
         }
 
         private static string buildgroupssegmentLabel(String[] groupsList)

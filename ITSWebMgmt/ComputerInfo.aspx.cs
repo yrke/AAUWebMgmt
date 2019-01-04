@@ -488,14 +488,9 @@ namespace ITSWebMgmt
             string configExtra = "False";
             string getsTestUpdates = "False";
 
-            var PCsb = new StringBuilder();
+            HTMLTableHelper groupTableHelper = new HTMLTableHelper(1, new string[] { "Collection Name" });
             if (DatabaseGetter.HasValues(results))
             {
-                HTMLTableHelper groupTableHelper = new HTMLTableHelper(1);
-                PCsb.Append(groupTableHelper.printStart());
-                PCsb.Append(groupTableHelper.printRow(new string[] { "Collection Name" }, true));
-
-
                 foreach (ManagementObject o in results)
                 {
                     
@@ -538,9 +533,8 @@ namespace ITSWebMgmt
                     obj.Path = path;
                     obj.Get();
                     
-                    PCsb.Append(groupTableHelper.printRow(new string[] { obj["Name"].ToString() }));
+                    groupTableHelper.AddRow(new string[] { obj["Name"].ToString() });
                 }
-                PCsb.Append(groupTableHelper.printEnd());
             }
             else
             {
@@ -555,7 +549,7 @@ namespace ITSWebMgmt
             List<string> interestingKeys = new List<string>() { "LastLogonUserName", "IPAddresses", "MACAddresses", "Build", "Config" };
             var tableAndList = DatabaseGetter.CreateTableAndRawFromDatabase(wqlq, interestingKeys, "Computer not found i SCCM");
 
-            labelSCCMComputers.Text = sb.ToString() + PCsb.ToString();
+            labelSCCMComputers.Text = sb.ToString() + groupTableHelper.GetTable();
             labelSCCMCollecionsTable.Text = tableAndList.Item1; //Table
             labelSCCMCollections.Text = tableAndList.Item2; //List
         }

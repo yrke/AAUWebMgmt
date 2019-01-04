@@ -98,10 +98,7 @@ namespace ITSWebMgmt.Connectors
         private static StringBuilder PrintTableOfCases(object jsonO, Func<string, bool> filter)
         {
             dynamic json = jsonO;
-            var sb = new StringBuilder();
-            var helper = new HTMLTableHelper(4);
-            sb.Append(helper.printStart());
-            sb.Append(helper.printRow(new string[] { "ID", "Title", "Status", "Last Change" }, true));
+            var helper = new HTMLTableHelper(4, new string[] { "ID", "Title", "Status", "Last Change" });
 
             for (int i = 0; i < json["MyRequest"].Length; i++)
             {
@@ -129,12 +126,12 @@ namespace ITSWebMgmt.Connectors
                     string tmp = json["MyRequest"][i]["LastModified"];
                     string sLastChange = Convert.ToDateTime(tmp).ToString("yyyy-MM-dd HH:mm");
 
-                    sb.Append(helper.printRow(new String[] { sID, sTitle, sStatus, sLastChange }));
+                    helper.AddRow(new String[] { sID, sTitle, sStatus, sLastChange });
                 }
             }
 
-            sb.Append(helper.printEnd());
-            return sb;
+            
+            return new StringBuilder(helper.GetTable());
         }
 
 

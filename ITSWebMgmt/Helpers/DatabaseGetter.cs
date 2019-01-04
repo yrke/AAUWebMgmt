@@ -31,14 +31,11 @@ namespace ITSWebMgmt.Helpers
 
         public static Tuple<string, string> CreateTableAndRawFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage)
         {
-            HTMLTableHelper tableHelper = new HTMLTableHelper(2);
-            var tableStringBuilder = new StringBuilder();
+            HTMLTableHelper tableHelper = new HTMLTableHelper(2, keys.ToArray());
             var sb = new StringBuilder();
 
             var results = getResults(wqlq);
             var mo = results.OfType<ManagementObject>().FirstOrDefault();
-
-            tableStringBuilder.Append(tableHelper.printStart());
 
             if (HasValues(results))
             {
@@ -58,17 +55,17 @@ namespace ITSWebMgmt.Helpers
                                 if (value.GetType().Equals(typeof(string[])))
                                 {
                                     string joinedValues = string.Join(", ", (string[])value);
-                                    tableStringBuilder.Append(tableHelper.printRow(new string[] { key, joinedValues }));
+                                    tableHelper.AddRow(new string[] { key, joinedValues });
 
                                 }
                                 else
                                 {
-                                    tableStringBuilder.Append(tableHelper.printRow(new string[] { key, value.ToString() }));
+                                    tableHelper.AddRow(new string[] { key, value.ToString() });
                                 }
                             }
                             else
                             {
-                                tableStringBuilder.Append(tableHelper.printRow(new string[] { key, "" }));
+                                tableHelper.AddRow(new string[] { key, "" });
                             }
                         }
 
@@ -104,8 +101,7 @@ namespace ITSWebMgmt.Helpers
                 sb.Append(errorMessage);
             }
 
-            tableStringBuilder.Append(tableHelper.printEnd());
-            return Tuple.Create(tableStringBuilder.ToString(), sb.ToString());
+            return Tuple.Create(tableHelper.GetTable(), sb.ToString());
         }
 
         public static string CreateTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage) => CreateTableFromDatabase(wqlq, keys, keys, errorMessage);
@@ -117,10 +113,7 @@ namespace ITSWebMgmt.Helpers
 
             if (HasValues(results))
             {
-                HTMLTableHelper SWTableHelper = new HTMLTableHelper(keys.Count());
-                var SWsb = new StringBuilder();
-                SWsb.Append(SWTableHelper.printStart());
-                SWsb.Append(SWTableHelper.printRow(names.ToArray(), true));
+                HTMLTableHelper tableHelper = new HTMLTableHelper(keys.Count(), names.ToArray());
 
                 foreach (ManagementObject o in results) //Has one!
                 {
@@ -129,11 +122,10 @@ namespace ITSWebMgmt.Helpers
                     {
                         properties.Add(o.Properties[p].Value.ToString());
                     }
-                    SWsb.Append(SWTableHelper.printRow(properties.ToArray()));
+                    tableHelper.AddRow(properties.ToArray());
                 }
 
-                SWsb.Append(SWTableHelper.printEnd());
-                sb.Append(SWsb);
+                sb.Append(tableHelper.GetTable());
             }
             else
             {
