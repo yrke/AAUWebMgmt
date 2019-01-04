@@ -130,20 +130,24 @@
                         </div>
                         <div class="ui tab segment" data-tab="sccmInfo">
                             <h2>SCCM Info</h2>
-                            <h3>Collections</h3>
-                            
-                            <asp:Label runat="server" ID="labelSCCMComputers" />
+                            <h3>Computer Details</h3>
                             <asp:Label runat="server" ID="labelSCCMCollecionsTable" />
                             
-                            <h2>Raw data</h2>
+                            <h3>Collections</h3>
+                            <asp:Label runat="server" ID="labelSCCMComputers" />
+
+                            <h3>Raw data</h3>
                             <asp:Label runat="server" ID="labelSCCMCollections" />
                         </div>
 
                         <div class="ui tab segment" data-tab="sccmInventory">
                             <h2>SCCM Info</h2>
                             <asp:Label runat="server" ID="labelSSCMInventoryTable" />
-                            
-                            <h2>Raw</h2>
+                           
+                            <h3>Software Details</h3>
+                            <asp:Label runat="server" ID="labelSCCMCollecionsSoftware" />
+
+                            <h3>Raw</h3>
                             <asp:Label runat="server" ID="labelSCCMInventory" />
                         </div>
 

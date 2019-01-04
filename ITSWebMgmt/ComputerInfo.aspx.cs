@@ -250,8 +250,8 @@ namespace ITSWebMgmt
 
             var resourceID = getSCCMResourceIDFromComputerName(computername); //XXX use ad path to get right object in sccm, also dont get obsolite
             //XXX check resourceID 
-            labelSCCMCollecionsTable.Text = buildSCCMInfo(resourceID);
-            labelSSCMInventoryTable.Text = buildSCCMInventory(resourceID);
+            buildSCCMInfo(resourceID);
+            buildSCCMInventory(resourceID);
 
 
             buildGroupsSegments(resultLocal.GetDirectoryEntry());
@@ -406,20 +406,22 @@ namespace ITSWebMgmt
         }
 
 
-        protected string buildSCCMInventory(string resourceID)
+        protected void buildSCCMInventory(string resourceID)
         {
             // labelSCCMInventory
             // SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=16780075
             List<string> interestingKeys = new List<string>() {"Manufacturer", "Model", "SystemType", "Roles"};
             
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=" + resourceID);
+            var wqlqSoftware = new WqlObjectQuery("SELECT * FROM SMS_G_System_INSTALLED_SOFTWARE WHERE ResourceID=" + resourceID);
+
             var tableAndList = DatabaseGetter.CreateTableFromDatabase(wqlq, interestingKeys, "No inventory data");
-            labelSCCMInventory.Text = "<h3>Software Details</h3>" + DatabaseGetter.CreateTableFromDatabase(wqlqSoftware, new List<string>() { "SoftwareCode", "ProductName", "ProductVersion", "TimeStamp" }, new List<string>() { "Product ID", "Name", "Version", "Install date" });
+            labelSSCMInventoryTable.Text = tableAndList.Item1; //Table
+            labelSCCMCollecionsSoftware.Text = DatabaseGetter.CreateTableFromDatabase(wqlqSoftware, new List<string>() { "SoftwareCode", "ProductName", "ProductVersion", "TimeStamp" }, new List<string>() { "Product ID", "Name", "Version", "Install date" });
             labelSCCMInventory.Text += tableAndList.Item2; //List
-            return tableAndList.Item1; //Table
         }
 
-        protected string buildSCCMInfo(string resourceID)
+        protected void buildSCCMInfo(string resourceID)
         {
             /*
              *     strQuery = "SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID="& computerID 
@@ -442,10 +444,10 @@ namespace ITSWebMgmt
             string configExtra = "False";
             string getsTestUpdates = "False";
 
+            var PCsb = new StringBuilder();
             if (DatabaseGetter.HasValues(results))
             {
                 HTMLTableHelper groupTableHelper = new HTMLTableHelper(1);
-                var PCsb = new StringBuilder();
                 PCsb.Append(groupTableHelper.printStart());
                 PCsb.Append(groupTableHelper.printRow(new string[] { "Collection Name" }, true));
 
@@ -495,7 +497,6 @@ namespace ITSWebMgmt
                     PCsb.Append(groupTableHelper.printRow(new string[] { obj["Name"].ToString() }));
                 }
                 PCsb.Append(groupTableHelper.printEnd());
-                tableStringBuilder.Append(PCsb);
             }
             else
             {
@@ -506,15 +507,13 @@ namespace ITSWebMgmt
             labelBasicInfoExtraConfig.Text = configExtra;
 
             //Basal Info
-            sb.Append("<h3>Computer Details</h3>");
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_R_System WHERE ResourceId=" + resourceID);
             List<string> interestingKeys = new List<string>() { "LastLogonUserName", "IPAddresses", "MACAddresses", "Build", "Config" };
             var tableAndList = DatabaseGetter.CreateTableFromDatabase(wqlq, interestingKeys, "Computer not found i SCCM");
 
-            sb.Append(tableAndList.Item2); //List
-
-            labelSCCMCollections.Text = sb.ToString();
-            return tableAndList.Item1; //Table
+            labelSCCMComputers.Text = sb.ToString() + PCsb.ToString();
+            labelSCCMCollecionsTable.Text = tableAndList.Item1; //Table
+            labelSCCMCollections.Text = tableAndList.Item2; //List
         }
 
 
