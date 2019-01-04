@@ -35,8 +35,9 @@ namespace ITSWebMgmt
             }
         
         }
+        
 
-        public string printRow(string[] args)
+        public string printRow(params string[] args)
         {
             var sb = new StringBuilder();
             if (!(args.Length == this.colums)) { throw new ArgumentOutOfRangeException(); };

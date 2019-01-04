@@ -75,13 +75,13 @@ namespace ITSWebMgmt.Helpers
         {
             // Names of items in tuple is c# 7 feature: (String[] groupListConvert, String[] groupsListAllConverted)
             var groupsList = result.Properties[name];
-            string attName = "msds-memberOfTransitive";
+            string attName = $"msds-{name}Transitive";
             result.RefreshCache(attName.Split(','));
 
             var b = groupsList.Cast<string>();
             var groupListConvert = b.ToArray<string>();
 
-            var groupsListAll = result.Properties["msds-memberOfTransitive"];
+            var groupsListAll = result.Properties[attName];
             var groupsListAllConverted = groupsListAll.Cast<string>().ToArray();
 
             groupssegmentLabel.Text = buildgroupssegmentLabel(groupListConvert);

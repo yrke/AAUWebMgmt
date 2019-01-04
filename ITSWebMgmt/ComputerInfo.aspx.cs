@@ -413,8 +413,6 @@ namespace ITSWebMgmt
             List<string> interestingKeys = new List<string>() {"Manufacturer", "Model", "SystemType", "Roles"};
             
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=" + resourceID);
-            var wqlqSoftware = new WqlObjectQuery("SELECT * FROM SMS_G_System_INSTALLED_SOFTWARE WHERE ResourceID=" + resourceID);
-
             var tableAndList = DatabaseGetter.CreateTableFromDatabase(wqlq, interestingKeys, "No inventory data");
             labelSCCMInventory.Text = "<h3>Software Details</h3>" + DatabaseGetter.CreateTableFromDatabase(wqlqSoftware, new List<string>() { "SoftwareCode", "ProductName", "ProductVersion", "TimeStamp" }, new List<string>() { "Product ID", "Name", "Version", "Install date" });
             labelSCCMInventory.Text += tableAndList.Item2; //List
@@ -448,13 +446,13 @@ namespace ITSWebMgmt
             {
                 HTMLTableHelper groupTableHelper = new HTMLTableHelper(1);
                 var PCsb = new StringBuilder();
-                PCsb.Append(groupTableHelper.printRow(new string[] { "Group Names" }, true));
-
                 PCsb.Append(groupTableHelper.printStart());
+                PCsb.Append(groupTableHelper.printRow(new string[] { "Collection Name" }, true));
+
+
                 foreach (ManagementObject o in results)
                 {
-                    configPC = "Unknown";
-                    configExtra = "False";
+                    
                     //o.Properties["ResourceID"].Value.ToString();
                     var collectionID = o.Properties["CollectionID"].Value.ToString();
 
@@ -497,7 +495,7 @@ namespace ITSWebMgmt
                     PCsb.Append(groupTableHelper.printRow(new string[] { obj["Name"].ToString() }));
                 }
                 PCsb.Append(groupTableHelper.printEnd());
-                sb.Append(PCsb);
+                tableStringBuilder.Append(PCsb);
             }
             else
             {

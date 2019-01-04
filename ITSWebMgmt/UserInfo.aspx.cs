@@ -804,7 +804,7 @@ namespace ITSWebMgmt
             }
             catch(System.UnauthorizedAccessException e)
             {
-                divComputerInformation.Text = "User not authorized for this action.";
+                divComputerInformation.Text = "Service user does not have SCCM access.";
             }
         }
         private void buildWarningSegment(DirectoryEntry result)
