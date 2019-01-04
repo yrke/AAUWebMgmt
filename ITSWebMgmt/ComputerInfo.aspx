@@ -165,7 +165,13 @@
                             <h3>RAM</h3>
                             <asp:Label runat="server" ID="labelSCCMRAM" />
                             <h3>BIOS</h3>
-                            <asp:Label runat="server" ID="labelSCCMRBIOS" />
+                            <asp:Label runat="server" ID="labelSCCMBIOS" />
+                            <h3>Video controller</h3>
+                            <asp:Label runat="server" ID="labelSCCMVC" />
+                            <h3>Processor</h3>
+                            <asp:Label runat="server" ID="labelSCCMProcessor" />
+                            <h3>Disk</h3>
+                            <asp:Label runat="server" ID="labelSCCMDisk" />
                         </div>
 
 

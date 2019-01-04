@@ -229,13 +229,40 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label labelSCCMRAM;
         
         /// <summary>
-        /// labelSCCMRBIOS control.
+        /// labelSCCMBIOS control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label labelSCCMRBIOS;
+        protected global::System.Web.UI.WebControls.Label labelSCCMBIOS;
+        
+        /// <summary>
+        /// labelSCCMVC control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMVC;
+        
+        /// <summary>
+        /// labelSCCMProcessor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMProcessor;
+        
+        /// <summary>
+        /// labelSCCMDisk control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMDisk;
         
         /// <summary>
         /// groupssegmentLabel control.
