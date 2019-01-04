@@ -12,6 +12,7 @@ using ITSWebMgmt.Connectors;
 using System.Web.UI.WebControls;
 using ITSWebMgmt.Connectors.Active_Directory;
 using ITSWebMgmt;
+using ITSWebMgmt.Helpers;
 
 namespace ITSWebMgmt
 {
@@ -789,11 +790,9 @@ namespace ITSWebMgmt
                 sb.Append(helper.printStart());
                 sb.Append(helper.printRow(new string[] { "Computername", "AAU Fjernsupport" }, true));
 
-                var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
                 var wqlq = new WqlObjectQuery("SELECT * FROM SMS_UserMachineRelationship WHERE UniqueUserName = \"" + userName + "\"");
-                var searcher = new ManagementObjectSearcher(ms, wqlq);
 
-                foreach (ManagementObject o in searcher.Get())
+                foreach (ManagementObject o in DatabaseGetter.getResults(wqlq))
                 {
                     var machinename = o.Properties["ResourceName"].Value.ToString();
                     var name = "<a href=\"/computerInfo.aspx?computername=" + machinename + "\">" + machinename + "</a><br />";
