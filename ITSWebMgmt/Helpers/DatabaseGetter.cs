@@ -29,7 +29,7 @@ namespace ITSWebMgmt.Helpers
             return false;
         }
 
-        public static Tuple<string, string> CreateTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage)
+        public static Tuple<string, string> CreateTableAndRawFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage)
         {
             HTMLTableHelper tableHelper = new HTMLTableHelper(2);
             var tableStringBuilder = new StringBuilder();
@@ -108,14 +108,16 @@ namespace ITSWebMgmt.Helpers
             return Tuple.Create(tableStringBuilder.ToString(), sb.ToString());
         }
 
-        public static string CreateTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, List<string> names)
+        public static string CreateTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage) => CreateTableFromDatabase(wqlq, keys, keys, errorMessage);
+
+        public static string CreateTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, List<string> names, string errorMessage)
         {
             var results = getResults(wqlq);
             var sb = new StringBuilder();
 
             if (HasValues(results))
             {
-                HTMLTableHelper SWTableHelper = new HTMLTableHelper(4);
+                HTMLTableHelper SWTableHelper = new HTMLTableHelper(keys.Count());
                 var SWsb = new StringBuilder();
                 SWsb.Append(SWTableHelper.printStart());
                 SWsb.Append(SWTableHelper.printRow(names.ToArray(), true));
@@ -135,7 +137,7 @@ namespace ITSWebMgmt.Helpers
             }
             else
             {
-                sb.Append("Software information not found");
+                sb.Append(errorMessage);
             }
 
             return sb.ToString();

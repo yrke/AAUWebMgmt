@@ -56,6 +56,7 @@
                             <a class="item" data-tab="groups">Groups</a>
                             <a class="item" data-tab="sccmInfo">SCCM Info</a>
                             <a class="item" data-tab="sccmInventory">Inventory</a>
+                            <a class="item" data-tab="sccmAV">Antivirus</a>
                             <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
                             <a class="item" data-tab="rawdata">Raw Data</a>
                             <a class="item" data-tab="tasks">Tasks</a>
@@ -149,6 +150,11 @@
 
                             <h3>Raw</h3>
                             <asp:Label runat="server" ID="labelSCCMInventory" />
+                        </div>
+
+                        <div class="ui tab segment" data-tab="sccmAV">
+                            <h2>Antivirus Info</h2>
+                            <asp:Label runat="server" ID="labelSCCMAV" />
                         </div>
 
                          <div class="ui tab segment" data-tab="groups">

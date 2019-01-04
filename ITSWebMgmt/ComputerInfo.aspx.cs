@@ -252,7 +252,7 @@ namespace ITSWebMgmt
             //XXX check resourceID 
             buildSCCMInfo(resourceID);
             buildSCCMInventory(resourceID);
-
+            buildSCCMAntivirus(resourceID);
 
             buildGroupsSegments(resultLocal.GetDirectoryEntry());
            
@@ -411,13 +411,57 @@ namespace ITSWebMgmt
             // labelSCCMInventory
             // SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=16780075
             List<string> interestingKeys = new List<string>() {"Manufacturer", "Model", "SystemType", "Roles"};
-            
+
+            #region Software Info class
+            /*
+            [DisplayName("Installed Software"), dynamic: ToInstance, provider("ExtnProv")]
+            class SMS_G_System_INSTALLED_SOFTWARE : SMS_G_System_Current
+            {
+                [ResDLL("SMS_RXPL.dll"), ResID(15)] uint32 ResourceID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(16)] uint32 GroupID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(17)] uint32 RevisionID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(12)] datetime TimeStamp = NULL;
+                string ARPDisplayName;
+                string ChannelCode;
+                string ChannelID;
+                string CM_DSLID;
+                string EvidenceSource;
+                datetime InstallDate;
+                uint32 InstallDirectoryValidation;
+                string InstalledLocation;
+                string InstallSource;
+                uint32 InstallType;
+                uint32 Language;
+                string LocalPackage;
+                string MPC;
+                uint32 OsComponent;
+                string PackageCode;
+                string ProductID;
+                string ProductName;
+                string ProductVersion;
+                string Publisher;
+                string RegisteredUser;
+                string ServicePack;
+                string SoftwareCode;
+                string SoftwarePropertiesHash;
+                string SoftwarePropertiesHashEx;
+                string UninstallString;
+                string UpgradeCode;
+                uint32 VersionMajor;
+                uint32 VersionMinor;
+            };
+            */
+            #endregion
+
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=" + resourceID);
             var wqlqSoftware = new WqlObjectQuery("SELECT * FROM SMS_G_System_INSTALLED_SOFTWARE WHERE ResourceID=" + resourceID);
 
-            var tableAndList = DatabaseGetter.CreateTableFromDatabase(wqlq, interestingKeys, "No inventory data");
+            var tableAndList = DatabaseGetter.CreateTableAndRawFromDatabase(wqlq, interestingKeys, "No inventory data");
             labelSSCMInventoryTable.Text = tableAndList.Item1; //Table
-            labelSCCMCollecionsSoftware.Text = DatabaseGetter.CreateTableFromDatabase(wqlqSoftware, new List<string>() { "SoftwareCode", "ProductName", "ProductVersion", "TimeStamp" }, new List<string>() { "Product ID", "Name", "Version", "Install date" });
+            labelSCCMCollecionsSoftware.Text = DatabaseGetter.CreateTableFromDatabase(wqlqSoftware,
+                new List<string>() { "SoftwareCode", "ProductName", "ProductVersion", "TimeStamp" },
+                new List<string>() { "Product ID", "Name", "Version", "Install date" },
+                "Software information not found");
             labelSCCMInventory.Text += tableAndList.Item2; //List
         }
 
@@ -509,13 +553,50 @@ namespace ITSWebMgmt
             //Basal Info
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_R_System WHERE ResourceId=" + resourceID);
             List<string> interestingKeys = new List<string>() { "LastLogonUserName", "IPAddresses", "MACAddresses", "Build", "Config" };
-            var tableAndList = DatabaseGetter.CreateTableFromDatabase(wqlq, interestingKeys, "Computer not found i SCCM");
+            var tableAndList = DatabaseGetter.CreateTableAndRawFromDatabase(wqlq, interestingKeys, "Computer not found i SCCM");
 
             labelSCCMComputers.Text = sb.ToString() + PCsb.ToString();
             labelSCCMCollecionsTable.Text = tableAndList.Item1; //Table
             labelSCCMCollections.Text = tableAndList.Item2; //List
         }
 
+        protected void buildSCCMAntivirus(string resourceID)
+        {
+            #region Antivirus Info class
+            /*             
+                instance of SMS_G_System_Threats
+                {
+                    ActionSuccess = TRUE;
+                    ActionTime = "20181206092351.150000+***";
+                    Category = "";
+                    CategoryID = 27;
+                    CleaningAction = 2;
+                    DetectionID = "{04155F79-EB84-4828-9CEC-AC0749C4EDA6}";
+                    DetectionSource = 3;
+                    DetectionTime = "20181206092345.703000+***";
+                    ErrorCode = -2142207965;
+                    ExecutionStatus = 1;
+                *    Path = "file:_C:\\OneDriveTemp\\S-1-5-21-1950982312-1110734968-986239597-1661\\2ce71f67d80e4f848ce20184ec987e52-8c19be29fc224df0aa8af25df55650dd-33f2835be60c42e1812107e28db565e3-d250bdce6b36dbf4e5459435ccabee25f9b05e46.temp";
+                *    PendingActions = 0;
+                *    Process = "C:\\Users\\lat\\AppData\\Local\\Microsoft\\OneDrive\\OneDrive.exe";
+                    ProductVersion = "4.18.1810.5";
+                    ResourceID = 16787705;
+                    Severity = "";
+                *    SeverityID = 5;
+                    ThreatID = "227086";
+                *    ThreatName = "PUA:Win32/Reimage";
+                *    UserName = "ET\\lat";
+                };
+            */
+            #endregion
+
+            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_Threats WHERE ResourceID=" + resourceID);
+            //DetectionID is requaired for UserName (SELECT * FROM SMS_G_System_Threats WHERE DetectionID='{04155F79-EB84-4828-9CEC-AC0749C4EDA6}' AND ResourceID=16787705)
+            //Only few computers with data, one them is AAU112782
+            labelSCCMAV.Text = DatabaseGetter.CreateTableFromDatabase(wqlq,
+                new List<string>() { "ThreatName", "PendingActions", "Process", "SeverityID", "Path" },
+                "Antivirus information not found");
+        }
 
         protected void addComputerToCollection(string resourceID, string collectionID)
         {
