@@ -253,6 +253,7 @@ namespace ITSWebMgmt
             buildSCCMInfo(resourceID);
             buildSCCMInventory(resourceID);
             buildSCCMAntivirus(resourceID);
+            biuldSCCMHardware(resourceID);
 
             buildGroupsSegments(resultLocal.GetDirectoryEntry());
            
@@ -590,6 +591,61 @@ namespace ITSWebMgmt
             labelSCCMAV.Text = DatabaseGetter.CreateTableFromDatabase(wqlq,
                 new List<string>() { "ThreatName", "PendingActions", "Process", "SeverityID", "Path" },
                 "Antivirus information not found");
+        }
+
+        protected void biuldSCCMHardware(string resourceID)
+        {
+            #region Logical Disk
+            /*
+             * [DisplayName("Logical Disk"), dynamic: ToInstance, provider("ExtnProv")]
+            class SMS_G_System_LOGICAL_DISK : SMS_G_System_Current
+            {
+                [ResDLL("SMS_RXPL.dll"), ResID(15)] uint32 ResourceID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(16)] uint32 GroupID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(17)] uint32 RevisionID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(12)] datetime TimeStamp = NULL;
+                uint32 Access;
+                uint32 Availability;
+                uint64 BlockSize;
+                string Caption;
+                uint32 Compressed;
+                uint32 ConfigManagerErrorCode;
+                uint32 ConfigManagerUserConfig;
+                string Description;
+            *    string DeviceID;
+                uint32 DriveType;
+                uint32 ErrorCleared;
+                string ErrorDescription;
+                string ErrorMethodology;
+            *    string FileSystem;
+            *    uint64 FreeSpace;
+                datetime InstallDate;
+                uint32 LastErrorCode;
+                uint32 MaximumComponentLength;
+                uint32 MediaType;
+                string Name;
+                string NumberOfBlocks;
+                string PNPDeviceID;
+                string PowerManagementCapabilities;
+                uint32 PowerManagementSupported;
+                string ProviderName;
+                string Purpose;
+            *    uint64 Size;
+                string Status;
+                uint32 StatusInfo;
+                uint32 SupportsFileBasedCompression;
+                string SystemName;
+                string VolumeName;
+                string VolumeSerialNumber;
+            };
+           */
+            #endregion
+
+            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_LOGICAL_DISK WHERE ResourceID=" + resourceID);
+            labelSCCMHW.Text = DatabaseGetter.CreateTableFromDatabase(wqlq,
+                new List<string>() { "DeviceID", "FileSystem", "Size", "FreeSpace"},
+                new List<string>() { "DeviceID", "File system", "Size (MB)", "FreeSpace (MB)" },
+                "Disk information not found");
         }
 
         protected void addComputerToCollection(string resourceID, string collectionID)
