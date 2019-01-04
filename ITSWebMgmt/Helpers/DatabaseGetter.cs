@@ -29,13 +29,46 @@ namespace ITSWebMgmt.Helpers
             return false;
         }
 
+        public static string CreateVerticalTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage) => CreateVerticalTableFromDatabase(wqlq, keys, keys, errorMessage);
+
+        public static string CreateVerticalTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, List<string> names, string errorMessage)
+        {
+            HTMLTableHelper tableHelper = new HTMLTableHelper(2);
+            var sb = new StringBuilder();
+            var results = getResults(wqlq);
+
+            if (HasValues(results))
+            {
+                int i = 0;
+                var o = results.OfType<ManagementObject>().FirstOrDefault();
+
+                foreach (var p in keys)
+                {
+                    if (o.Properties[p].Name == "Size" || o.Properties[p].Name == "FreeSpace")
+                    {
+                        tableHelper.AddRow(new string[] { names[i], (int.Parse(o.Properties[p].Value.ToString()) / 1024).ToString() });
+                    }
+                    else
+                    {
+                        tableHelper.AddRow(new string[] { names[i], o.Properties[p].Value.ToString() });
+                    }
+                    i++;
+                }
+            }
+            else
+            {
+                return errorMessage;
+            }
+
+            return tableHelper.GetTable();
+        }
+
         public static Tuple<string, string> CreateTableAndRawFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage)
         {
             HTMLTableHelper tableHelper = new HTMLTableHelper(2);
             var sb = new StringBuilder();
 
             var results = getResults(wqlq);
-            var mo = results.OfType<ManagementObject>().FirstOrDefault();
 
             if (HasValues(results))
             {

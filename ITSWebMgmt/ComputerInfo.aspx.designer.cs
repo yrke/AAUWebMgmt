@@ -211,15 +211,6 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label labelSCCMAV;
         
         /// <summary>
-        /// labelSCCMHW control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label labelSCCMHW;
-        
-        /// <summary>
         /// labelSCCMRAM control.
         /// </summary>
         /// <remarks>
@@ -229,13 +220,13 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label labelSCCMRAM;
         
         /// <summary>
-        /// labelSCCMBIOS control.
+        /// labelSCCMProcessor control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label labelSCCMBIOS;
+        protected global::System.Web.UI.WebControls.Label labelSCCMProcessor;
         
         /// <summary>
         /// labelSCCMVC control.
@@ -247,13 +238,22 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label labelSCCMVC;
         
         /// <summary>
-        /// labelSCCMProcessor control.
+        /// labelSCCMBIOS control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label labelSCCMProcessor;
+        protected global::System.Web.UI.WebControls.Label labelSCCMBIOS;
+        
+        /// <summary>
+        /// labelSCCMLD control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSCCMLD;
         
         /// <summary>
         /// labelSCCMDisk control.

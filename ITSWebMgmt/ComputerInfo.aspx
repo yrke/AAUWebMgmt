@@ -160,16 +160,16 @@
 
                         <div class="ui tab segment" data-tab="sccmHW">
                             <h2>Hardware Info</h2>
-                            <h3>Disk</h3>
-                            <asp:Label runat="server" ID="labelSCCMHW" />
                             <h3>RAM</h3>
                             <asp:Label runat="server" ID="labelSCCMRAM" />
-                            <h3>BIOS</h3>
-                            <asp:Label runat="server" ID="labelSCCMBIOS" />
-                            <h3>Video controller</h3>
-                            <asp:Label runat="server" ID="labelSCCMVC" />
                             <h3>Processor</h3>
                             <asp:Label runat="server" ID="labelSCCMProcessor" />
+                            <h3>Video controller</h3>
+                            <asp:Label runat="server" ID="labelSCCMVC" />
+                            <h3>BIOS</h3>
+                            <asp:Label runat="server" ID="labelSCCMBIOS" />
+                            <h3>Logical Disk</h3>
+                            <asp:Label runat="server" ID="labelSCCMLD" />
                             <h3>Disk</h3>
                             <asp:Label runat="server" ID="labelSCCMDisk" />
                         </div>
