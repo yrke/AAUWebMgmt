@@ -164,6 +164,8 @@
                             <asp:Label runat="server" ID="labelSCCMHW" />
                             <h3>RAM</h3>
                             <asp:Label runat="server" ID="labelSCCMRAM" />
+                            <h3>BIOS</h3>
+                            <asp:Label runat="server" ID="labelSCCMRBIOS" />
                         </div>
 
 

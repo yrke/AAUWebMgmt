@@ -716,6 +716,51 @@ namespace ITSWebMgmt
                 labelSCCMRAM.Text = "Disk information not found";
             }
 
+            #region BIOS
+            /*
+            [DisplayName("BIOS"), dynamic: ToInstance, provider("ExtnProv")]
+            class SMS_G_System_PC_BIOS : SMS_G_System_Current
+            {
+                [ResDLL("SMS_RXPL.dll"), ResID(15)] uint32 ResourceID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(16)] uint32 GroupID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(17)] uint32 RevisionID = NULL;
+                [ResDLL("SMS_RXPL.dll"), ResID(12)] datetime TimeStamp = NULL;
+                string BiosCharacteristics;
+            *    string BIOSVersion;
+                string BuildNumber;
+                string Caption;
+                string CodeSet;
+                string CurrentLanguage;
+            *    string Description;
+                string IdentificationCode;
+                uint32 InstallableLanguages;
+                datetime InstallDate;
+                string LanguageEdition;
+                string ListOfLanguages;
+            *    string Manufacturer;
+            *    string Name;
+                string OtherTargetOS;
+                uint32 PrimaryBIOS;
+                datetime ReleaseDate;
+                string SerialNumber;
+            *    string SMBIOSBIOSVersion;
+            *    uint32 SMBIOSMajorVersion;
+            *    uint32 SMBIOSMinorVersion;
+                uint32 SMBIOSPresent;
+                string SoftwareElementID;
+                uint32 SoftwareElementState;
+                string Status;
+                uint32 TargetOperatingSystem;
+                string Version;
+            };
+            */
+            #endregion
+
+            wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_PC_BIOS WHERE ResourceID=" + resourceID);
+            //Minor and Major not exist
+            labelSCCMRBIOS.Text = DatabaseGetter.CreateTableFromDatabase(wqlq,
+                new List<string>() { "BIOSVersion", "Description", "Manufacturer", "Name", "SMBIOSBIOSVersion"},
+                "Antivirus information not found");
         }
 
         protected void addComputerToCollection(string resourceID, string collectionID)
