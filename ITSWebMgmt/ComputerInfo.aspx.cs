@@ -1,4 +1,5 @@
 ﻿using ITSWebMgmt.Connectors.Active_Directory;
+using ITSWebMgmt.Helpers;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -388,20 +389,14 @@ namespace ITSWebMgmt
               Next
 
               computerNameToID = computerResourceID */
-            
-            var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
-            var wqlq = new WqlObjectQuery("select ResourceID from SMS_CM_RES_COLL_SMS00001 where name like '" + computername + "'");
-            var searcher = new ManagementObjectSearcher(ms, wqlq);
 
             string resourceID=null;
-            foreach (ManagementObject o in searcher.Get())
+            foreach (ManagementObject o in DatabaseGetter.getResults(new WqlObjectQuery("select ResourceID from SMS_CM_RES_COLL_SMS00001 where name like '" + computername + "'")))
             {
                 resourceID = o.Properties["ResourceID"].Value.ToString();
                 break;
             }
             return resourceID;
-            
-
         }
 
         private void buildGroupsSegments(DirectoryEntry result)
@@ -415,154 +410,17 @@ namespace ITSWebMgmt
         {
             // labelSCCMInventory
             // SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=16780075
-
-            var sb = new StringBuilder();
-            var tableStringBuilder = new StringBuilder();
-
-            HTMLTableHelper inventoryTableHelper = new HTMLTableHelper(2);
-            string s =
-                "Manufacturer," +
-                "Model," +
-                "SystemType," +
-                "Roles";
-            List<string> interestingKeys = s.Split(',').ToList<string>();
-
-
-            var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
+            List<string> interestingKeys = new List<string>() {"Manufacturer", "Model", "SystemType", "Roles"};
+            
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=" + resourceID);
-            var searcher = new ManagementObjectSearcher(ms, wqlq);
-
-            ManagementObject obj = new ManagementObject();
-            var results = searcher.Get();
-
-
-            var mo = results.OfType<ManagementObject>().FirstOrDefault();
-
-            tableStringBuilder.Append(inventoryTableHelper.printStart());
-
-            if (mo != null) {
-                foreach (var property in mo.Properties)
-                {
-                    string key = property.Name;
-                    object value = property.Value;
-
-                    if (interestingKeys.Contains(key))
-                    {
-                        if (value != null)
-                        {
-                            tableStringBuilder.Append(inventoryTableHelper.printRow(new string[] { key, value.ToString() }));
-                        }
-                        else
-                        {
-                            tableStringBuilder.Append(inventoryTableHelper.printRow(new string[] { key, "" }));
-                        }
-                    }
-
-                    int i = 0;
-                    if (value != null && value.GetType().IsArray)
-                    {
-                        var arry = (string[])value;
-                        foreach (string f in arry)
-                        {
-                            sb.Append(string.Format("{0}[{2}]: {1}<br />", key, f, i));
-                            i++;
-                        }
-                    }
-                    else
-                    {
-                        sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
-                    }
-                }
-            }else
-            {
-                sb.Append("No inventory data");
-            }
-
-            //Software Info
-            /*
-            [DisplayName("Installed Software"), dynamic: ToInstance, provider("ExtnProv")]
-            class SMS_G_System_INSTALLED_SOFTWARE : SMS_G_System_Current
-            {
-                [ResDLL("SMS_RXPL.dll"), ResID(15)] uint32 ResourceID = NULL;
-                [ResDLL("SMS_RXPL.dll"), ResID(16)] uint32 GroupID = NULL;
-                [ResDLL("SMS_RXPL.dll"), ResID(17)] uint32 RevisionID = NULL;
-                [ResDLL("SMS_RXPL.dll"), ResID(12)] datetime TimeStamp = NULL;
-                string ARPDisplayName;
-                string ChannelCode;
-                string ChannelID;
-                string CM_DSLID;
-                string EvidenceSource;
-                datetime InstallDate;
-                uint32 InstallDirectoryValidation;
-                string InstalledLocation;
-                string InstallSource;
-                uint32 InstallType;
-                uint32 Language;
-                string LocalPackage;
-                string MPC;
-                uint32 OsComponent;
-                string PackageCode;
-                string ProductID;
-                string ProductName;
-                string ProductVersion;
-                string Publisher;
-                string RegisteredUser;
-                string ServicePack;
-                string SoftwareCode;
-                string SoftwarePropertiesHash;
-                string SoftwarePropertiesHashEx;
-                string UninstallString;
-                string UpgradeCode;
-                uint32 VersionMajor;
-                uint32 VersionMinor;
-            };
-            */
             var wqlqSoftware = new WqlObjectQuery("SELECT * FROM SMS_G_System_INSTALLED_SOFTWARE WHERE ResourceID=" + resourceID);
-            var searcherSoftware = new ManagementObjectSearcher(ms, wqlqSoftware);
 
-            ManagementObject objSoftware = new ManagementObject();
-            var resultsSoftware = searcherSoftware.Get();
-
-            bool hasValues = false;
-            try
-            {
-                var t2 = resultsSoftware.Count;
-                hasValues = true;
-            }
-            catch (ManagementException e) { }
-
-            sb.Append("<h3>Software Details</h3>");
-
-
-            if (hasValues)
-            {
-                HTMLTableHelper SWTableHelper = new HTMLTableHelper(4);
-                var SWsb = new StringBuilder();
-                SWsb.Append(SWTableHelper.printStart());
-                SWsb.Append(SWTableHelper.printRow(new string[] { "Product ID", "Name", "Version", "Install date" }, true));
-
-                foreach (ManagementObject o in resultsSoftware) //Has one!
-                {
-                    string productID = o.Properties["SoftwareCode"].Value.ToString();
-                    string productName = o.Properties["ProductName"].Value.ToString();
-                    string productVersion = o.Properties["ProductVersion"].Value.ToString();
-                    string installDate = o.Properties["TimeStamp"].Value.ToString();
-                    SWsb.Append(SWTableHelper.printRow(new string[] { productID, productName, productVersion, installDate }));
-                }
-
-                SWsb.Append(SWTableHelper.printEnd());
-                sb.Append(SWsb);
-            }
-            else
-            {
-                sb.Append("Software information not found");
-            }
-
-            tableStringBuilder.Append(inventoryTableHelper.printEnd());
-
-            labelSCCMInventory.Text = sb.ToString();
-            return tableStringBuilder.ToString();
+            var tableAndList = DatabaseGetter.CreateTableFromDatabase(wqlq, interestingKeys, "No inventory data");
+            labelSCCMInventory.Text = "<h3>Software Details</h3>" + DatabaseGetter.CreateTableFromDatabase(wqlqSoftware, new List<string>() { "SoftwareCode", "ProductName", "ProductVersion", "TimeStamp" }, new List<string>() { "Product ID", "Name", "Version", "Install date" });
+            labelSCCMInventory.Text += tableAndList.Item2; //List
+            return tableAndList.Item1; //Table
         }
+
         protected string buildSCCMInfo(string resourceID)
         {
             /*
@@ -576,44 +434,17 @@ namespace ITSWebMgmt
              * 
              */
 
-
-
             //XXX: remeber to filter out computers that are obsolite in sccm (not active)
             var sb = new StringBuilder();
-            var tableStringBuilder = new StringBuilder();
-
-            HTMLTableHelper infoTableHelper = new HTMLTableHelper(2);
-
-            string s =
-                "LastLogonUserName," +
-                "IPAddresses," +
-                "MACAddresses," +
-                "Build," +
-                "Config";
-            List<string> interestingKeys = s.Split(',').ToList<string>();
            
-
-            tableStringBuilder.Append(infoTableHelper.printStart());
-
-            var ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
-            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID=" + resourceID);
-            var searcher = new ManagementObjectSearcher(ms, wqlq);
-
             ManagementObject obj = new ManagementObject();
-            var results = searcher.Get();
-
-            bool hasValues=false;
-            try
-            {
-                var t = results.Count;
-                hasValues=true;
-            }catch (ManagementException e){}
+            var results = DatabaseGetter.getResults(new WqlObjectQuery("SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID=" + resourceID));
 
             string configPC = "Unknown";
             string configExtra = "False";
             string getsTestUpdates = "False";
 
-            if (hasValues)
+            if (DatabaseGetter.HasValues(results))
             {
                 HTMLTableHelper groupTableHelper = new HTMLTableHelper(1);
                 var PCsb = new StringBuilder();
@@ -675,91 +506,17 @@ namespace ITSWebMgmt
 
             labelBasicInfoPCConfig.Text = configPC;
             labelBasicInfoExtraConfig.Text = configExtra;
-            
 
             //Basal Info
-            var wqlqSystem = new WqlObjectQuery("SELECT * FROM SMS_R_System WHERE ResourceId=" + resourceID);
-            var searcherSystem = new ManagementObjectSearcher(ms, wqlqSystem);
-
-            ManagementObject objSystem = new ManagementObject();
-            var resultsSystem = searcherSystem.Get();
-
-            hasValues = false;
-            try
-            {
-                var t2 = resultsSystem.Count;
-                hasValues = true;
-            }
-            catch (ManagementException e) {}
-
             sb.Append("<h3>Computer Details</h3>");
+            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_R_System WHERE ResourceId=" + resourceID);
+            List<string> interestingKeys = new List<string>() { "LastLogonUserName", "IPAddresses", "MACAddresses", "Build", "Config" };
+            var tableAndList = DatabaseGetter.CreateTableFromDatabase(wqlq, interestingKeys, "Computer not found i SCCM");
 
-            if (hasValues)
-            {
-
-                
-                foreach (ManagementObject o in resultsSystem) //Has one!
-                {
-                    //OperatingSystemNameandVersion = Microsoft Windows NT Workstation 6.1
-
-                    foreach (var property in o.Properties)
-                    {
-                        string key = property.Name;
-                        object value = property.Value;
-
-                        if (interestingKeys.Contains(key))
-                        {
-                            if(value != null)
-                            {
-                                if (value.GetType().Equals(typeof(string[])))
-                                {
-                                    string joinedValues = string.Join(", ", (string[])value);
-                                    tableStringBuilder.Append(infoTableHelper.printRow(new string[] { key, joinedValues }));
-
-                                }
-                                else
-                                {
-                                    tableStringBuilder.Append(infoTableHelper.printRow(new string[] { key, value.ToString() }));
-                                }
-                            }
-                            else
-                            {
-                                tableStringBuilder.Append(infoTableHelper.printRow(new string[] { key, "" }));
-                            }
-                        }
-
-                        int i = 0;
-                        string[] arry = null;
-                        if (value != null && value.GetType().IsArray)
-                        {
-                            if (value is string[]){ 
-                                arry = (string[])value;
-                            } else {
-                                arry = new string[]{ "none-string value" }; //XXX get the byte value
-                            }
-                            foreach (string f in arry)
-                            {
-                                sb.Append(string.Format("{0}[{2}]: {1}<br />", key, f, i));
-                                i++;
-                            }
-                        }
-                        else
-                        {
-                            sb.Append(string.Format("{0}: {1}<br />", key, property.Value));
-                        }
-                        
-                    }
-
-                }
-            }
-            else
-            {
-                sb.Append("Computer not found i SCCM");
-            }
-            tableStringBuilder.Append(infoTableHelper.printEnd());
+            sb.Append(tableAndList.Item2); //List
 
             labelSCCMCollections.Text = sb.ToString();
-            return tableStringBuilder.ToString();
+            return tableAndList.Item1; //Table
         }
 
 
@@ -788,7 +545,6 @@ namespace ITSWebMgmt
             rule["ResourceID"] = resourceID;
 
             obj.InvokeMethod("AddMembershipRule", new object[] { rule });
-
         }
  
         
@@ -801,10 +557,6 @@ namespace ITSWebMgmt
             var resourceID = getSCCMResourceIDFromComputerName(computerName);
             var collectionID = "AA1000B8"; //Enabled Bitlocker Encryption Collection ID
             addComputerToCollection(resourceID, collectionID);
-
         }
-
-
-
     }
 }
