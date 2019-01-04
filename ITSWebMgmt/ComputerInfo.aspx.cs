@@ -642,10 +642,80 @@ namespace ITSWebMgmt
             #endregion
 
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_LOGICAL_DISK WHERE ResourceID=" + resourceID);
-            labelSCCMHW.Text = DatabaseGetter.CreateTableFromDatabase(wqlq,
-                new List<string>() { "DeviceID", "FileSystem", "Size", "FreeSpace"},
-                new List<string>() { "DeviceID", "File system", "Size (MB)", "FreeSpace (MB)" },
-                "Disk information not found");
+            var results = DatabaseGetter.getResults(wqlq);
+
+            if (DatabaseGetter.HasValues(results))
+            {
+                HTMLTableHelper tableHelper = new HTMLTableHelper(new string[]{ "DeviceID", "File system", "Size (GB)", "FreeSpace (GB)" });
+
+                foreach (ManagementObject o in results) //Has one!
+                {
+                    List<string> properties = new List<string>();
+                    foreach (var p in new List<string>() { "DeviceID", "FileSystem"})
+                    {
+                        properties.Add(o.Properties[p].Value.ToString());
+                    }
+                    properties.Add((int.Parse(o.Properties["Size"].Value.ToString()) / 1024).ToString());
+                    properties.Add((int.Parse(o.Properties["FreeSpace"].Value.ToString()) / 1024).ToString());
+
+                    tableHelper.AddRow(properties.ToArray());
+                }
+
+                labelSCCMHW.Text = tableHelper.GetTable();
+            }
+            else
+            {
+                labelSCCMHW.Text = "Disk information not found";
+            }
+
+            #region RAM
+            /*
+            SELECT * FROM SMS_G_System_PHYSICAL_MEMORY WHERE ResourceID=16787049
+            instance of SMS_G_System_PHYSICAL_MEMORY
+            {
+                BankLabel = "";
+            *    Capacity = "4096";
+                Caption = "Physical Memory";
+                CreationClassName = "Win32_PhysicalMemory";
+                DataWidth = 64;
+                Description = "Physical Memory";
+                DeviceLocator = "PROC 2 DIMM 1D";
+                FormFactor = 8;
+                GroupID = 7;
+                MemoryType = 0;
+                Name = "Physical Memory";
+                ResourceID = 16779367;
+                RevisionID = 1;
+                Speed = 1333;
+                Tag = "Physical Memory 6";
+                TimeStamp = "20141107155847.000000+***";
+                TotalWidth = 72;
+                TypeDetail = 128;
+            };
+            */
+            #endregion
+
+            wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_PHYSICAL_MEMORY WHERE ResourceID=" + resourceID);
+            results = DatabaseGetter.getResults(wqlq);
+
+            if (DatabaseGetter.HasValues(results))
+            {
+                int total = 0;
+                int count = 0;
+
+                foreach (ManagementObject o in results) //Has one!
+                {
+                    total += int.Parse(o.Properties["Capacity"].Value.ToString()) / 1024;
+                    count++;
+                }
+
+                labelSCCMRAM.Text = $"{total} GB RAM in {count} slots";
+            }
+            else
+            {
+                labelSCCMRAM.Text = "Disk information not found";
+            }
+
         }
 
         protected void addComputerToCollection(string resourceID, string collectionID)

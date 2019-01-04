@@ -160,7 +160,10 @@
 
                         <div class="ui tab segment" data-tab="sccmHW">
                             <h2>Hardware Info</h2>
+                            <h3>Disk</h3>
                             <asp:Label runat="server" ID="labelSCCMHW" />
+                            <h3>RAM</h3>
+                            <asp:Label runat="server" ID="labelSCCMRAM" />
                         </div>
 
 

@@ -109,7 +109,6 @@ namespace ITSWebMgmt.Helpers
         public static string CreateTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, List<string> names, string errorMessage)
         {
             var results = getResults(wqlq);
-            var sb = new StringBuilder();
 
             if (HasValues(results))
             {
@@ -125,14 +124,12 @@ namespace ITSWebMgmt.Helpers
                     tableHelper.AddRow(properties.ToArray());
                 }
 
-                sb.Append(tableHelper.GetTable());
+                return tableHelper.GetTable();
             }
             else
             {
-                sb.Append(errorMessage);
+                return errorMessage;
             }
-
-            return sb.ToString();
         }
     }
 }
