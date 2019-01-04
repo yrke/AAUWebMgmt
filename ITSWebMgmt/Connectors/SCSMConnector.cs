@@ -98,7 +98,7 @@ namespace ITSWebMgmt.Connectors
         private static StringBuilder PrintTableOfCases(object jsonO, Func<string, bool> filter)
         {
             dynamic json = jsonO;
-            var helper = new HTMLTableHelper(4, new string[] { "ID", "Title", "Status", "Last Change" });
+            var helper = new HTMLTableHelper(new string[] { "ID", "Title", "Status", "Last Change" });
 
             for (int i = 0; i < json["MyRequest"].Length; i++)
             {

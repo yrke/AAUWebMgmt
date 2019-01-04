@@ -178,7 +178,7 @@ namespace ITSWebMgmt
                 transitiv = "<h3>NB: Listen viser kun direkte medlemsskaber, kunne ikke finde fuld liste på denne Domain Controller eller domæne</h3>";
             }
             
-            var helper = new HTMLTableHelper(4, new string[] { "Type", "Domain", "Name", "Access" });
+            var helper = new HTMLTableHelper(new string[] { "Type", "Domain", "Name", "Access" });
 
             //Select Exchange groups and convert to list of ExchangeMailboxGroup
             var exchangeMailboxGroupList = groupsList.Where<string>(group => (group.StartsWith("CN=MBX_"))).Select(x => new ExchangeMailboxGroup(x));       
@@ -269,7 +269,7 @@ namespace ITSWebMgmt
                 transitiv = "<h3>NB: Listen viser kun direkte medlemsskaber, kunne ikke finde fuld liste på denne Domain Controller eller domæne</h3>";
             }
 
-            var helper = new HTMLTableHelper(4, new string[] { "Type", "Domain", "Name", "Access" });
+            var helper = new HTMLTableHelper(new string[] { "Type", "Domain", "Name", "Access" });
 
             //Filter fileshare groups and convert to Fileshare Objects
             var fileshareList = groupsList.Where<string>((string value)=> {
@@ -774,7 +774,7 @@ namespace ITSWebMgmt
 
                 string userName = String.Format("{0}\\\\{1}", domain, upnsplit[0]);
 
-                var helper = new HTMLTableHelper(2, new string[] { "Computername", "AAU Fjernsupport" });
+                var helper = new HTMLTableHelper(new string[] { "Computername", "AAU Fjernsupport" });
 
                 var wqlq = new WqlObjectQuery("SELECT * FROM SMS_UserMachineRelationship WHERE UniqueUserName = \"" + userName + "\"");
 

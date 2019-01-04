@@ -62,7 +62,7 @@ namespace ITSWebMgmt.Functions
             var linesNetUse = lines.Where<string>(s => s.StartsWith("net use", StringComparison.CurrentCultureIgnoreCase)).ToArray<string>();
             var linesNetUseNotDelete = linesNetUse.Where<string>(s => !s.ToLower().Contains(" /d")).ToArray<string>();
 
-            var table = new HTMLTableHelper(2, new string[] { "Drive Letter", "share" });
+            var table = new HTMLTableHelper(new string[] { "Drive Letter", "share" });
 
             sb.Append("<h3>Networkdrives</h3>");;
 

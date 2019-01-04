@@ -12,7 +12,7 @@ namespace ITSWebMgmt.Helpers
     {
         private static string CreateGroupTable(List<string> groupsAsList)
         {
-            HTMLTableHelper groupTableHelper = new HTMLTableHelper(2, new string[] { "Domain", "Name" });
+            HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Domain", "Name" });
 
             foreach (string adpath in groupsAsList)
             {

@@ -7,14 +7,18 @@ namespace ITSWebMgmt
     {
         private StringBuilder table = new StringBuilder();
         private bool tableEnded = false;
+        private int colums;
 
-        int colums;
-        public HTMLTableHelper(int colums, string[] headers)
+        public HTMLTableHelper(int columbs)
         {
-            this.colums = colums;
+            colums = columbs;
             table.Append("<table class=\"ui celled table\">");
+        }
 
-            if (!(headers.Length == this.colums)) { throw new ArgumentOutOfRangeException(); };
+        public HTMLTableHelper(string[] headers)
+        {
+            colums = headers.Length;
+            table.Append("<table class=\"ui celled table\">");
 
             table.Append("<thead>");
             AddRow(headers);
@@ -23,6 +27,8 @@ namespace ITSWebMgmt
 
         public void AddRow(string[] args)
         {
+            if (!(args.Length == colums)) { throw new ArgumentOutOfRangeException(); };
+
             table.Append("<tr>");
 
             foreach (string s in args)

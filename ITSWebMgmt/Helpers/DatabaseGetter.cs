@@ -22,7 +22,7 @@ namespace ITSWebMgmt.Helpers
             try
             {
                 var t2 = results.Count;
-                return true;
+                return results.Count != 0;
             }
             catch (ManagementException e) { }
 
@@ -31,7 +31,7 @@ namespace ITSWebMgmt.Helpers
 
         public static Tuple<string, string> CreateTableAndRawFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage)
         {
-            HTMLTableHelper tableHelper = new HTMLTableHelper(2, keys.ToArray());
+            HTMLTableHelper tableHelper = new HTMLTableHelper(2);
             var sb = new StringBuilder();
 
             var results = getResults(wqlq);
@@ -113,7 +113,7 @@ namespace ITSWebMgmt.Helpers
 
             if (HasValues(results))
             {
-                HTMLTableHelper tableHelper = new HTMLTableHelper(keys.Count(), names.ToArray());
+                HTMLTableHelper tableHelper = new HTMLTableHelper(names.ToArray());
 
                 foreach (ManagementObject o in results) //Has one!
                 {

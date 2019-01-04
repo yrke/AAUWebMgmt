@@ -488,7 +488,7 @@ namespace ITSWebMgmt
             string configExtra = "False";
             string getsTestUpdates = "False";
 
-            HTMLTableHelper groupTableHelper = new HTMLTableHelper(1, new string[] { "Collection Name" });
+            HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Collection Name" });
             if (DatabaseGetter.HasValues(results))
             {
                 foreach (ManagementObject o in results)
