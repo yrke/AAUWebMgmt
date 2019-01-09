@@ -234,8 +234,7 @@ namespace ITSWebMgmt
             if (resultLocal.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
             {
                 long rawDate = (long)resultLocal.Properties["ms-Mcs-AdmPwdExpirationTime"][0];
-                DateTime expireDate = DateTime.FromFileTime(rawDate);
-                labelPwdExpireDate.Text = expireDate.ToString();
+                labelPwdExpireDate.Text = DateTimeConverter.Convert(rawDate);
             }
             else
             {
@@ -273,9 +272,8 @@ namespace ITSWebMgmt
             
             if (de.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
             {
-               
                 DateTime? expireDate = ADHelpers.convertADTimeToDateTime(de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value);
-                labelPwdExpireDate.Text = expireDate.ToString();
+                labelPwdExpireDate.Text = DateTimeConverter.Convert(expireDate);
             }
             else
             {

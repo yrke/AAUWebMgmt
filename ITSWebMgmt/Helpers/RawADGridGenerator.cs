@@ -1,4 +1,6 @@
-﻿using System.DirectoryServices;
+﻿using ITSWebMgmt.Helpers;
+using System;
+using System.DirectoryServices;
 using System.Text;
 
 namespace ITSWebMgmt
@@ -28,19 +30,26 @@ namespace ITSWebMgmt
                 {
                     builder.Append("<td rowspan=\""+a.Count+"\">" + k + "</td>");
 
+                    var v = a[0];
+                    if (v.GetType().Equals(typeof(DateTime)))
+                    {
+                        v = DateTimeConverter.Convert((DateTime)v);
+                    }
+
                     if (a.Count == 1)
                     {
-                        var v = a[0];
                         builder.Append("<td>" + v + "</td></tr>");
                     }
                     else
                     {
-
-                        var v = a[0];
                         builder.Append("<td>" + v + "</td>");
                         for (int i = 1; i < a.Count; i++)
                         {
                             v = a[i];
+                            if (v.GetType().Equals(typeof(DateTime)))
+                            {
+                                v = DateTimeConverter.Convert((DateTime)v);
+                            }
                             builder.Append("<tr><td>" + v + "</td></tr>");
                         }
 

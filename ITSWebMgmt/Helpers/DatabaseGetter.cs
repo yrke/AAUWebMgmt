@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Management;
 using System.Text;
@@ -44,9 +45,14 @@ namespace ITSWebMgmt.Helpers
 
                 foreach (var p in keys)
                 {
+                    var property = o.Properties[p];
                     if (o.Properties[p].Name == "Size" || o.Properties[p].Name == "FreeSpace")
                     {
                         tableHelper.AddRow(new string[] { names[i], (int.Parse(o.Properties[p].Value.ToString()) / 1024).ToString() });
+                    }
+                    else if (property.Type.ToString() == "DateTime")
+                    {
+                        tableHelper.AddRow(new string[] { names[i], DateTimeConverter.Convert(o.Properties[p].Value.ToString()) });
                     }
                     else
                     {
@@ -90,6 +96,10 @@ namespace ITSWebMgmt.Helpers
                                     string joinedValues = string.Join(", ", (string[])value);
                                     tableHelper.AddRow(new string[] { key, joinedValues });
 
+                                }
+                                else if (property.Type.ToString() == "DateTime")
+                                {
+                                    tableHelper.AddRow(new string[] { key, DateTimeConverter.Convert(value.ToString()) });
                                 }
                                 else
                                 {
@@ -152,7 +162,13 @@ namespace ITSWebMgmt.Helpers
                     List<string> properties = new List<string>();
                     foreach (var p in keys)
                     {
-                        properties.Add(o.Properties[p].Value.ToString());
+                        string temp = o.Properties[p].Value.ToString();
+                        if (o.Properties[p].Type.ToString() == "DateTime")
+                        {
+                            temp = DateTimeConverter.Convert(temp);
+                        }
+                        properties.Add(temp);
+                        
                     }
                     tableHelper.AddRow(properties.ToArray());
                 }

@@ -177,6 +177,7 @@
       <DependentUpon>ActiveChanges.ascx</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DatabaseGetter.cs" />
+    <Compile Include="Helpers\DateTimeConverter.cs" />
     <Compile Include="Helpers\GroupTableGenerator.cs" />
     <Compile Include="Helpers\HTMLEncodingHelper.cs" />
     <Compile Include="Helpers\HTMLTableHelper.cs" />
