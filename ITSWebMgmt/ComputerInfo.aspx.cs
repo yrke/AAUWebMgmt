@@ -638,7 +638,6 @@ namespace ITSWebMgmt
             };
            */
             #endregion
-
             var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_LOGICAL_DISK WHERE ResourceID=" + resourceID);
             labelSCCMLD.Text = DatabaseGetter.CreateVerticalTableFromDatabase(wqlq,
                 new List<string>() { "DeviceID", "FileSystem", "Size", "FreeSpace" },
@@ -671,7 +670,6 @@ namespace ITSWebMgmt
             };
             */
             #endregion
-
             wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_PHYSICAL_MEMORY WHERE ResourceID=" + resourceID);
             var results = DatabaseGetter.getResults(wqlq);
 
@@ -692,7 +690,6 @@ namespace ITSWebMgmt
             {
                 labelSCCMRAM.Text = "Disk information not found";
             }
-
 
             #region BIOS
             /*
@@ -733,7 +730,6 @@ namespace ITSWebMgmt
             };
             */
             #endregion
-
             wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_PC_BIOS WHERE ResourceID=" + resourceID);
             //Minor and Major not exist
             labelSCCMBIOS.Text = DatabaseGetter.CreateVerticalTableFromDatabase(wqlq,
@@ -808,9 +804,7 @@ namespace ITSWebMgmt
             };
             */
             #endregion
-
             wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_VIDEO_CONTROLLER WHERE ResourceID=" + resourceID);
-            //Minor and Major not exist
             labelSCCMVC.Text = DatabaseGetter.CreateVerticalTableFromDatabase(wqlq,
                 new List<string>() { "AdapterRAM", "CurrentHorizontalResolution", "CurrentVerticalResolution", "DriverDate", "DriverVersion", "Name" },
                 "Video controller information not found");
@@ -884,9 +878,7 @@ namespace ITSWebMgmt
             };
              */
             #endregion
-
             wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_PROCESSOR WHERE ResourceID=" + resourceID);
-            //Minor and Major not exist
             labelSCCMProcessor.Text = DatabaseGetter.CreateVerticalTableFromDatabase(wqlq,
                 new List<string>() { "Is64Bit", "IsMobile", "IsVitualizationCapable", "Manufacturer", "MaxClockSpeed", "Name", "NumberOfCores", "NumberOfLogicalProcessors" },
                 "Processor information not found");
@@ -949,9 +941,7 @@ namespace ITSWebMgmt
             };
             */
             #endregion
-
             wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_DISK WHERE ResourceID=" + resourceID);
-            //Minor and Major not exist
             labelSCCMDisk.Text = DatabaseGetter.CreateVerticalTableFromDatabase(wqlq,
                 new List<string>() { "Caption", "Model", "Partitions", "Size", "Name" },
                 "Video controller information not found");
