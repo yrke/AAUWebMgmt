@@ -30,13 +30,14 @@ namespace ITSWebMgmt.Helpers
             return false;
         }
 
-        public static string CreateVerticalTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage) => CreateVerticalTableFromDatabase(wqlq, keys, keys, errorMessage);
+        public static string CreateVerticalTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage) => CreateVerticalTableFromDatabase(getResults(wqlq), keys, keys, errorMessage);
 
-        public static string CreateVerticalTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, List<string> names, string errorMessage)
+        public static string CreateVerticalTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, List<string> names, string errorMessage) => CreateVerticalTableFromDatabase(getResults(wqlq), keys, names, errorMessage);
+
+        public static string CreateVerticalTableFromDatabase(ManagementObjectCollection results, List<string> keys, List<string> names, string errorMessage)
         {
             HTMLTableHelper tableHelper = new HTMLTableHelper(2);
             var sb = new StringBuilder();
-            var results = getResults(wqlq);
 
             if (HasValues(results))
             {
