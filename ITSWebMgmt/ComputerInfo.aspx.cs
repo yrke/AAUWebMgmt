@@ -249,13 +249,12 @@ namespace ITSWebMgmt
 
             buildBasicInfo(resultLocal.GetDirectoryEntry());
 
-            var resourceID = getSCCMResourceIDFromComputerName(computername); //XXX use ad path to get right object in sccm, also dont get obsolite
-            computer = new ComputerData(resourceID);
+            computer = new ComputerData(computername);
             //XXX check resourceID 
-            buildSCCMInfo(resourceID);
-            buildSCCMInventory(resourceID);
-            buildSCCMAntivirus(resourceID);
-            biuldSCCMHardware(resourceID);
+            buildSCCMInfo();
+            buildSCCMInventory();
+            buildSCCMAntivirus();
+            biuldSCCMHardware();
 
             buildGroupsSegments(resultLocal.GetDirectoryEntry());
            
@@ -377,30 +376,6 @@ namespace ITSWebMgmt
 
         }
 
-
-        protected string getSCCMResourceIDFromComputerName(string computername)
-        {
-
-            /*  strQuery = 
-              Set foundComputers = SWbemServices.ExecQuery(strQuery)
-
-              ' XXX Assuming only one result   (find the right way to do this)
-              for each c in foundComputers 
-                computerResourceID = c.ResourceID
-                exit for 
-              Next
-
-              computerNameToID = computerResourceID */
-
-            string resourceID=null;
-            foreach (ManagementObject o in Database.getResults(new WqlObjectQuery("select ResourceID from SMS_CM_RES_COLL_SMS00001 where name like '" + computername + "'")))
-            {
-                resourceID = o.Properties["ResourceID"].Value.ToString();
-                break;
-            }
-            return resourceID;
-        }
-
         private void buildGroupsSegments(DirectoryEntry result)
         {
             //XXX is memeber of an attribute
@@ -408,11 +383,8 @@ namespace ITSWebMgmt
         }
 
 
-        protected void buildSCCMInventory(string resourceID)
+        protected void buildSCCMInventory()
         {
-            var wqlq = new WqlObjectQuery("SELECT * FROM SMS_G_System_COMPUTER_SYSTEM WHERE ResourceID=" + resourceID);
-            var wqlqSoftware = new WqlObjectQuery("SELECT * FROM SMS_G_System_INSTALLED_SOFTWARE WHERE ResourceID=" + resourceID);
-
             var tableAndList = TableGenerator.CreateTableAndRawFromDatabase(computer.Computer, new List<string>() { "Manufacturer", "Model", "SystemType", "Roles" }, "No inventory data");
             labelSSCMInventoryTable.Text = tableAndList.Item1; //Table
             labelSCCMCollecionsSoftware.Text = TableGenerator.CreateTableFromDatabase(computer.Software,
@@ -422,7 +394,7 @@ namespace ITSWebMgmt
             labelSCCMInventory.Text += tableAndList.Item2; //List
         }
 
-        protected void buildSCCMInfo(string resourceID)
+        protected void buildSCCMInfo()
         {
             /*
              *     strQuery = "SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID="& computerID 
@@ -438,16 +410,14 @@ namespace ITSWebMgmt
             //XXX: remeber to filter out computers that are obsolite in sccm (not active)
             var sb = new StringBuilder();
            
-            var results = Database.getResults(new WqlObjectQuery("SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID=" + resourceID));
-
             string configPC = "Unknown";
             string configExtra = "False";
             string getsTestUpdates = "False";
 
             HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Collection Name" });
-            if (Database.HasValues(results))
+            if (Database.HasValues(computer.Collection))
             {
-                foreach (ManagementObject o in results)
+                foreach (ManagementObject o in computer.Collection)
                 {
                     
                     //o.Properties["ResourceID"].Value.ToString();
@@ -509,7 +479,7 @@ namespace ITSWebMgmt
             labelSCCMCollections.Text = tableAndList.Item2; //List
         }
 
-        protected void buildSCCMAntivirus(string resourceID)
+        protected void buildSCCMAntivirus()
         {
             //DetectionID is required for UserName (SELECT * FROM SMS_G_System_Threats WHERE DetectionID='{04155F79-EB84-4828-9CEC-AC0749C4EDA6}' AND ResourceID=16787705)
             //Only few computers with data, one them is AAU112782
@@ -518,7 +488,7 @@ namespace ITSWebMgmt
                 "Antivirus information not found");
         }
 
-        protected void biuldSCCMHardware(string resourceID)
+        protected void biuldSCCMHardware()
         {
             labelSCCMLD.Text = TableGenerator.CreateVerticalTableFromDatabase(computer.LogicalDisk,
                 new List<string>() { "DeviceID", "FileSystem", "Size", "FreeSpace" },
@@ -594,10 +564,9 @@ namespace ITSWebMgmt
             string adpath = (string)Session["adpath"];
             string[] adpathsplit = adpath.Split('/');
             string computerName = (adpathsplit[adpathsplit.Length-1].Split(','))[0].Replace("CN=", "");
-
-            var resourceID = getSCCMResourceIDFromComputerName(computerName);
+            
             var collectionID = "AA1000B8"; //Enabled Bitlocker Encryption Collection ID
-            addComputerToCollection(resourceID, collectionID);
+            addComputerToCollection(computer.ResourceID, collectionID);
         }
     }
 }

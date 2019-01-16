@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ITSWebMgmt.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
@@ -11,10 +12,24 @@ namespace ITSWebMgmt.Computer
         public string ResourceID;
         private SCCMcache SCCMcache;
 
-        public ComputerData(string resourceID)
+        public ComputerData(string computername)
         {
-            ResourceID = resourceID;
-            SCCMcache = new SCCMcache(resourceID);
+            SCCMcache = new SCCMcache();
+            ResourceID = getSCCMResourceIDFromComputerName(computername);
+            SCCMcache.ResourceID = ResourceID;
+        }
+
+        public string getSCCMResourceIDFromComputerName(string computername)
+        {
+            string resourceID = "";
+            //XXX use ad path to get right object in sccm, also dont get obsolite
+            foreach (ManagementObject o in SCCMcache.getResourceIDFromComputerName(computername))
+            {
+                resourceID = o.Properties["ResourceID"].Value.ToString();
+                break;
+            }
+
+            return resourceID;
         }
 
         public ManagementObjectCollection RAM { get => SCCMcache.RAM; private set { } }
@@ -27,5 +42,6 @@ namespace ITSWebMgmt.Computer
         public ManagementObjectCollection Computer { get => SCCMcache.Computer; private set { } }
         public ManagementObjectCollection Antivirus { get => SCCMcache.Antivirus; private set { } }
         public ManagementObjectCollection System { get => SCCMcache.System; private set { } }
+        public ManagementObjectCollection Collection { get => SCCMcache.Collection; private set { } }
     }
 }

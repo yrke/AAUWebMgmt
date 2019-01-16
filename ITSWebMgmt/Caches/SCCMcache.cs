@@ -10,14 +10,15 @@ namespace ITSWebMgmt.Computer
     {
         public string ResourceID;
 
-        public SCCMcache(string resourceID)
+        public SCCMcache()
         {
-            ResourceID = resourceID;
         }
 
         private static ManagementScope ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
 
-        private ManagementObjectCollection[] _cache = new ManagementObjectCollection[10];
+        private ManagementObjectCollection[] _cache = new ManagementObjectCollection[20]; //TODO fix size
+        private ManagementObjectCollection[] _cache2 = new ManagementObjectCollection[20]; //TODO fix size
+
         private string[] DBEntry = {
             "SMS_G_System_PHYSICAL_MEMORY",
             "SMS_G_System_LOGICAL_DISK",
@@ -28,7 +29,8 @@ namespace ITSWebMgmt.Computer
             "SMS_G_System_INSTALLED_SOFTWARE",
             "SMS_G_System_COMPUTER_SYSTEM",
             "SMS_G_System_Threats",
-            "SMS_R_System"
+            "SMS_R_System",
+            "SMS_FullCollectionMembership"
         };
 
         #region RAM
@@ -415,7 +417,21 @@ namespace ITSWebMgmt.Computer
         public ManagementObjectCollection Antivirus { get => getQuery(8); private set { } }
         //Missing class
         public ManagementObjectCollection System { get => getQuery(9); private set { } }
+        //Missing class
+        public ManagementObjectCollection Collection { get => getQuery(10); private set { } }
 
+        public ManagementObjectCollection getResourceIDFromComputerName(string computername) => getQuery(1, new WqlObjectQuery("select ResourceID from SMS_CM_RES_COLL_SMS00001 where name like '" + computername + "'"));
+
+        private ManagementObjectCollection getQuery(int i, WqlObjectQuery wqlq)
+        {
+            if (_cache2[i] == null)
+            {
+                var searcher = new ManagementObjectSearcher(ms, wqlq);
+                _cache2[i] = searcher.Get();
+            }
+
+            return _cache2[i];
+        }
 
         private ManagementObjectCollection getQuery(int i)
         {
