@@ -36,7 +36,7 @@ namespace ITSWebMgmt
                 if (computername != null)
                 {
                     ComputerName = HttpUtility.HtmlEncode(computername);
-                    computer = new ComputerController(ComputerName);
+                    computer = new ComputerController(ComputerName, HttpContext.Current.User.Identity.Name);
                     buildlookupComputer();
                 }
             }
@@ -57,7 +57,8 @@ namespace ITSWebMgmt
                 return;
             }
 
-            labelDomain.Text = computer.Domain;
+            //TODO get domain
+            //labelDomain.Text = computer.Domain;
 
             if (resultLocal.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
             {

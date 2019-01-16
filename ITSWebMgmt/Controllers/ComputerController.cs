@@ -17,10 +17,10 @@ namespace ITSWebMgmt.Controllers.Computer
         public string ComputerName = "ITS\\AAU804396";
         public static Logger logger = LogManager.GetCurrentClassLogger();
         private SCCMcache SCCMcache;
+        private ADcache ADcache;
         public string ConfigPC = "Unknown";
         public string ConfigExtra = "False";
         //TODO getsTestUpdates not used
-        public string Domain;
         public ManagementObjectCollection RAM { get => SCCMcache.RAM; private set { } }
         public ManagementObjectCollection LogicalDisk { get => SCCMcache.LogicalDisk; private set { } }
         public ManagementObjectCollection BIOS { get => SCCMcache.BIOS; private set { } }
@@ -33,11 +33,11 @@ namespace ITSWebMgmt.Controllers.Computer
         public ManagementObjectCollection System { get => SCCMcache.System; private set { } }
         public ManagementObjectCollection Collection { get => SCCMcache.Collection; private set { } }
         
-        public ComputerController(string computername)
+        public ComputerController(string computername, string username)
         {
             //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
             SCCMcache = new SCCMcache();
-            getDomain();
+            ADcache = new ADcache(computername, username);
             ResourceID = getSCCMResourceIDFromComputerName();
             SCCMcache.ResourceID = ResourceID;
         }
@@ -55,55 +55,9 @@ namespace ITSWebMgmt.Controllers.Computer
             return resourceID;
         }
 
-        private string getDomain()
-        {
-            var tmpName = ComputerName;
-
-            if (tmpName.Contains("\\"))
-            {
-                var tmp = tmpName.Split('\\');
-                ComputerName = tmp[1];
-
-                if (!tmp[0].Equals("aau", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    Domain = tmp[0] + ".aau.dk";
-                }
-                else
-                {
-                    Domain = "aau.dk";
-                }
-            }
-
-            if (Domain == null)
-            {
-                var de = new DirectoryEntry("GC://aau.dk");
-                string filter = string.Format("(&(objectClass=computer)(cn={0}))", ComputerName);
-
-                var search = new DirectorySearcher(de);
-                search.Filter = filter;
-                search.PropertiesToLoad.Add("distinguishedName");
-
-                var r = search.FindOne();
-
-                if (r == null)
-                { //Computer not found
-
-                    return null;
-                }
-
-                var distinguishedName = r.Properties["distinguishedName"][0].ToString();
-                var split = distinguishedName.Split(',');
-
-                var len = split.GetLength(0);
-                Domain = (split[len - 3] + "." + split[len - 2] + "." + split[len - 1]).Replace("DC=", "");
-            }
-
-            return Domain;
-        }
-
         public SearchResult GetSearch(string username)
         {
-            var de2 = new DirectoryEntry("LDAP://" + Domain);
+            var de2 = new DirectoryEntry("LDAP://" + ADcache.Domain);
             var search2 = new DirectorySearcher(de2);
 
             search2.PropertiesToLoad.Add("cn");
@@ -136,7 +90,7 @@ namespace ITSWebMgmt.Controllers.Computer
 
             DirectoryEntry de = new DirectoryEntry(adpath);
 
-            //XXX if expire time i smaller than 4 hours, you can use this to add time to the password (eg 3h to expire will become 4), never allow a password expire to be larger than the old value
+            //XXX if expire time is smaller than 4 hours, you can use this to add time to the password (eg 3h to expire will become 4), never allow a password expire to be larger than the old value
 
             if (de.Properties.Contains("ms-Mcs-AdmPwd"))
             {
