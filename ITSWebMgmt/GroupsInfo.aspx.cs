@@ -82,12 +82,12 @@ namespace ITSWebMgmt
 
         private void buildMemberOf(DirectoryEntry group)
         {
-            Helpers.GroupTableGenerator.BuildGroupsSegments("memberOf", group, groupofsegmentLabel, groupofAllsegmentLabel);
+            Helpers.TableGenerator.BuildGroupsSegments("memberOf", group, groupofsegmentLabel, groupofAllsegmentLabel);
         }
 
         private void buildMembers(DirectoryEntry group)
         {
-            Helpers.GroupTableGenerator.BuildGroupsSegments("member", group, groupssegmentLabel, groupsAllsegmentLabel);
+            Helpers.TableGenerator.BuildGroupsSegments("member", group, groupssegmentLabel, groupsAllsegmentLabel);
         }
 
         private void buildBasicInfo(DirectoryEntry group)

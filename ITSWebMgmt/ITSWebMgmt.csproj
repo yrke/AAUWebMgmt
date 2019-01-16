@@ -200,9 +200,9 @@
     <Compile Include="Controls\ActiveChanges.ascx.designer.cs">
       <DependentUpon>ActiveChanges.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\DatabaseGetter.cs" />
+    <Compile Include="Helpers\Database.cs" />
     <Compile Include="Helpers\DateTimeConverter.cs" />
-    <Compile Include="Helpers\GroupTableGenerator.cs" />
+    <Compile Include="Helpers\TableGenerator.cs" />
     <Compile Include="Helpers\HTMLEncodingHelper.cs" />
     <Compile Include="Helpers\HTMLTableHelper.cs" />
     <Compile Include="ComputerInfo.aspx.cs">

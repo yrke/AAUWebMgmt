@@ -1,45 +1,99 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.DirectoryServices;
 using System.Linq;
 using System.Management;
 using System.Text;
 using System.Web;
+using System.Web.UI.WebControls;
 
 namespace ITSWebMgmt.Helpers
 {
-    public class DatabaseGetter
+    public class TableGenerator
     {
-        public static ManagementScope ms = new ManagementScope("\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1");
-
-        public static ManagementObjectCollection getResults(WqlObjectQuery wqlq)
+        private static string CreateGroupTable(List<string> groupsAsList)
         {
-            var searcher = new ManagementObjectSearcher(ms, wqlq);
-            return searcher.Get();
-        }
+            HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Domain", "Name" });
 
-        public static bool HasValues(ManagementObjectCollection results)
-        {
-            try
+            foreach (string adpath in groupsAsList)
             {
-                var t2 = results.Count;
-                return results.Count != 0;
-            }
-            catch (ManagementException e) { }
+                var split = adpath.Split(',');
+                var groupname = split[0].Replace("CN=", "");
+                var domain = split.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
+                var linkToGroup = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), groupname);
+                groupTableHelper.AddRow(new string[] { domain, linkToGroup });
 
-            return false;
+            }
+
+            return groupTableHelper.GetTable();
         }
 
-        public static string CreateVerticalTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage) => CreateVerticalTableFromDatabase(getResults(wqlq), keys, keys, errorMessage);
+        private static string buildgroupssegmentLabel(String[] groupsList)
+        {
+            var groupsAsList = groupsList.ToList();
 
-        public static string CreateVerticalTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, List<string> names, string errorMessage) => CreateVerticalTableFromDatabase(getResults(wqlq), keys, names, errorMessage);
+            /*Func<string[], string, bool> startsWith = delegate (string[] prefix, string value)
+            {
+                return prefix.Any<string>(x => value.StartsWith(x));
+            };
+            string[] prefixMBX_ACL = { "CN=MBX_", "CN=ACL_" };
+            Func<string, bool> startsWithMBXorACL = (string value) => startsWith(prefixMBX_ACL, value);*/
+
+            bool StartsWith(string[] prefix, string value) => prefix.Any(value.StartsWith);
+            string[] prefixMBX_ACL = { "CN=MBX_", "CN=ACL_" };
+            bool startsWithMBXorACL(string value) => StartsWith(prefixMBX_ACL, value);
+
+            //Sort MBX and ACL Last
+            groupsAsList.Sort((a, b) =>
+            {
+                if (startsWithMBXorACL(a) && startsWithMBXorACL(b))
+                {
+                    return a.CompareTo(b);
+                }
+                else if (startsWithMBXorACL(a))
+                {
+                    return 1;
+                }
+                else if (startsWithMBXorACL(b))
+                {
+                    return -1;
+                }
+                else
+                {
+                    return a.CompareTo(b);
+                }
+            });
+
+            return CreateGroupTable(groupsAsList);
+        }
+        
+        public static Tuple<String[], String[]> BuildGroupsSegments(string name, DirectoryEntry result, Label groupssegmentLabel, Label groupsAllsegmentLabel)
+        {
+            // Names of items in tuple is c# 7 feature: (String[] groupListConvert, String[] groupsListAllConverted)
+            var groupsList = result.Properties[name];
+            string attName = $"msds-{name}Transitive";
+            result.RefreshCache(attName.Split(','));
+
+            var b = groupsList.Cast<string>();
+            var groupListConvert = b.ToArray<string>();
+
+            var groupsListAll = result.Properties[attName];
+            var groupsListAllConverted = groupsListAll.Cast<string>().ToArray();
+
+            groupssegmentLabel.Text = buildgroupssegmentLabel(groupListConvert);
+            groupsAllsegmentLabel.Text = buildgroupssegmentLabel(groupsListAllConverted);
+
+            return Tuple.Create(groupListConvert, groupsListAllConverted);
+        }
+
+        public static string CreateVerticalTableFromDatabase(ManagementObjectCollection results, List<string> keys, string errorMessage) => CreateVerticalTableFromDatabase(results, keys, keys, errorMessage);
 
         public static string CreateVerticalTableFromDatabase(ManagementObjectCollection results, List<string> keys, List<string> names, string errorMessage)
         {
             HTMLTableHelper tableHelper = new HTMLTableHelper(2);
             var sb = new StringBuilder();
 
-            if (HasValues(results))
+            if (Database.HasValues(results))
             {
                 int i = 0;
                 var o = results.OfType<ManagementObject>().FirstOrDefault();
@@ -70,14 +124,12 @@ namespace ITSWebMgmt.Helpers
             return tableHelper.GetTable();
         }
 
-        public static Tuple<string, string> CreateTableAndRawFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage)
+        public static Tuple<string, string> CreateTableAndRawFromDatabase(ManagementObjectCollection results, List<string> keys, string errorMessage)
         {
             HTMLTableHelper tableHelper = new HTMLTableHelper(2);
             var sb = new StringBuilder();
 
-            var results = getResults(wqlq);
-
-            if (HasValues(results))
+            if (Database.HasValues(results))
             {
                 foreach (ManagementObject o in results) //Has one!
                 {
@@ -148,13 +200,11 @@ namespace ITSWebMgmt.Helpers
             return Tuple.Create(tableHelper.GetTable(), sb.ToString());
         }
 
-        public static string CreateTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, string errorMessage) => CreateTableFromDatabase(wqlq, keys, keys, errorMessage);
+        public static string CreateTableFromDatabase(ManagementObjectCollection results, List<string> keys, string errorMessage) => CreateTableFromDatabase(results, keys, keys, errorMessage);
 
-        public static string CreateTableFromDatabase(WqlObjectQuery wqlq, List<string> keys, List<string> names, string errorMessage)
+        public static string CreateTableFromDatabase(ManagementObjectCollection results, List<string> keys, List<string> names, string errorMessage)
         {
-            var results = getResults(wqlq);
-
-            if (HasValues(results))
+            if (Database.HasValues(results))
             {
                 HTMLTableHelper tableHelper = new HTMLTableHelper(names.ToArray());
 
@@ -169,7 +219,7 @@ namespace ITSWebMgmt.Helpers
                             temp = DateTimeConverter.Convert(temp);
                         }
                         properties.Add(temp);
-                        
+
                     }
                     tableHelper.AddRow(properties.ToArray());
                 }

@@ -572,7 +572,7 @@ namespace ITSWebMgmt
 
         private void buildGroupsSegments(DirectoryEntry result)
         {
-            var temp = Helpers.GroupTableGenerator.BuildGroupsSegments("memberOf", result, groupssegmentLabel, groupsAllsegmentLabel);
+            var temp = Helpers.TableGenerator.BuildGroupsSegments("memberOf", result, groupssegmentLabel, groupsAllsegmentLabel);
             var groupsListAllConverted = temp.Item1;
             var groupListConvert = temp.Item2;
 
@@ -778,7 +778,7 @@ namespace ITSWebMgmt
 
                 var wqlq = new WqlObjectQuery("SELECT * FROM SMS_UserMachineRelationship WHERE UniqueUserName = \"" + userName + "\"");
 
-                foreach (ManagementObject o in DatabaseGetter.getResults(wqlq))
+                foreach (ManagementObject o in Database.getResults(wqlq))
                 {
                     var machinename = o.Properties["ResourceName"].Value.ToString();
                     var name = "<a href=\"/computerInfo.aspx?computername=" + machinename + "\">" + machinename + "</a><br />";
