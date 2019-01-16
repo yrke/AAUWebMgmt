@@ -17,7 +17,7 @@ namespace ITSWebMgmt.Controllers.Computer
         public string ComputerName = "ITS\\AAU804396";
         public static Logger logger = LogManager.GetCurrentClassLogger();
         private SCCMcache SCCMcache;
-        public string ConfigPC = "False";
+        public string ConfigPC = "Unknown";
         public string ConfigExtra = "False";
         //TODO getsTestUpdates not used
         public string Domain;
