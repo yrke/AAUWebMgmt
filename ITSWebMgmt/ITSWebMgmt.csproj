@@ -178,7 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Caches\ADcache.cs" />
-    <Compile Include="Computer.cs" />
+    <Compile Include="Controllers\Computer.cs" />
     <Compile Include="Caches\SCCMcache.cs" />
     <Compile Include="Connectors\Active Directory\ADHelpers.cs" />
     <Compile Include="Connectors\ADMdbConnector.cs" />
@@ -282,7 +282,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="DynamicData\FieldTemplates\" />
   </ItemGroup>
   <PropertyGroup>
