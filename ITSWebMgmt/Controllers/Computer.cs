@@ -252,11 +252,12 @@ namespace ITSWebMgmt.Controllers.Computer
 
         }
 
-        public string setConfig()
+        public List<string> setConfig()
         {
-            if (Database.HasValues(Collection))
+            if (Database.HasValues(this.Collection))
             {
-                foreach (ManagementObject o in Collection)
+                List<string> namesInCollection = new List<string>();
+                foreach (ManagementObject o in this.Collection)
                 {
                     //o.Properties["ResourceID"].Value.ToString();
                     var collectionID = o.Properties["CollectionID"].Value.ToString();
@@ -300,8 +301,9 @@ namespace ITSWebMgmt.Controllers.Computer
                     obj.Path = path;
                     obj.Get();
 
-                    return obj["Name"].ToString();
+                    namesInCollection.Add(obj["Name"].ToString());
                 }
+                return namesInCollection;
             }
             return null;
         }

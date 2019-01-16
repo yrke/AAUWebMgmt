@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Management;
+using System.Text;
 using System.Web;
 
 namespace ITSWebMgmt
@@ -197,17 +198,21 @@ namespace ITSWebMgmt
 
             //XXX: remeber to filter out computers that are obsolite in sccm (not active)
             string error = "";
-
             HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Collection Name" });
-            string name = computer.setConfig();
-            if (name != null)
+            var names = computer.setConfig();
+            
+            if (names != null)
             {
-                groupTableHelper.AddRow(new string[] { name });
+                foreach (var name in names)
+                {
+                    groupTableHelper.AddRow(new string[] { name });
+                }
             }
             else
             {
                 error = "Computer not found i SCCM";
             }
+
             labelBasicInfoPCConfig.Text = computer.ConfigPC;
             labelBasicInfoExtraConfig.Text = computer.ConfigExtra;
 
