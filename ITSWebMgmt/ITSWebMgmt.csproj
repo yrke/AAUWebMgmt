@@ -178,13 +178,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Caches\ADcache.cs" />
-    <Compile Include="Controllers\Computer.cs" />
+    <Compile Include="Controllers\ComputerController.cs" />
     <Compile Include="Caches\SCCMcache.cs" />
     <Compile Include="Connectors\Active Directory\ADHelpers.cs" />
     <Compile Include="Connectors\ADMdbConnector.cs" />
     <Compile Include="Connectors\PDSConnector.cs" />
     <Compile Include="Connectors\PrintConnector.cs" />
     <Compile Include="Connectors\SCSMConnector.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="DefendpointChallengeResponse.aspx.cs">
       <DependentUpon>DefendpointChallengeResponse.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -240,6 +241,8 @@
     <Compile Include="IDtoSystem.aspx.designer.cs">
       <DependentUpon>IDtoSystem.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Models\ExchangeMailboxGroup.cs" />
+    <Compile Include="Models\Fileshare.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\RawADGridGenerator.cs" />
     <Compile Include="Redirector.aspx.cs">

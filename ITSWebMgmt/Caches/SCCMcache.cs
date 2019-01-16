@@ -420,7 +420,8 @@ namespace ITSWebMgmt.Computer
         //Missing class
         public ManagementObjectCollection Collection { get => getQuery(10); private set { } }
 
-        public ManagementObjectCollection getResourceIDFromComputerName(string computername) => getQuery(0, new WqlObjectQuery("select ResourceID from SMS_CM_RES_COLL_SMS00001 where name like '" + computername + "'"));
+        public ManagementObjectCollection getResourceIDFromComputerName(string computerName) => getQuery(0, new WqlObjectQuery("select ResourceID from SMS_CM_RES_COLL_SMS00001 where name like '" + computerName + "'"));
+        public ManagementObjectCollection getUserMachineRelationshipFromUserName(string userName) => getQuery(1, new WqlObjectQuery("SELECT * FROM SMS_UserMachineRelationship WHERE UniqueUserName = \"" + userName + "\""));
 
         private ManagementObjectCollection getQuery(int i, WqlObjectQuery wqlq)
         {

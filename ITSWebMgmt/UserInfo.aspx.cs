@@ -13,24 +13,25 @@ using System.Web.UI.WebControls;
 using ITSWebMgmt.Connectors.Active_Directory;
 using ITSWebMgmt;
 using ITSWebMgmt.Helpers;
+using ITSWebMgmt.Models;
+using ITSWebMgmt.Controllers;
 
 namespace ITSWebMgmt
 {
     public partial class UserInfo : System.Web.UI.Page
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
+        private UserController user;
         protected string UserName = "kyrke@its.aau.dk";
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-
                 ResultDiv.Visible = false;
                 errordiv.Visible = false;
+                user = new UserController();
 
-                String search = Request.QueryString["search"];
+                string search = Request.QueryString["search"];
                 if (search != null)
                 {
                     UserName = HttpUtility.HtmlEncode(search);
@@ -38,7 +39,7 @@ namespace ITSWebMgmt
                     return;
                 }
 
-                String username = Request.QueryString["username"];
+                string username = Request.QueryString["username"];
                 if (username != null)
                 {
                     UserName = HttpUtility.HtmlEncode(username);
@@ -46,7 +47,7 @@ namespace ITSWebMgmt
                     return;
                 }
 
-                String phoneNr = Request.QueryString["phone"];
+                string phoneNr = Request.QueryString["phone"];
                 if (phoneNr != null)
                 {
                     UserName = HttpUtility.HtmlEncode(phoneNr);
@@ -70,106 +71,34 @@ namespace ITSWebMgmt
             }
         }
 
-        //Searhces on a phone numer (internal or external), and returns a upn (later ADsPath) to a use or null if not found
-        protected string doPhoneSearch(string numberIn)
+        protected void buildUserLookupFromPhone(string phone)
         {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            string number = numberIn;
-            //If number is a shot internal number, expand it :)
-            if (number.Length == 4)
+            var adpath = user.doPhoneSearch(phone);
+            buildUserLookupFromAdpath(adpath);
+
+        }
+        protected void buildUserLookupFromUsername(string username)
+        {
+            string adpath = user.getADPathFromUsername(username);
+            buildUserLookupFromAdpath(adpath);
+        }
+
+        protected void buildUserLookupFromAdpath(string adpath)
+        {
+
+            if (adpath == null)
             {
-                // format is 3452
-                number = String.Format("+459940{0}", number);
-
-            }
-            else if (number.Length == 6)
-            {
-                //format is +453452 
-                number = String.Format("+459940{0}", number.Replace("+45", ""));
-
-            }
-            else if (number.Length == 8)
-            {
-                //format is 99403442
-                number = String.Format("+45{0}", number);
-
-            } // else format is ok
-
-            DirectoryEntry de = new DirectoryEntry("GC://aau.dk");
-            //string filter = string.Format("(&(objectCategory=person)(telephoneNumber={0}))", number);
-            string filter = string.Format("(&(objectCategory=person)(objectClass=user)(telephoneNumber={0}))", number);
-
-            //logger.Debug(filter);
-
-            DirectorySearcher search = new DirectorySearcher(de, filter);
-            search.PropertiesToLoad.Add("userPrincipalName"); //Load something to speed up the object get?
-            SearchResult r = search.FindOne();
-
-            watch.Stop();
-            System.Diagnostics.Debug.WriteLine("phonesearch took: " + watch.ElapsedMilliseconds);
-
-            if (r != null)
-            {
-                //return r.Properties["ADsPath"][0].ToString(); //XXX handle if result is 0 (null exception)
-                return r.Properties["ADsPath"][0].ToString().Replace("GC:", "LDAP:").Replace("aau.dk/", "");
+                buildUserNotFound();
             }
             else
             {
-                return null;
-            }
-        }
-
-        class ExchangeMailboxGroup
-        {
-            public string RawValue {get;}
-
-            public string Type { get; }
-            public string Domain { get; }
-            public string Name { get; }
-            public string Access { get; }
-
-            public ExchangeMailboxGroup(string group)
-            {
-                RawValue = group;
-                if (group.StartsWith("CN=MBX_"))
-                {
-                    var adpathsplit = group.Split(',');
-                    var nameSplit = adpathsplit[0].Split('_');
-
-                    if (nameSplit.Length == 5)
-                    {
-                        //A normal exchange resource group
-                        Type = nameSplit[2];
-                        Domain = nameSplit[1];
-                        Name = nameSplit[3];
-                        Access = nameSplit[4];
-                    } //XXX: if Length == 4 this a all resources group
-                    else if (nameSplit.Length == 4)
-                    {
-                        Type = nameSplit[2];
-                        Domain = nameSplit[1];
-                        Name = nameSplit[2];
-                        Access = nameSplit[3];   
-                    } else if (nameSplit.Length > 5)
-                    {
-                        var len = nameSplit.Length;
-                        Type = nameSplit[2];
-                        Domain = nameSplit[1];
-                        Name = String.Join("_", nameSplit.Skip(3).Reverse().Skip(1).Reverse());
-                        Access = nameSplit[len-1];
-                    } else
-                    {
-                        throw new NotImplementedException("not implemented support for MBX group with less than 4 sections: " + group);
-                    }
-                }else
-                {
-                    throw new FormatException("Mbx group must start with \"MBX_\"");
-                }
+                user.adpath = adpath;
+                buildUserLookup(adpath);
             }
 
         }
 
-        protected void buildExchangeLabel(String[] groupsList, bool isTransitiv)
+        protected void buildExchangeLabel(string[] groupsList, bool isTransitiv)
         {
             string transitiv = "";
 
@@ -185,82 +114,17 @@ namespace ITSWebMgmt
 
             foreach (ExchangeMailboxGroup e in exchangeMailboxGroupList)
             {
-
-                {
-                    var type = e.Type;
-                    var domain = e.Domain;
-                    var nameFormated = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + e.RawValue), e.Name);
-                    var access = e.Access;
-                    helper.AddRow(new string[] { type, domain, nameFormated, access });
-                }
+                var type = e.Type;
+                var domain = e.Domain;
+                var nameFormated = string.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + e.RawValue), e.Name);
+                var access = e.Access;
+                helper.AddRow(new string[] { type, domain, nameFormated, access });
             }
 
             lblexchange.Text = transitiv + helper.GetTable();
         }
 
-        class Fileshare
-        {
-            public string Fileshareraw { get; }
-            public string Domain { get; }
-            public string Type { get; }
-            public string Name { get; }
-            public string Access { get; }
-
-            public Fileshare(string value)
-            {
-                this.Fileshareraw = value;
-
-                var split = value.Split(',');
-                var oupath = split.Where<string>(s => s.StartsWith("OU=")).ToArray<string>();
-                int count = oupath.Count();
-
-                if (count == 3 && oupath[count - 1].Equals("OU=Groups") && oupath[count - 2].Equals("OU=Resource Access"))
-                {
-                    //This is a group access group
-                    var groupname = split[0].Replace("CN=", "");
-                    var groupNameSplit = groupname.Split('_');
-
-                    var type = groupNameSplit[2];
-                    if (type.Equals("generic"))
-                    {
-                        type = "fileshares";
-                    }
-                    else
-                    {
-                        type = "department";
-                    }
-                    var domain = groupNameSplit[1];
-
-                    //XXX: Can do this with array copy and a join simpler 
-                    string nameString = null;
-                    for (int i = 3; i < groupNameSplit.Length - 1; i++)
-                    {
-                        if (nameString == null)
-                        {
-                            nameString = groupNameSplit[i];
-                        }
-                        else
-                        {
-                            nameString = nameString + "_" + groupNameSplit[i];
-                        }
-                    }
-
-                    var access = groupNameSplit[groupNameSplit.Length - 1];
-
-                    this.Name = nameString;
-                    this.Domain = domain;
-                    this.Type = type;
-                    this.Access = access;
-
-                }
-                else
-                {
-                    throw new FormatException("invalid location for filesharegroup");
-                }
-            }
-        };
-
-        protected void buildFilesharessegmentLabel(String[] groupsList, bool isTransitiv)
+        protected void buildFilesharessegmentLabel(string[] groupsList, bool isTransitiv)
         {
             string transitiv = "";
 
@@ -282,135 +146,18 @@ namespace ITSWebMgmt
 
             foreach (Fileshare f in fileshareList)
             {
-                var nameWithLink = String.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + f.Fileshareraw), f.Name);
+                var nameWithLink = string.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + f.Fileshareraw), f.Name);
                 helper.AddRow(new string[] { f.Type, f.Domain, nameWithLink, f.Access });
             }
         
             filesharessegmentLabel.Text = transitiv + helper.GetTable();
         }
 
-        protected bool userIsInRightOU(DirectoryEntry de)
-        {
-
-            String dn = (string)de.Properties["distinguishedName"][0];
-            String[] dnarray = dn.Split(',');
-
-            String[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
-
-            int count = ou.Count();
-            if (count < 2)
-            {
-                return false;
-            }
-            //Check root is people
-            if (!(ou[count - 1]).Equals("ou=people", StringComparison.CurrentCultureIgnoreCase))
-            {
-                //Error user is not placed in people!!!!! Cant move the user (might not be a real user or admin or computer)
-                return false;
-            }
-            String[] okplaces = new String[3] { "ou=staff", "ou=guests", "ou=students" };
-            if (!okplaces.Contains(ou[count - 2], StringComparer.OrdinalIgnoreCase))
-            {
-                //Error user is not in out staff, people or student, what is gowing on here?
-                return false;
-            }
-            if (count > 2)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        protected bool fixUserOu(String adpath)
-        {
-            DirectoryEntry de = new DirectoryEntry(adpath);
-
-            if (userIsInRightOU(de)) { return false; }
-
-            //See if it can be fixed!
-            String dn = (string)de.Properties["distinguishedName"][0];
-            String[] dnarray = dn.Split(',');
-
-            String[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
-
-            int count = ou.Count();
-
-            if (count < 2)
-            {
-                //This cant be in people/{staff,student,guest}
-                return false;
-            }
-            //Check root is people
-            if (!(ou[count - 1]).Equals("ou=people", StringComparison.CurrentCultureIgnoreCase))
-            {
-                //Error user is not placed in people!!!!! Cant move the user (might not be a real user or admin or computer)
-                return false;
-            }
-            String[] okplaces = new String[3] { "ou=staff", "ou=guests", "ou=students" };
-            if (!okplaces.Contains(ou[count - 2], StringComparer.OrdinalIgnoreCase))
-            {
-                //Error user is not in out staff, people or student, what is gowing on here?
-                return false;
-            }
-            if (count > 2)
-            {
-                //User is not placed in people/{staff,student,guest}, but in a sub ou, we need to do somthing!
-                //from above check we know the path is people/{staff,student,guest}, lets generate new OU
-
-                //Format ldap://DOMAIN/pathtoOU
-                //return false; //XX Return false here?
-
-                String[] adpathsplit = adpath.ToLower().Replace("ldap://", "").Split('/');
-                String protocol = "LDAP://";
-                String domain = adpathsplit[0];
-                String[] dcpath = (adpathsplit[0].Split(',')).Where<string>(s => s.StartsWith("dc=", StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
-
-                String newOU = String.Format("{0},{1}", ou[count - 2], ou[count - 1]);
-                String newPath = String.Format("{0}{1}/{2},{3}", protocol, String.Join(".", dcpath).Replace("dc=", ""), newOU, String.Join(",", dcpath));
-
-                logger.Info("user " + System.Web.HttpContext.Current.User.Identity.Name + " changed OU on user to: " + newPath + " from " + adpath + ".");
-
-                var newLocaltion = new DirectoryEntry(newPath);
-                de.MoveTo(newLocaltion);
-
-                return true;
-            }
-            //We don't need to do anything, user is placed in the right ou! (we think, can still be in wrong ou fx a guest changed to staff, we cant check that here) 
-            logger.Debug("no need to change user {0} out, all is good", adpath);
-            return true;
-        }
-
-        protected void toggle_userprofile(String adpath)
-        {
-            DirectoryEntry de = new DirectoryEntry(adpath);
-
-            //String profilepath = (string)(de.Properties["profilePath"])[0];
-
-            if (de.Properties.Contains("profilepath"))
-            {
-                de.Properties["profilePath"].Clear();
-                de.CommitChanges();
-            }
-            else
-            {
-                String upn = ((string)de.Properties["userPrincipalName"][0]);
-                var tmp = upn.Split('@');
-
-                string path = String.Format("\\\\{0}\\profiles\\{1}", tmp[1], tmp[0]);
-
-                de.Properties["profilePath"].Add(path);
-                de.CommitChanges();
-            }
-        }
-
         protected void button_toggle_userprofile(object sender, EventArgs e)
         {
-            String adpath = (String)Session["adpath"];
-
-            //XXX log what the new value of profile is :)
-            logger.Info("User {0} toggled romaing profile for user  {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
+            string adpath = (string)Session["adpath"];
             
-            toggle_userprofile(adpath);
+            user.toggle_userprofile(adpath);
             
             //Set value
             //DirectoryEntry de = result.GetDirectoryEntry();
@@ -419,94 +166,10 @@ namespace ITSWebMgmt
             //de.CommitChanges();
         }
 
-
-        protected string globalSearch(string email)
-        {
-
-            DirectoryEntry de = new DirectoryEntry("GC://aau.dk");
-            string filter = string.Format("(proxyaddresses=SMTP:{0})", email);
-
-
-            DirectorySearcher search = new DirectorySearcher(de, filter);
-            //search.PropertiesToLoad.Add("userPrincipalName");
-            SearchResult r = search.FindOne();
-
-            if (r != null)
-            {
-                //return r.Properties["userPrincipalName"][0].ToString(); //XXX handle if result is 0 (null exception)
-                String adpath = r.Properties["ADsPath"][0].ToString();
-                return adpath.Replace("aau.dk/", "").Replace("GC:","LDAP:");
-            }
-            else
-            {
-                return null;
-            }
-        }
         protected void fixUserOUButton(object sender, EventArgs e)
         {
-            fixUserOu((string)Session["adpath"]);
+            user.fixUserOu();
         }
-
-
-
-
-        protected void buildUserLookupFromPhone(string phone)
-        {
-            var adpath = doPhoneSearch(phone);
-            buildUserLookupFromAdpath(adpath);
-
-        }
-        protected void buildUserLookupFromUsername(string username)
-        {
-            string adpath = getADPathFromUsername(username);
-            buildUserLookupFromAdpath(adpath);
-        }
-
-        protected void buildUserLookupFromAdpath(string adpath)
-        {
-
-            if (adpath == null)
-            {
-                buildUserNotFound();
-            } else
-            {
-                buildUserLookup(adpath);
-            }
-            
-        }
-
-        protected string getADPathFromUsername(string username)
-        {
-            //XXX, this is a use input, might not be save us use in log 
-            logger.Info("User {0} lookedup user {1}", System.Web.HttpContext.Current.User.Identity.Name, username);
-
-            if (username.Contains("\\"))
-            {
-                //Form is domain\useranme
-                var tmp = username.Split('\\');
-                if (!tmp[0].Equals("AAU", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    username = string.Format("{0}@{1}.aau.dk", tmp[1], tmp[0]);
-                }
-                else //IS AAU domain 
-                {
-                    username = string.Format("{0}@{1}.dk", tmp[1], tmp[0]);
-                }
-            }
-
-            var adpath = globalSearch(username);
-            if (adpath == null)
-            {
-                //Show user not found
-                return null;
-            } else
-            {
-                //We got ADPATH lets build the GUI
-                return adpath;
-            }
-        }
-
-
 
         protected void buildUserNotFound()
         {
@@ -572,7 +235,7 @@ namespace ITSWebMgmt
 
         private void buildGroupsSegments(DirectoryEntry result)
         {
-            var temp = Helpers.TableGenerator.BuildGroupsSegments("memberOf", result, groupssegmentLabel, groupsAllsegmentLabel);
+            var temp = TableGenerator.BuildGroupsSegments("memberOf", result, groupssegmentLabel, groupsAllsegmentLabel);
             var groupsListAllConverted = temp.Item1;
             var groupListConvert = temp.Item2;
 
@@ -616,18 +279,18 @@ namespace ITSWebMgmt
                 string k = attrArry[i];
                 sb.Append("<tr>");
 
-                sb.Append(String.Format("<td>{0}</td>", dispArry[i].Trim()));
+                sb.Append(string.Format("<td>{0}</td>", dispArry[i].Trim()));
 
                 if (result.Properties.Contains(k))
                 {
                     if (dateFields.Contains(k))
                     {
-                        sb.Append(String.Format("<td>{0:yyyy-MM-dd HH':'mm}</td>", ADHelpers.convertADTimeToDateTime(result.Properties[k].Value)));
+                        sb.Append(string.Format("<td>{0:yyyy-MM-dd HH':'mm}</td>", ADHelpers.convertADTimeToDateTime(result.Properties[k].Value)));
                     }
                     else
                     {
                         string v = result.Properties[k].Value.ToString();
-                        sb.Append(String.Format("<td>{0}</td>", v));
+                        sb.Append(string.Format("<td>{0}</td>", v));
                     }
                 }
                 else
@@ -671,14 +334,14 @@ namespace ITSWebMgmt
             }
             else
             {
-                basicInfoPasswordExpireDate.Text = String.Format("{0:yyyy-MM-dd HH':'mm}", expireDate);
+                basicInfoPasswordExpireDate.Text = string.Format("{0:yyyy-MM-dd HH':'mm}", expireDate);
             }
 
             labelBasicInfoTable.Text = sb.ToString();
 
             var admdb = new ADMdbConnector();
 
-            String upn = (string)result.Properties["userPrincipalName"][0];
+            string upn = (string)result.Properties["userPrincipalName"][0];
 
             string firstName = (string)result.Properties["givenName"][0];
             string lastName = (string)result.Properties["sn"][0];
@@ -703,41 +366,11 @@ namespace ITSWebMgmt
         }
         private void buildCalAgenda(DirectoryEntry result)
         {
-            ExchangeService service = new ExchangeService(ExchangeVersion.Exchange2010_SP2);
-            service.UseDefaultCredentials = true; // Use domain account for connecting 
-            //service.Credentials = new WebCredentials("user1@contoso.com", "password"); // used if we need to enter a password, but for now we are using domain credentials
-            //service.AutodiscoverUrl("kyrke@its.aau.dk");  //XXX we should use the service user for webmgmt!
-            service.Url = new System.Uri("https://mail.aau.dk/EWS/exchange.asmx");
-
-            List<AttendeeInfo> attendees = new List<AttendeeInfo>();
-
-            attendees.Add(new AttendeeInfo()
-            {
-                SmtpAddress = result.Properties["userPrincipalName"].Value.ToString(),
-                AttendeeType = MeetingAttendeeType.Organizer
-            });
-
-
-            // Specify availability options.
-            AvailabilityOptions myOptions = new AvailabilityOptions();
-
-            myOptions.MeetingDuration = 30;
-            myOptions.RequestedFreeBusyView = FreeBusyViewType.FreeBusy;
-
-            // Return a set of free/busy times.
-            DateTime dayBegin = DateTime.Now.Date;
-            var window = new TimeWindow(dayBegin, dayBegin.AddDays(1));
-            GetUserAvailabilityResults freeBusyResults = service.GetUserAvailability(attendees,
-                                                                                 window,
-                                                                                     AvailabilityData.FreeBusy,
-                                                                                     myOptions);
-
             var sb = new StringBuilder();
             // Display available meeting times.
 
-
             DateTime now = DateTime.Now;
-            foreach (AttendeeAvailability availability in freeBusyResults.AttendeesAvailability)
+            foreach (AttendeeAvailability availability in user.getFreeBusyResults(result).AttendeesAvailability)
             {
 
                 foreach (CalendarEvent calendarItem in availability.CalendarEvents)
@@ -772,13 +405,11 @@ namespace ITSWebMgmt
                 string[] upnsplit = upn.Split('@');
                 string domain = upnsplit[1].Split('.')[0];
 
-                string userName = String.Format("{0}\\\\{1}", domain, upnsplit[0]);
+                string userName = string.Format("{0}\\\\{1}", domain, upnsplit[0]);
 
                 var helper = new HTMLTableHelper(new string[] { "Computername", "AAU Fjernsupport" });
 
-                var wqlq = new WqlObjectQuery("SELECT * FROM SMS_UserMachineRelationship WHERE UniqueUserName = \"" + userName + "\"");
-
-                foreach (ManagementObject o in Database.getResults(wqlq))
+                foreach (ManagementObject o in user.getUserMachineRelationshipFromUserName(userName))
                 {
                     var machinename = o.Properties["ResourceName"].Value.ToString();
                     var name = "<a href=\"/computerInfo.aspx?computername=" + machinename + "\">" + machinename + "</a><br />";
@@ -800,7 +431,6 @@ namespace ITSWebMgmt
 
             var flags = (int)result.Properties["userAccountControl"].Value;
 
-
             //Account is disabled!
             const int ufAccountDisable = 0x0002;
             if (((flags & ufAccountDisable) == ufAccountDisable))
@@ -809,8 +439,7 @@ namespace ITSWebMgmt
             }
 
             //Accont is locked
-
-            if ((Convert.ToBoolean(result.InvokeGet("IsAccountLocked"))))
+            if (Convert.ToBoolean(result.InvokeGet("IsAccountLocked")))
             {
                 errorUserLockedDiv.Style.Clear();
             }
@@ -833,7 +462,7 @@ namespace ITSWebMgmt
                 errorMissingAAUAttr.Style.Clear();
             }
 
-            if (!userIsInRightOU(result))
+            if (!user.userIsInRightOU(result))
             {
                 //Show warning
                 warningNotStandardOU.Style.Clear();
@@ -847,20 +476,7 @@ namespace ITSWebMgmt
 
         protected void unlockUserAccountButton_Click(object sender, EventArgs e)
         {
-            string adpath = (string)Session["adpath"];
-            logger.Info("User {0} unlocked useraccont {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
-            unlockUserAccount(adpath);
-        }
-
-        protected void unlockUserAccount(string adpath)
-        {
-
-            DirectoryEntry uEntry = new DirectoryEntry(adpath);
-            uEntry.Properties["LockOutTime"].Value = 0; //unlock account
-
-            uEntry.CommitChanges(); //may not be needed but adding it anyways
-
-            uEntry.Close();
+            user.unlockUserAccount();
         }
 
         protected void createNewIRSR_Click(object sender, EventArgs e)
@@ -873,8 +489,6 @@ namespace ITSWebMgmt
 
         protected void buildPrint(DirectoryEntry user)
         {
-            //lblPrint.Text = "Hello World";
-
             PrintConnector printConnector = new PrintConnector(user.Guid.ToString());
 
             lblPrint.Text = printConnector.doStuff();
@@ -882,7 +496,6 @@ namespace ITSWebMgmt
 
         protected void buildLoginscript(DirectoryEntry user)
         {
-
             menuLoginScript.Visible = false;
 
             var loginscripthelper = new Loginscript();
