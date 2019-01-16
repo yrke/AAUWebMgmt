@@ -258,7 +258,7 @@ namespace ITSWebMgmt.Controllers
             return service.GetUserAvailability(attendees, window, AvailabilityData.FreeBusy, myOptions);
         }
 
-        public void toggle_userprofile(string adpath)
+        public void toggle_userprofile()
         {
             //XXX log what the new value of profile is :)
             logger.Info("User {0} toggled romaing profile for user  {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);

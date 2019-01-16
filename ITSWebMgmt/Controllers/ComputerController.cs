@@ -127,14 +127,14 @@ namespace ITSWebMgmt.Controllers.Computer
             return resultLocal;
         }
 
-        public string getLocalAdminPassword(string adobject)
+        public string getLocalAdminPassword()
         {
-            if (string.IsNullOrEmpty(adobject))
+            if (string.IsNullOrEmpty(adpath))
             { //Error no session
                 return null;
             }
 
-            DirectoryEntry de = new DirectoryEntry(adobject);
+            DirectoryEntry de = new DirectoryEntry(adpath);
 
             //XXX if expire time i smaller than 4 hours, you can use this to add time to the password (eg 3h to expire will become 4), never allow a password expire to be larger than the old value
 

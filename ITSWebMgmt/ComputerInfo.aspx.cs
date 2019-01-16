@@ -132,12 +132,9 @@ namespace ITSWebMgmt
 
         protected void ResultGetPassword_Click(object sender, EventArgs e)
         {
+            ComputerController.logger.Info("User {0} requesed localadmin password for computer {1}", System.Web.HttpContext.Current.User.Identity.Name, computer.adpath);
 
-            string adpath = (string)Session["adpath"];
-
-            ComputerController.logger.Info("User {0} requesed localadmin password for computer {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
-
-            var passwordRetuned = computer.getLocalAdminPassword(adpath);
+            var passwordRetuned = computer.getLocalAdminPassword();
 
             if (string.IsNullOrEmpty(passwordRetuned))
             {

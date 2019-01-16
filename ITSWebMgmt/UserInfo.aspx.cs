@@ -154,10 +154,8 @@ namespace ITSWebMgmt
         }
 
         protected void button_toggle_userprofile(object sender, EventArgs e)
-        {
-            string adpath = (string)Session["adpath"];
-            
-            user.toggle_userprofile(adpath);
+        {            
+            user.toggle_userprofile();
             
             //Set value
             //DirectoryEntry de = result.GetDirectoryEntry();
