@@ -196,9 +196,10 @@ namespace ITSWebMgmt
                 var task2 = BuildSCSMSegment(userDE);
 
                 //Build GUI
-                var rawbuilder = new RawADGridGenerator();
+                //TODO
+                /*var rawbuilder = new RawADGridGenerator();
                 var rawsegment = rawbuilder.buildRawSegment(userDE);
-                labelRawdata.Text = rawsegment;
+                labelRawdata.Text = rawsegment;*/
 
                 buildComputerInformation(userDE);
                 buildWarningSegment(userDE);
@@ -233,7 +234,8 @@ namespace ITSWebMgmt
 
         private void buildGroupsSegments(DirectoryEntry result)
         {
-            var temp = TableGenerator.BuildGroupsSegments("memberOf", result, groupssegmentLabel, groupsAllsegmentLabel);
+            //TODO
+            /*var temp = TableGenerator.BuildGroupsSegments("memberOf", result, groupssegmentLabel, groupsAllsegmentLabel);
             var groupsListAllConverted = temp.Item1;
             var groupListConvert = temp.Item2;
 
@@ -246,7 +248,7 @@ namespace ITSWebMgmt
             {   //If we dont have transitive data
                 buildExchangeLabel(groupListConvert, false);
                 buildFilesharessegmentLabel(groupListConvert, false);
-            }
+            }*/
         }
 
         private async System.Threading.Tasks.Task buildBasicInfoSegment(DirectoryEntry result)

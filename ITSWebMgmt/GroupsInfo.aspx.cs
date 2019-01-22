@@ -73,21 +73,24 @@ namespace ITSWebMgmt
 
         private void buildRaw(DirectoryEntry group)
         {
-            var generator = new RawADGridGenerator();
+            //TODO
+            /*var generator = new RawADGridGenerator();
             var result = generator.buildRawSegment(group);
 
-            labelRawData.Text = result.ToString();
+            labelRawData.Text = result.ToString();*/
         
         }
 
         private void buildMemberOf(DirectoryEntry group)
         {
-            Helpers.TableGenerator.BuildGroupsSegments("memberOf", group, groupofsegmentLabel, groupofAllsegmentLabel);
+            //TODO
+            //Helpers.TableGenerator.BuildGroupsSegments("memberOf", group, groupofsegmentLabel, groupofAllsegmentLabel);
         }
 
         private void buildMembers(DirectoryEntry group)
         {
-            Helpers.TableGenerator.BuildGroupsSegments("member", group, groupssegmentLabel, groupsAllsegmentLabel);
+            //TODO
+            //Helpers.TableGenerator.BuildGroupsSegments("member", group, groupssegmentLabel, groupsAllsegmentLabel);
         }
 
         private void buildBasicInfo(DirectoryEntry group)

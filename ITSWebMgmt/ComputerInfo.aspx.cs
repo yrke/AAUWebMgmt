@@ -49,20 +49,17 @@ namespace ITSWebMgmt
 
         protected void buildlookupComputer()
         {
-            var resultLocal = computer.GetSearch(HttpContext.Current.User.Identity.Name);
-
-            if (resultLocal == null)
+            if (!computer.ComputerFound)
             {
                 ResultLabel.Text = "Computer Not Found";
                 return;
             }
 
-            //TODO get domain
-            //labelDomain.Text = computer.Domain;
+            labelDomain.Text = computer.Domain;
 
-            if (resultLocal.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
+            if (computer.AdminPasswordExpirationTime != null)
             {
-                long rawDate = (long)resultLocal.Properties["ms-Mcs-AdmPwdExpirationTime"][0];
+                long rawDate = (long)computer.AdminPasswordExpirationTime;
                 labelPwdExpireDate.Text = DateTimeConverter.Convert(rawDate);
             }
             else
@@ -70,10 +67,9 @@ namespace ITSWebMgmt
                 labelPwdExpireDate.Text = "LAPS not Enabled";
             }
 
-            var rawbuilder = new RawADGridGenerator();
-            ResultLabelRaw.Text = rawbuilder.buildRawSegment(resultLocal.GetDirectoryEntry());
+            ResultLabelRaw.Text = TableGenerator.buildRawTable(computer.getAllProperties());
 
-            buildBasicInfo(resultLocal.GetDirectoryEntry());
+            buildBasicInfo();
 
             //XXX check resourceID 
             buildSCCMInfo();
@@ -81,7 +77,7 @@ namespace ITSWebMgmt
             buildSCCMAntivirus();
             biuldSCCMHardware();
 
-            buildGroupsSegments(resultLocal.GetDirectoryEntry());
+            buildGroupsSegments();
 
             ResultDiv.Visible = true;
 
@@ -91,11 +87,11 @@ namespace ITSWebMgmt
             }
         }
 
-        protected void buildBasicInfo(DirectoryEntry de)
+        protected void buildBasicInfo()
         {
-            if (de.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
+            if (computer.AdminPasswordExpirationTime != null)
             {
-                DateTime? expireDate = ADHelpers.convertADTimeToDateTime(de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value);
+                DateTime? expireDate = ADHelpers.convertADTimeToDateTime(computer.AdminPasswordExpirationTime);
                 labelPwdExpireDate.Text = DateTimeConverter.Convert(expireDate);
             }
             else
@@ -106,9 +102,9 @@ namespace ITSWebMgmt
             //Managed By
             labelManagedBy.Text = "none";
 
-            if (de.Properties.Contains("managedBy"))
+            if (computer.ManagedBy != null)
             {
-                string managerVal = de.Properties["managedBy"].Value.ToString();
+                string managerVal = computer.ManagedBy;
 
                 if (!string.IsNullOrWhiteSpace(managerVal))
                 {
@@ -117,9 +113,7 @@ namespace ITSWebMgmt
                 }
             }
 
-            //builder.Append((string)Session["adpath"]);
-
-            if (de.Properties.Contains("ms-Mcs-AdmPwdExpirationTime"))
+            if (computer.AdminPasswordExpirationTime != null)
             {
                 ResultGetPassword.Visible = true;
                 ResultGetPassword2.Visible = true;
@@ -164,10 +158,10 @@ namespace ITSWebMgmt
             ResultGetPassword.Visible = false;
         }
 
-        private void buildGroupsSegments(DirectoryEntry result)
+        private void buildGroupsSegments()
         {
             //XXX is memeber of an attribute
-            TableGenerator.BuildGroupsSegments("memberOf", result, groupssegmentLabel, groupsAllsegmentLabel);
+            TableGenerator.BuildGroupsSegments(computer.getGroups("memberOf"), computer.getGroupsTransitive("memberOf"), groupssegmentLabel, groupsAllsegmentLabel);
         }
 
         protected void buildSCCMInventory()

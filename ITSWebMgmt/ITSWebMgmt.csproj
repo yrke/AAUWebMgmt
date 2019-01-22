@@ -244,7 +244,6 @@
     <Compile Include="Models\ExchangeMailboxGroup.cs" />
     <Compile Include="Models\Fileshare.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Helpers\RawADGridGenerator.cs" />
     <Compile Include="Redirector.aspx.cs">
       <DependentUpon>Redirector.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

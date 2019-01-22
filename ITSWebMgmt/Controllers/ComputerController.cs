@@ -13,14 +13,14 @@ namespace ITSWebMgmt.Controllers.Computer
     public class ComputerController
     {
         public string ResourceID;
-        public string adpath;
-        public string ComputerName = "ITS\\AAU804396";
         public static Logger logger = LogManager.GetCurrentClassLogger();
         private SCCMcache SCCMcache;
         private ADcache ADcache;
         public string ConfigPC = "Unknown";
         public string ConfigExtra = "False";
         //TODO getsTestUpdates not used
+
+        //SCCMcache
         public ManagementObjectCollection RAM { get => SCCMcache.RAM; private set { } }
         public ManagementObjectCollection LogicalDisk { get => SCCMcache.LogicalDisk; private set { } }
         public ManagementObjectCollection BIOS { get => SCCMcache.BIOS; private set { } }
@@ -32,7 +32,23 @@ namespace ITSWebMgmt.Controllers.Computer
         public ManagementObjectCollection Antivirus { get => SCCMcache.Antivirus; private set { } }
         public ManagementObjectCollection System { get => SCCMcache.System; private set { } }
         public ManagementObjectCollection Collection { get => SCCMcache.Collection; private set { } }
-        
+
+        //ADcache
+        public string adpath { get => ADcache.adpath; }
+        public string ComputerName { get => ADcache.ComputerName; }
+        public string Domain { get => ADcache.Domain; }
+        public bool ComputerFound { get => ADcache.ComputerFound; } 
+        public object AdminPasswordExpirationTime { get => ADcache.getProperty("ms-Mcs-AdmPwdExpirationTime"); }
+        public string ManagedBy { get
+            {
+                var temp = ADcache.getProperty("managedBy");
+                return temp != null ? temp.ToString() : null;
+            }
+        }
+        public string[] getGroups(string name) => ADcache.getGroups(name);
+        public string[] getGroupsTransitive(string name) => ADcache.getGroupsTransitive(name);
+        public List<PropertyValueCollection> getAllProperties() => ADcache.getAllProperties();
+
         public ComputerController(string computername, string username)
         {
             //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
@@ -53,32 +69,6 @@ namespace ITSWebMgmt.Controllers.Computer
             }
 
             return resourceID;
-        }
-
-        public SearchResult GetSearch(string username)
-        {
-            var de2 = new DirectoryEntry("LDAP://" + ADcache.Domain);
-            var search2 = new DirectorySearcher(de2);
-
-            search2.PropertiesToLoad.Add("cn");
-
-            //search.PropertiesToLoad.Add("ms-Mcs-AdmPwd");
-            search2.PropertiesToLoad.Add("ms-Mcs-AdmPwdExpirationTime");
-            search2.PropertiesToLoad.Add("memberOf");
-
-            search2.Filter = string.Format("(&(objectClass=computer)(cn={0}))", ComputerName);
-            var resultLocal = search2.FindOne();
-
-            if (resultLocal == null)
-            { //Computer not found
-                return null;
-            }
-
-            adpath = resultLocal.Properties["ADsPath"][0].ToString();
-
-            logger.Info("User {0} requesed info about computer {1}", username, adpath);
-
-            return resultLocal;
         }
 
         public string getLocalAdminPassword()

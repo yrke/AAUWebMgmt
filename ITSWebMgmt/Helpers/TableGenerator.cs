@@ -67,23 +67,65 @@ namespace ITSWebMgmt.Helpers
             return CreateGroupTable(groupsAsList);
         }
         
-        public static Tuple<String[], String[]> BuildGroupsSegments(string name, DirectoryEntry result, Label groupssegmentLabel, Label groupsAllsegmentLabel)
+        public static Tuple<String[], String[]> BuildGroupsSegments(string[] groupsList, string[] groupsListTransitive, Label groupssegmentLabel, Label groupsAllsegmentLabel)
         {
             // Names of items in tuple is c# 7 feature: (String[] groupListConvert, String[] groupsListAllConverted)
-            var groupsList = result.Properties[name];
-            string attName = $"msds-{name}Transitive";
-            result.RefreshCache(attName.Split(','));
 
-            var b = groupsList.Cast<string>();
-            var groupListConvert = b.ToArray<string>();
+            groupssegmentLabel.Text = buildgroupssegmentLabel(groupsList);
+            groupsAllsegmentLabel.Text = buildgroupssegmentLabel(groupsListTransitive);
 
-            var groupsListAll = result.Properties[attName];
-            var groupsListAllConverted = groupsListAll.Cast<string>().ToArray();
+            return Tuple.Create(groupsList, groupsListTransitive);
+        }
 
-            groupssegmentLabel.Text = buildgroupssegmentLabel(groupListConvert);
-            groupsAllsegmentLabel.Text = buildgroupssegmentLabel(groupsListAllConverted);
+        public static string buildRawTable(List<PropertyValueCollection> properties)
+        {
+            //builder.Append((result.Properties["aauStaffID"][0])).ToString();
+            var builder = new StringBuilder();
 
-            return Tuple.Create(groupListConvert, groupsListAllConverted);
+            builder.Append("<table class=\"ui celled structured table\"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>");
+
+            foreach (PropertyValueCollection a in properties)
+            {
+                builder.Append("<tr>");
+
+                //Don't display admin password in raw data
+                if (a != null && a.Count > 0 && a.PropertyName != "ms-Mcs-AdmPwd")
+                {
+                    builder.Append("<td rowspan=\"" + a.Count + "\">" + a.PropertyName + "</td>");
+
+                    var v = a[0];
+                    if (v.GetType().Equals(typeof(DateTime)))
+                    {
+                        v = DateTimeConverter.Convert((DateTime)v);
+                    }
+
+                    if (a.Count == 1)
+                    {
+                        builder.Append("<td>" + v + "</td></tr>");
+                    }
+                    else
+                    {
+                        builder.Append("<td>" + v + "</td>");
+                        for (int i = 1; i < a.Count; i++)
+                        {
+                            v = a[i];
+                            if (v.GetType().Equals(typeof(DateTime)))
+                            {
+                                v = DateTimeConverter.Convert((DateTime)v);
+                            }
+                            builder.Append("<tr><td>" + v + "</td></tr>");
+                        }
+                    }
+                }
+                else
+                {
+                    builder.Append("<td></td></tr>");
+                }
+            }
+
+            builder.Append("</tbody></table>");
+
+            return builder.ToString();
         }
 
         public static string CreateVerticalTableFromDatabase(ManagementObjectCollection results, List<string> keys, string errorMessage) => CreateVerticalTableFromDatabase(results, keys, keys, errorMessage);

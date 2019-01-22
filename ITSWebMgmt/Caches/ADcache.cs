@@ -11,13 +11,17 @@ namespace ITSWebMgmt.Computer
     {
         private Dictionary<string, object> properties = new Dictionary<string, object>();
         public static Logger logger = LogManager.GetCurrentClassLogger();
-        private string adpath;
+        public string adpath;
+        public string ComputerName = "ITS\\AAU804396";
+        public bool ComputerFound = false;
         public string Domain;
+        private DirectoryEntry DE;
 
         public object AdmPwdExpirationTime;
         public ADcache(string computerName, string userName)
         {
-            var de = new DirectoryEntry("LDAP://" + Domain);
+            ComputerName = computerName;
+            var de = new DirectoryEntry("LDAP://" + getDomain());
             var search = new DirectorySearcher(de);
 
             search.PropertiesToLoad.Add("cn");
@@ -25,26 +29,62 @@ namespace ITSWebMgmt.Computer
             search.PropertiesToLoad.Add("ms-Mcs-AdmPwdExpirationTime");
             search.PropertiesToLoad.Add("memberOf");
 
-            search.Filter = string.Format("(&(objectClass=computer)(cn={0}))", computerName);
+            search.Filter = string.Format("(&(objectClass=computer)(cn={0}))", ComputerName);
             var resultLocal = search.FindOne();
 
             if (resultLocal == null)
             { //Computer not found
-                
+                return;
             }
 
-            addProperty("cn", de.Properties["cn"].Value);
-            addProperty("memberOf", de.Properties["memberOf"].Value);
-            addProperty("ms-Mcs-AdmPwdExpirationTime", de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value);
+            ComputerFound = true;
 
-            adpath = resultLocal.Properties["ADsPath"][0].ToString();
+            saveDataFromDataBase(de, resultLocal);
+
+            adpath = adpath = resultLocal.Properties["ADsPath"][0].ToString();
+
+            DE = de;
 
             logger.Info("User {0} requesed info about computer {1}", userName, adpath);
         }
 
+        public List<PropertyValueCollection> getAllProperties()
+        {
+            List<PropertyValueCollection> propertyValueCollections = new List<PropertyValueCollection>();
+            foreach (string k in DE.Properties.PropertyNames)
+            {
+                propertyValueCollections.Add(DE.Properties[k]);
+            }
+            return propertyValueCollections;
+        }
+
+        public string[] getGroups(string name)
+        {
+            return DE.Properties[name].Cast<string>().ToArray();
+        }
+
+        public string[] getGroupsTransitive(string name)
+        {
+            string attName = $"msds-{name}Transitive";
+            DE.RefreshCache(attName.Split(','));
+            return DE.Properties[attName].Cast<string>().ToArray();
+        }
+
+        private void saveDataFromDataBase(DirectoryEntry de, SearchResult resultLocal)
+        {
+            addProperty("managedBy", de.Properties["managedBy"].Value);
+            addProperty("cn", resultLocal.Properties["cn"]);
+            addProperty("memberOf", resultLocal.Properties["memberOf"]);
+            addProperty("ms-Mcs-AdmPwdExpirationTime", de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value);
+        }
+
         public object getProperty(string property)
         {
-            return properties[property];
+            if (properties.ContainsKey(property))
+            {
+                return properties[property];
+            }
+            return null;
         }
 
         public void addProperty(string property, object value)
@@ -52,7 +92,7 @@ namespace ITSWebMgmt.Computer
             properties.Add(property, value);
         }
 
-        private string getDomain(string ComputerName)
+        private string getDomain()
         {
             var tmpName = ComputerName;
 
