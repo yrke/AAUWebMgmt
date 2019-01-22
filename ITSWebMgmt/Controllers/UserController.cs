@@ -9,11 +9,9 @@ using System.Management;
 
 namespace ITSWebMgmt.Controllers
 {
-    public class UserController
+    public class UserController : Controller<UserADcache>
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
         private SCCMcache SCCMcache;
-        public string adpath;
 
         public UserController()
         {

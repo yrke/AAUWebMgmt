@@ -180,6 +180,7 @@
     <Compile Include="Caches\ADcache.cs" />
     <Compile Include="Caches\ComputerADcache.cs" />
     <Compile Include="Caches\GroupADcache.cs" />
+    <Compile Include="Caches\UserADcache.cs" />
     <Compile Include="Controllers\ComputerController.cs" />
     <Compile Include="Caches\SCCMcache.cs" />
     <Compile Include="Connectors\Active Directory\ADHelpers.cs" />
@@ -187,6 +188,7 @@
     <Compile Include="Connectors\PDSConnector.cs" />
     <Compile Include="Connectors\PrintConnector.cs" />
     <Compile Include="Connectors\SCSMConnector.cs" />
+    <Compile Include="Controllers\Controller.cs" />
     <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="DefendpointChallengeResponse.aspx.cs">

@@ -7,14 +7,8 @@ using System.Web;
 
 namespace ITSWebMgmt.Controllers
 {
-    public class GroupController
+    public class GroupController : Controller<GroupADcache>
     {
-        private GroupADcache ADcache;
-
-        public string[] getGroups(string name) => ADcache.getGroups(name);
-        public string[] getGroupsTransitive(string name) => ADcache.getGroupsTransitive(name);
-        public List<PropertyValueCollection> getAllProperties() => ADcache.getAllProperties();
-
         public string Description { get => ADcache.getPropertyAsString("description"); }
         public string Info { get => ADcache.getPropertyAsString("info"); }
         public string Name { get => ADcache.getPropertyAsString("name"); }

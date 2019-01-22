@@ -10,12 +10,10 @@ using System.Web;
 
 namespace ITSWebMgmt.Controllers.Computer
 {
-    public class ComputerController
+    public class ComputerController : Controller<ComputerADcache>
     {
         public string ResourceID;
-        public static Logger logger = LogManager.GetCurrentClassLogger();
         private SCCMcache SCCMcache;
-        private ComputerADcache ADcache;
         public string ConfigPC = "Unknown";
         public string ConfigExtra = "False";
         //TODO getsTestUpdates not used
@@ -34,15 +32,11 @@ namespace ITSWebMgmt.Controllers.Computer
         public ManagementObjectCollection Collection { get => SCCMcache.Collection; private set { } }
 
         //ADcache
-        public string adpath { get => ADcache.adpath; }
         public string ComputerName { get => ADcache.ComputerName; }
         public string Domain { get => ADcache.Domain; }
         public bool ComputerFound { get => ADcache.ComputerFound; } 
         public object AdminPasswordExpirationTime { get => ADcache.getProperty("ms-Mcs-AdmPwdExpirationTime"); }
         public string ManagedBy { get => ADcache.getPropertyAsString("managedBy"); }
-        public string[] getGroups(string name) => ADcache.getGroups(name);
-        public string[] getGroupsTransitive(string name) => ADcache.getGroupsTransitive(name);
-        public List<PropertyValueCollection> getAllProperties() => ADcache.getAllProperties();
 
         public ComputerController(string computername, string username)
         {
