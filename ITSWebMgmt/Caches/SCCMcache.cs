@@ -4,7 +4,7 @@ using System.Linq;
 using System.Management;
 using System.Web;
 
-namespace ITSWebMgmt.Computer
+namespace ITSWebMgmt.Caches
 {
     public class SCCMcache
     {

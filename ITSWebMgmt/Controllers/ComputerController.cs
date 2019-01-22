@@ -1,4 +1,4 @@
-﻿using ITSWebMgmt.Computer;
+﻿using ITSWebMgmt.Caches;
 using ITSWebMgmt.Helpers;
 using NLog;
 using System;
@@ -15,7 +15,7 @@ namespace ITSWebMgmt.Controllers.Computer
         public string ResourceID;
         public static Logger logger = LogManager.GetCurrentClassLogger();
         private SCCMcache SCCMcache;
-        private ADcache ADcache;
+        private ComputerADcache ADcache;
         public string ConfigPC = "Unknown";
         public string ConfigExtra = "False";
         //TODO getsTestUpdates not used
@@ -39,12 +39,7 @@ namespace ITSWebMgmt.Controllers.Computer
         public string Domain { get => ADcache.Domain; }
         public bool ComputerFound { get => ADcache.ComputerFound; } 
         public object AdminPasswordExpirationTime { get => ADcache.getProperty("ms-Mcs-AdmPwdExpirationTime"); }
-        public string ManagedBy { get
-            {
-                var temp = ADcache.getProperty("managedBy");
-                return temp != null ? temp.ToString() : null;
-            }
-        }
+        public string ManagedBy { get => ADcache.getPropertyAsString("managedBy"); }
         public string[] getGroups(string name) => ADcache.getGroups(name);
         public string[] getGroupsTransitive(string name) => ADcache.getGroupsTransitive(name);
         public List<PropertyValueCollection> getAllProperties() => ADcache.getAllProperties();
@@ -53,7 +48,7 @@ namespace ITSWebMgmt.Controllers.Computer
         {
             //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
             SCCMcache = new SCCMcache();
-            ADcache = new ADcache(computername, username);
+            ADcache = new ComputerADcache(computername, username);
             ResourceID = getSCCMResourceIDFromComputerName();
             SCCMcache.ResourceID = ResourceID;
         }
