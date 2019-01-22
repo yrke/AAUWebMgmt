@@ -18,6 +18,39 @@ namespace ITSWebMgmt.Controllers
             //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
             SCCMcache = new SCCMcache();
         }
+
+        public override string adpath { get => ADcache.adpath; set { ADcache = new UserADcache(value); ADcache.adpath = value; } }
+        public DirectoryEntry Result { get => ADcache.result.GetDirectoryEntry(); }//TODO temporarely solution
+        public string Guid { get => ADcache.DE.Path; }
+        public string UserPrincipalName { get => ADcache.getPropertyAsString("userPrincipalName"); }
+        public string DisplayName { get => ADcache.getPropertyAsString("displayName"); }
+        public string ProxyAddresses { get => ADcache.getPropertyAsString("proxyAddresses"); }
+        public int? UserAccountControlComputed
+        {
+            get
+            {
+                var temp = ADcache.getProperty("msDS-User-Account-Control-Computed");
+                return temp != null ? (int)temp : (int?)null;
+            }
+        }
+        public int? UserAccountControl
+        {
+            get
+            {
+                var temp = ADcache.getProperty("userAccountControl");
+                return temp != null ? (int)temp : (int?)null;
+            }
+        }
+        public object UserPasswordExpiryTimeComputed { get => ADcache.getProperty("msDS-UserPasswordExpiryTimeComputed"); }
+        public string GivenName { get => ADcache.getPropertyAsString("givenName"); }
+        public string SN { get => ADcache.getPropertyAsString("sn"); }
+        public string AAUStaffID { get => ADcache.getPropertyAsString("aauStaffID"); }
+        public object Profilepath { get => ADcache.getProperty("profilepath"); }
+        public object AAUStudentID { get => ADcache.getProperty("aauStudentID"); }
+        public object AAUUserClassification { get => ADcache.getProperty("aauUserClassification"); }
+        public object AAUUserStatus { get => ADcache.getProperty("aauUserStatus"); }
+        public string ScriptPath { get => ADcache.getPropertyAsString("scriptPath"); }
+
         public ManagementObjectCollection getUserMachineRelationshipFromUserName(string userName) => SCCMcache.getUserMachineRelationshipFromUserName(userName);
 
         public string globalSearch(string email)
@@ -92,10 +125,10 @@ namespace ITSWebMgmt.Controllers
             }
         }
 
-        public bool userIsInRightOU(DirectoryEntry de)
+        public bool userIsInRightOU()
         {
 
-            string dn = (string)de.Properties["distinguishedName"][0];
+            string dn = (string)ADcache.DE.Properties["distinguishedName"][0];
             string[] dnarray = dn.Split(',');
 
             string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<string>();
@@ -126,12 +159,10 @@ namespace ITSWebMgmt.Controllers
 
         public bool fixUserOu()
         {
-            DirectoryEntry de = new DirectoryEntry(adpath);
-
-            if (userIsInRightOU(de)) { return false; }
+            if (userIsInRightOU()) { return false; }
 
             //See if it can be fixed!
-            string dn = (string)de.Properties["distinguishedName"][0];
+            string dn = (string)ADcache.DE.Properties["distinguishedName"][0];
             string[] dnarray = dn.Split(',');
 
             string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<string>();
@@ -174,7 +205,7 @@ namespace ITSWebMgmt.Controllers
                 logger.Info("user " + System.Web.HttpContext.Current.User.Identity.Name + " changed OU on user to: " + newPath + " from " + adpath + ".");
 
                 var newLocaltion = new DirectoryEntry(newPath);
-                de.MoveTo(newLocaltion);
+                ADcache.DE.MoveTo(newLocaltion);
 
                 return true;
             }
@@ -261,24 +292,22 @@ namespace ITSWebMgmt.Controllers
             //XXX log what the new value of profile is :)
             logger.Info("User {0} toggled romaing profile for user  {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
 
-            DirectoryEntry de = new DirectoryEntry(adpath);
+            //string profilepath = (string)(ADcache.DE.Properties["profilePath"])[0];
 
-            //string profilepath = (string)(de.Properties["profilePath"])[0];
-
-            if (de.Properties.Contains("profilepath"))
+            if (ADcache.DE.Properties.Contains("profilepath"))
             {
-                de.Properties["profilePath"].Clear();
-                de.CommitChanges();
+                ADcache.DE.Properties["profilePath"].Clear();
+                ADcache.DE.CommitChanges();
             }
             else
             {
-                string upn = ((string)de.Properties["userPrincipalName"][0]);
+                string upn = ((string)ADcache.DE.Properties["userPrincipalName"][0]);
                 var tmp = upn.Split('@');
 
                 string path = string.Format("\\\\{0}\\profiles\\{1}", tmp[1], tmp[0]);
 
-                de.Properties["profilePath"].Add(path);
-                de.CommitChanges();
+                ADcache.DE.Properties["profilePath"].Add(path);
+                ADcache.DE.CommitChanges();
             }
         }
     }

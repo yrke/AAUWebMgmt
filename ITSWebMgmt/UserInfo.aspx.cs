@@ -185,28 +185,19 @@ namespace ITSWebMgmt
             {
                 var watch = System.Diagnostics.Stopwatch.StartNew();
 
-                //Get the AD object 
-                var userDE = new DirectoryEntry(adpath);
-
-                //Save Session
-                Session["adpath"] = adpath;
-
                 //Async
-                var task1 = buildBasicInfoSegment(userDE);
-                var task2 = BuildSCSMSegment(userDE);
+                var task1 = buildBasicInfoSegment();
+                var task2 = BuildSCSMSegment();
 
                 //Build GUI
-                //TODO
-                /*var rawbuilder = new RawADGridGenerator();
-                var rawsegment = rawbuilder.buildRawSegment(userDE);
-                labelRawdata.Text = rawsegment;*/
+                labelRawdata.Text = TableGenerator.buildRawTable(user.getAllProperties());
 
-                buildComputerInformation(userDE);
-                buildWarningSegment(userDE);
-                buildGroupsSegments(userDE);
-                buildCalAgenda(userDE);
-                buildLoginscript(userDE);
-                buildPrint(userDE); // XXX make async? 
+                buildComputerInformation();
+                buildWarningSegment();
+                buildGroupsSegments();
+                buildCalAgenda();
+                buildLoginscript();
+                buildPrint(); // XXX make async? 
 
                 await System.Threading.Tasks.Task.WhenAll(task1, task2);
 
@@ -220,22 +211,21 @@ namespace ITSWebMgmt
         }
 
 
-        private async System.Threading.Tasks.Task  BuildSCSMSegment(DirectoryEntry result)
+        private async System.Threading.Tasks.Task  BuildSCSMSegment()
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var scsmtest = new SCSMConnector();
-            divServiceManager.Text = await scsmtest.getActiveIncidents((string)result.Properties["userPrincipalName"][0], (string)result.Properties["displayName"][0]);
+            divServiceManager.Text = await scsmtest.getActiveIncidents(user.UserPrincipalName, user.DisplayName);
             var userID = scsmtest.userID;
             Session["scsmuserID"] = userID;
-            Session["scsmuserUPN"] = (string)result.Properties["userPrincipalName"][0];
+            Session["scsmuserUPN"] = user.UserPrincipalName;
             watch.Stop();
             System.Diagnostics.Debug.WriteLine("BuildSCSMSegment took: " + watch.ElapsedMilliseconds);
         }
 
-        private void buildGroupsSegments(DirectoryEntry result)
+        private void buildGroupsSegments()
         {
-            //TODO
-            /*var temp = TableGenerator.BuildGroupsSegments("memberOf", result, groupssegmentLabel, groupsAllsegmentLabel);
+            var temp = TableGenerator.BuildGroupsSegments(user.getGroups("memberOf"), user.getGroupsTransitive("memberOf"), groupssegmentLabel, groupsAllsegmentLabel);
             var groupsListAllConverted = temp.Item1;
             var groupListConvert = temp.Item2;
 
@@ -248,18 +238,18 @@ namespace ITSWebMgmt
             {   //If we dont have transitive data
                 buildExchangeLabel(groupListConvert, false);
                 buildFilesharessegmentLabel(groupListConvert, false);
-            }*/
+            }
         }
 
-        private async System.Threading.Tasks.Task buildBasicInfoSegment(DirectoryEntry result)
+        private async System.Threading.Tasks.Task buildBasicInfoSegment()
         {
             //Fills in basic user info
-            displayName.Text = result.Properties["displayName"][0].ToString();
+            displayName.Text = user.DisplayName;
 
             //lblbasicInfoOfficePDS
-            if (result.Properties.Contains("aauStaffID"))            
+            if (user.AAUStaffID != null)
             {
-                string empID = result.Properties["aauStaffID"].Value.ToString();
+                string empID = user.AAUStaffID;
 
                 var pds = new PDSConnector(empID);
                 lblbasicInfoDepartmentPDS.Text = pds.Department;
@@ -281,15 +271,15 @@ namespace ITSWebMgmt
 
                 sb.Append(string.Format("<td>{0}</td>", dispArry[i].Trim()));
 
-                if (result.Properties.Contains(k))
+                if (user.Result.Properties.Contains(k))
                 {
                     if (dateFields.Contains(k))
                     {
-                        sb.Append(string.Format("<td>{0:yyyy-MM-dd HH':'mm}</td>", ADHelpers.convertADTimeToDateTime(result.Properties[k].Value)));
+                        sb.Append(string.Format("<td>{0:yyyy-MM-dd HH':'mm}</td>", ADHelpers.convertADTimeToDateTime(user.Result.Properties[k].Value)));
                     }
                     else
                     {
-                        string v = result.Properties[k].Value.ToString();
+                        string v = user.Result.Properties[k].Value.ToString();
                         sb.Append(string.Format("<td>{0}</td>", v));
                     }
                 }
@@ -303,7 +293,7 @@ namespace ITSWebMgmt
             }
 
             //Email
-            var proxyAddressesAD = result.Properties["proxyAddresses"];
+            var proxyAddressesAD = user.Result.Properties["proxyAddresses"]; ;
             var proxyAddresses = proxyAddressesAD.Cast<string>().ToArray<string>();
             string email = "";
             foreach (string s in proxyAddresses) {
@@ -315,10 +305,11 @@ namespace ITSWebMgmt
             sb.Append($"<tr><td>E-mails</td><td>{email}</td></tr>");
 
             string attName = "msDS-UserPasswordExpiryTimeComputed,msDS-User-Account-Control-Computed";
-            result.RefreshCache(attName.Split(','));
+            user.Result.RefreshCache(attName.Split(','));
 
-            const int UF_LOCKOUT = 0x0010;
-            int userFlags = (int)result.Properties["msDS-User-Account-Control-Computed"].Value;
+            //TODO
+            /* const int UF_LOCKOUT = 0x0010;
+            int userFlags = (int)user.UserAccountControlComputed;
 
             //basicInfoPasswordExpired.Text = "False";
 
@@ -327,7 +318,7 @@ namespace ITSWebMgmt
             //    basicInfoPasswordExpired.Text = "True";
             }
 
-            DateTime? expireDate = ADHelpers.convertADTimeToDateTime(result.Properties["msDS-UserPasswordExpiryTimeComputed"].Value);
+            DateTime? expireDate = ADHelpers.convertADTimeToDateTime(user.UserPasswordExpiryTimeComputed);
             if (expireDate == null)
             {
                 basicInfoPasswordExpireDate.Text = "Never";
@@ -335,16 +326,16 @@ namespace ITSWebMgmt
             else
             {
                 basicInfoPasswordExpireDate.Text = string.Format("{0:yyyy-MM-dd HH':'mm}", expireDate);
-            }
+            }*/
 
             labelBasicInfoTable.Text = sb.ToString();
 
             var admdb = new ADMdbConnector();
 
-            string upn = (string)result.Properties["userPrincipalName"][0];
+            string upn = user.UserPrincipalName;
 
-            string firstName = (string)result.Properties["givenName"][0];
-            string lastName = (string)result.Properties["sn"][0];
+            string firstName = user.GivenName;
+            string lastName = user.SN;
 
             var tmp = upn.Split('@');
             var domain = tmp[1].Split('.')[0];
@@ -357,20 +348,20 @@ namespace ITSWebMgmt
 
             //Has roaming
             labelBasicInfoRomaing.Text = "false";
-            if (result.Properties.Contains("profilepath"))
+            if (user.Profilepath != null)
             {
                 labelBasicInfoRomaing.Text = "true";
             }
 
             //Password Expire date "PasswordExpirationDate"
         }
-        private void buildCalAgenda(DirectoryEntry result)
+        private void buildCalAgenda()
         {
             var sb = new StringBuilder();
             // Display available meeting times.
 
             DateTime now = DateTime.Now;
-            foreach (AttendeeAvailability availability in user.getFreeBusyResults(result).AttendeesAvailability)
+            foreach (AttendeeAvailability availability in user.getFreeBusyResults(user.Result).AttendeesAvailability)
             {
 
                 foreach (CalendarEvent calendarItem in availability.CalendarEvents)
@@ -397,11 +388,11 @@ namespace ITSWebMgmt
             lblcalAgenda.Text = sb.ToString();
         }
 
-        private void buildComputerInformation(DirectoryEntry result)
+        private void buildComputerInformation()
         {
             try
             {
-                string upn = (string)result.Properties["userPrincipalName"][0];
+                string upn = user.UserPrincipalName;
                 string[] upnsplit = upn.Split('@');
                 string domain = upnsplit[1].Split('.')[0];
 
@@ -423,13 +414,13 @@ namespace ITSWebMgmt
                 divComputerInformation.Text = "Service user does not have SCCM access.";
             }
         }
-        private void buildWarningSegment(DirectoryEntry result)
+        private void buildWarningSegment()
         {
             //Creates warning headers for differnt kinds of user errors 
 
             StringBuilder sb = new StringBuilder();
 
-            var flags = (int)result.Properties["userAccountControl"].Value;
+            var flags = user.UserAccountControl;
 
             //Account is disabled!
             const int ufAccountDisable = 0x0002;
@@ -439,30 +430,32 @@ namespace ITSWebMgmt
             }
 
             //Accont is locked
-            if (Convert.ToBoolean(result.InvokeGet("IsAccountLocked")))
+            if (Convert.ToBoolean(user.Result.InvokeGet("IsAccountLocked")))
             {
                 errorUserLockedDiv.Style.Clear();
             }
 
             //Password Expired
             string attName = "msDS-User-Account-Control-Computed";
-            result.RefreshCache(attName.Split(','));
+            user.Result.RefreshCache(attName.Split(','));
 
             const int UF_LOCKOUT = 0x0010;
-            int userFlags = (int)result.Properties["msDS-User-Account-Control-Computed"].Value;
+
+            //TODO
+            /*int userFlags = (int)user.Result.Properties["msDS-User-Account-Control-Computed"].Value;
 
             if ((userFlags & UF_LOCKOUT) == UF_LOCKOUT)
             {
                 errorPasswordExpired.Style.Clear();
-            }
+            }*/
 
             //Missing Attributes 
-            if (!(result.Properties.Contains("aauUserClassification") && result.Properties.Contains("aauUserStatus") && (result.Properties.Contains("aauStaffID") || result.Properties.Contains("aauStudentID"))))
+            if (!(user.AAUUserClassification != null && user.AAUUserStatus != null && (user.AAUStaffID != null || user.AAUStudentID != null)))
             {
                 errorMissingAAUAttr.Style.Clear();
             }
 
-            if (!user.userIsInRightOU(result))
+            if (!user.userIsInRightOU())
             {
                 //Show warning
                 warningNotStandardOU.Style.Clear();
@@ -487,20 +480,20 @@ namespace ITSWebMgmt
             Response.Redirect("/CreateWorkItem.aspx?userID=" + userID + "&userDisplayName=" + upn);
         }
 
-        protected void buildPrint(DirectoryEntry user)
+        protected void buildPrint()
         {
             PrintConnector printConnector = new PrintConnector(user.Guid.ToString());
 
             lblPrint.Text = printConnector.doStuff();
         }
 
-        protected void buildLoginscript(DirectoryEntry user)
+        protected void buildLoginscript()
         {
             menuLoginScript.Visible = false;
 
             var loginscripthelper = new Loginscript();
 
-            var script = loginscripthelper.getLoginScript(user);
+            var script = loginscripthelper.getLoginScript(user.ScriptPath, user.Path);
 
             if (script != null) {
                 menuLoginScript.Visible = true;

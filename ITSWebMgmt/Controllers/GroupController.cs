@@ -14,7 +14,6 @@ namespace ITSWebMgmt.Controllers
         public string Name { get => ADcache.getPropertyAsString("name"); }
         public string ManagedBy { get => ADcache.getPropertyAsString("managedBy"); }
         public string GroupType { get => ADcache.getPropertyAsString("groupType"); }
-        public string Path { get => ADcache.Path; }
 
         public GroupController(string adpath)
         {

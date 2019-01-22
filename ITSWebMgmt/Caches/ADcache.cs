@@ -10,11 +10,34 @@ namespace ITSWebMgmt.Caches
     public abstract class ADcache
     {
         protected Dictionary<string, object> properties = new Dictionary<string, object>();
-        public List<string> propertyNames;
+        public List<string> PropertyNames;
         public DirectoryEntry DE;
         public SearchResult result;
+        public string Path { get => DE.Path; }
         public static Logger logger = LogManager.GetCurrentClassLogger();
         public string adpath;
+
+        public ADcache() { }
+
+        public ADcache(string adpath, List<string> propertyNemes)
+        {
+            PropertyNames = propertyNemes;
+            this.adpath = adpath;
+            DE = new DirectoryEntry(adpath);
+            var search = new DirectorySearcher(DE);
+
+            foreach (string p in PropertyNames)
+            {
+                search.PropertiesToLoad.Add(p);
+            }
+
+            result = search.FindOne();
+
+            foreach (string p in PropertyNames)
+            {
+                addProperty(p, DE.Properties[p].Value);
+            }
+        }
 
         public List<PropertyValueCollection> getAllProperties()
         {

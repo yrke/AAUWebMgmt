@@ -13,16 +13,16 @@ namespace ITSWebMgmt.Caches
         public bool ComputerFound = false;
         public string Domain;
         public object AdmPwdExpirationTime;
-        public ComputerADcache(string computerName, string userName)
+        public ComputerADcache(string computerName, string userName) : base()
         {
             ComputerName = computerName;
             DE = new DirectoryEntry("LDAP://" + getDomain());
             var search = new DirectorySearcher(DE);
 
             //propertyNames.Add("ms-Mcs-AdmPwd");
-            propertyNames = new List<string> { "memberOf", "cn", "ms-Mcs-AdmPwdExpirationTime", "managedBy" };
+            PropertyNames = new List<string> { "memberOf", "cn", "ms-Mcs-AdmPwdExpirationTime", "managedBy" };
 
-            foreach (string p in propertyNames)
+            foreach (string p in PropertyNames)
             {
                 search.PropertiesToLoad.Add(p);
             }
@@ -39,7 +39,7 @@ namespace ITSWebMgmt.Caches
 
             saveDataFromDataBase(DE, result);
 
-            adpath = adpath = result.Properties["ADsPath"][0].ToString();
+            adpath = result.Properties["ADsPath"][0].ToString();
 
             logger.Info("User {0} requesed info about computer {1}", userName, adpath);
         }
