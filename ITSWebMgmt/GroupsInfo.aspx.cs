@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ITSWebMgmt.Controllers;
+using ITSWebMgmt.Helpers;
+using System;
 using System.DirectoryServices;
 using System.Linq;
 using System.Text;
@@ -8,10 +10,11 @@ namespace ITSWebMgmt
 {
     public partial class GroupsInfo : System.Web.UI.Page
     {
+        private GroupController group;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             ResultDiv.Visible = false;
-
 
             if (!IsPostBack)
             {
@@ -23,22 +26,20 @@ namespace ITSWebMgmt
                 String groupPath = Request.QueryString["grouppath"];
                 String groupName = Request.QueryString["groupname"];
                 String defaultUser = Request.QueryString["defaultuser"];
+
                 if (groupPath != null)
                 {
-                    //Handle a group path
-                    var groupDE = convertADpathToDirectoryEntry(groupPath);
-                    if (groupDE != null) { 
-                        buildResult(groupDE);
+                    group = new GroupController(groupPath);
+
+                    if (group.isGroup())
+                    {
+                        buildResult();
                     }
                 }
             }
             else //Is postback
             {
-
-            }       
-
-
-
+            }
         }
 
         protected void sumbit_Click(object sender, EventArgs e)
@@ -46,51 +47,31 @@ namespace ITSWebMgmt
             //Search button i pressed, do stuff
         }
 
-        protected DirectoryEntry convertADpathToDirectoryEntry(string adpath)
+        protected void buildResult()
         {
-            ///XXX we expect a group check its a group
-            var groupDE = new DirectoryEntry(adpath);
-            if (groupDE.SchemaEntry.Name.Equals("group", StringComparison.CurrentCultureIgnoreCase))
-            {
-                return groupDE;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        protected void buildResult(DirectoryEntry group)
-        {
-            buildBasicInfo(group);
-            buildMembers(group);
-            buildMemberOf(group);
-            buildRaw(group);
+            buildBasicInfo();
+            buildMembers();
+            buildMemberOf();
+            buildRaw();
 
             ResultDiv.Visible = true;
-
         }
 
-        private void buildRaw(DirectoryEntry group)
+        private void buildRaw()
         {
-            var generator = new RawADGridGenerator();
-            var result = generator.buildRawSegment(group);
-
-            labelRawData.Text = result.ToString();
-        
+            labelRawData.Text = TableGenerator.buildRawTable(group.getAllProperties());
         }
 
-        private void buildMemberOf(DirectoryEntry group)
+        private void buildMembers()
         {
-            Helpers.GroupTableGenerator.BuildGroupsSegments("memberOf", group, groupofsegmentLabel, groupofAllsegmentLabel);
+            TableGenerator.BuildGroupsSegments(group.getGroups("member"), group.getGroupsTransitive("member"), groupssegmentLabel, groupsAllsegmentLabel);
         }
-
-        private void buildMembers(DirectoryEntry group)
+        private void buildMemberOf()
         {
-            Helpers.GroupTableGenerator.BuildGroupsSegments("member", group, groupssegmentLabel, groupsAllsegmentLabel);
+            TableGenerator.BuildGroupsSegments(group.getGroups("memberOf"), group.getGroupsTransitive("memberOf"), groupofsegmentLabel, groupofAllsegmentLabel);
         }
 
-        private void buildBasicInfo(DirectoryEntry group)
+        private void buildBasicInfo()
         {
             var sb = new StringBuilder();
 
@@ -100,7 +81,7 @@ namespace ITSWebMgmt
             sb.Append("<tr><td>");
             sb.Append("Name");
             sb.Append("</td><td>");
-            sb.Append(group.Properties["name"].Value.ToString());
+            sb.Append(group.Name);
             sb.Append("</td></tr>");
 
             sb.Append("<tr><td>");
@@ -111,9 +92,9 @@ namespace ITSWebMgmt
             sb.Append("</td></tr>");
 
             string managedByString = "none";
-            if (group.Properties.Contains("managedBy"))
+            if (group.ManagedBy != null)
             {
-                var manager = group.Properties["managedBy"].Value.ToString();
+                var manager = group.ManagedBy;
 
                 var ldapSplit = manager.Split(',');
                 var name = ldapSplit[0].Replace("CN=", "");
@@ -134,7 +115,7 @@ namespace ITSWebMgmt
             var isDistgrp = false;
             string groupType = ""; //domain Local, Global, Universal 
 
-            var gt = group.Properties["groupType"].Value.ToString();
+            var gt = group.GroupType;
             switch (gt)
             {
                 case "2":
@@ -172,22 +153,22 @@ namespace ITSWebMgmt
             sb.Append(groupType);
             sb.Append("</td></tr>");
 
-            if (group.Properties.Contains("description"))
+            if (group.Description != null)
             {
                 sb.Append("<tr><td>");
                 sb.Append("Description");
                 sb.Append("</td><td>");
-                sb.Append(group.Properties["description"].Value.ToString());
+                sb.Append(group.Description);
                 sb.Append("</td></tr>");
             }
 
             //I found a object that had a attrib that was info not description?
-            if (group.Properties.Contains("info"))
+            if (group.Info != null)
             {
                 sb.Append("<tr><td>");
                 sb.Append("Info");
                 sb.Append("</td><td>");
-                sb.Append(group.Properties["info"].Value.ToString());
+                sb.Append(group.Info);
                 sb.Append("</td></tr>");
             }
             

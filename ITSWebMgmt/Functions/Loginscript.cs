@@ -17,15 +17,10 @@ namespace ITSWebMgmt.Functions
         }
 
         //Return the loginscript of the user or null for none
-        public string getLoginScript(DirectoryEntry user)
+        public string getLoginScript(string scriptName, string path)
         {
-
-
-
-            if (user.Properties.Contains("scriptPath"))
+            if (scriptName != null)
             {
-                string scriptName = user.Properties["scriptPath"].Value.ToString();
-
                 //Get DCpath
                 //\\adm.aau.dk\SYSVOL\adm.aau.dk\scripts
 
@@ -34,7 +29,7 @@ namespace ITSWebMgmt.Functions
                     scriptName += ".bat";
                 }
 
-                var split = user.Path.Split(',');
+                var split = path.Split(',');
                 var dc = split.Where<string>(s => s.StartsWith("DC=")).ToArray<string>();
                 var domain = String.Join<string>(".", dc).Replace("DC=", "");
              
