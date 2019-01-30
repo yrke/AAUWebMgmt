@@ -15,8 +15,6 @@ namespace ITSWebMgmt.Caches
             "userPrincipalName",
             "displayName",
             "proxyAddresses",
-            "msDS-User-Account-Control-Computed",
-            "msDS-UserPasswordExpiryTimeComputed",
             "givenName",
             "sn",
             "profilepath",
@@ -25,7 +23,20 @@ namespace ITSWebMgmt.Caches
             "aauUserClassification",
             "aauUserStatus",
             "userAccountControl",
-            "scriptPath"
-        }){}
+            "scriptPath",
+            "IsAccountLocked",
+            "aauAAUID",
+            "aauUUID",
+            "telephoneNumber",
+            "lastLogon"
+        })
+        {
+            string[] test = { "msDS-User-Account-Control-Computed", "msDS-UserPasswordExpiryTimeComputed" };
+            DE.RefreshCache(test);
+            for (int i = 0; i < 2; i++)
+            {
+                addProperty(test[i], DE.Properties[test[i]].Value);
+            }
+        }
     }
 }

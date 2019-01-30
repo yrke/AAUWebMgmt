@@ -257,9 +257,8 @@ namespace ITSWebMgmt
             }
 
             //Other fileds
-            var attrToDisplay =   "userPrincipalName, aauAAUID, aauUUID, aauUserStatus, aauStaffID, aauStudentID, aauUserClassification, telephoneNumber, lastLogon";
             var attrDisplayName = "UserName, AAU-ID, AAU-UUID, UserStatus, StaffID, StudentID, UserClassification, Telephone, LastLogon (approx.)";
-            var attrArry = attrToDisplay.Replace(" ", "").Split(',');
+            var attrArry = user.getUserInfo();
             var dispArry = attrDisplayName.Split(',');
             string[] dateFields = { "lastLogon", "badPasswordTime" };
 
@@ -271,17 +270,9 @@ namespace ITSWebMgmt
 
                 sb.Append(string.Format("<td>{0}</td>", dispArry[i].Trim()));
 
-                if (user.Result.Properties.Contains(k))
+                if (k != null)
                 {
-                    if (dateFields.Contains(k))
-                    {
-                        sb.Append(string.Format("<td>{0:yyyy-MM-dd HH':'mm}</td>", ADHelpers.convertADTimeToDateTime(user.Result.Properties[k].Value)));
-                    }
-                    else
-                    {
-                        string v = user.Result.Properties[k].Value.ToString();
-                        sb.Append(string.Format("<td>{0}</td>", v));
-                    }
+                    sb.Append(string.Format("<td>{0}</td>", k));
                 }
                 else
                 {
@@ -289,14 +280,11 @@ namespace ITSWebMgmt
                 }
 
                 sb.Append("</tr>");
-
             }
 
             //Email
-            var proxyAddressesAD = user.Result.Properties["proxyAddresses"]; ;
-            var proxyAddresses = proxyAddressesAD.Cast<string>().ToArray<string>();
             string email = "";
-            foreach (string s in proxyAddresses) {
+            foreach (string s in user.ProxyAddresses) {
                 if (s.StartsWith("SMTP:", StringComparison.CurrentCultureIgnoreCase)){
                     var tmp2 = s.ToLower().Replace("smtp:", "");
                     email += string.Format("<a href=\"mailto:{0}\">{0}</a><br/>", tmp2);
@@ -304,11 +292,8 @@ namespace ITSWebMgmt
             }
             sb.Append($"<tr><td>E-mails</td><td>{email}</td></tr>");
 
-            string attName = "msDS-UserPasswordExpiryTimeComputed,msDS-User-Account-Control-Computed";
-            user.Result.RefreshCache(attName.Split(','));
-
             //TODO
-            /* const int UF_LOCKOUT = 0x0010;
+            const int UF_LOCKOUT = 0x0010;
             int userFlags = (int)user.UserAccountControlComputed;
 
             //basicInfoPasswordExpired.Text = "False";
@@ -318,15 +303,14 @@ namespace ITSWebMgmt
             //    basicInfoPasswordExpired.Text = "True";
             }
 
-            DateTime? expireDate = ADHelpers.convertADTimeToDateTime(user.UserPasswordExpiryTimeComputed);
-            if (expireDate == null)
+            if (user.UserPasswordExpiryTimeComputed == null)
             {
                 basicInfoPasswordExpireDate.Text = "Never";
             }
             else
             {
-                basicInfoPasswordExpireDate.Text = string.Format("{0:yyyy-MM-dd HH':'mm}", expireDate);
-            }*/
+                basicInfoPasswordExpireDate.Text = user.UserPasswordExpiryTimeComputed;
+            }
 
             labelBasicInfoTable.Text = sb.ToString();
 
@@ -361,7 +345,7 @@ namespace ITSWebMgmt
             // Display available meeting times.
 
             DateTime now = DateTime.Now;
-            foreach (AttendeeAvailability availability in user.getFreeBusyResults(user.Result).AttendeesAvailability)
+            foreach (AttendeeAvailability availability in user.getFreeBusyResults().AttendeesAvailability)
             {
 
                 foreach (CalendarEvent calendarItem in availability.CalendarEvents)
@@ -430,24 +414,20 @@ namespace ITSWebMgmt
             }
 
             //Accont is locked
-            if (Convert.ToBoolean(user.Result.InvokeGet("IsAccountLocked")))
+            if (user.IsAccountLocked == true)
             {
                 errorUserLockedDiv.Style.Clear();
             }
 
             //Password Expired
-            string attName = "msDS-User-Account-Control-Computed";
-            user.Result.RefreshCache(attName.Split(','));
-
             const int UF_LOCKOUT = 0x0010;
 
-            //TODO
-            /*int userFlags = (int)user.Result.Properties["msDS-User-Account-Control-Computed"].Value;
+            int userFlags = (int)user.UserAccountControlComputed;
 
             if ((userFlags & UF_LOCKOUT) == UF_LOCKOUT)
             {
                 errorPasswordExpired.Style.Clear();
-            }*/
+            }
 
             //Missing Attributes 
             if (!(user.AAUUserClassification != null && user.AAUUserStatus != null && (user.AAUStaffID != null || user.AAUStudentID != null)))

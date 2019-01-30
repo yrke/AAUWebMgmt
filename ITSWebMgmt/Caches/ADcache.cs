@@ -1,4 +1,6 @@
-﻿using NLog;
+﻿using ITSWebMgmt.Connectors.Active_Directory;
+using ITSWebMgmt.Helpers;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
@@ -64,6 +66,26 @@ namespace ITSWebMgmt.Caches
             {
                 var temp = getProperty(property);
                 return temp != null ? temp.ToString() : null;
+            }
+            return null;
+        }
+
+        public string getPropertyAsDateString(string property)
+        {
+            if (properties.ContainsKey(property))
+            {
+                var temp = getProperty(property);
+                return temp != null ? DateTimeConverter.Convert(ADHelpers.convertADTimeToDateTime(temp)) : null;
+            }
+            return null;
+        }
+
+        public T? getPropertyAs<T>(string property) where T : struct
+        {
+            if (properties.ContainsKey(property))
+            {
+                var temp = getProperty(property);
+                return temp != null ? (T)temp : (T?)null;
             }
             return null;
         }
