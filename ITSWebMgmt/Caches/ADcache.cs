@@ -75,6 +75,10 @@ namespace ITSWebMgmt.Caches
             if (properties.ContainsKey(property))
             {
                 var temp = getProperty(property);
+                if (temp.GetType() == typeof(long))
+                {
+                    return DateTimeConverter.Convert((long)temp);
+                }
                 return temp != null ? DateTimeConverter.Convert(ADHelpers.convertADTimeToDateTime(temp)) : null;
             }
             return null;

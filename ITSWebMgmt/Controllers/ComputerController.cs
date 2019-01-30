@@ -35,7 +35,7 @@ namespace ITSWebMgmt.Controllers.Computer
         public string ComputerName { get => ADcache.ComputerName; }
         public string Domain { get => ADcache.Domain; }
         public bool ComputerFound { get => ADcache.ComputerFound; } 
-        public object AdminPasswordExpirationTime { get => ADcache.getProperty("ms-Mcs-AdmPwdExpirationTime"); }
+        public string AdminPasswordExpirationTime { get => ADcache.getPropertyAsDateString("ms-Mcs-AdmPwdExpirationTime"); }
         public string ManagedBy { get => ADcache.getPropertyAsString("managedBy"); }
 
         public ComputerController(string computername, string username)

@@ -4,8 +4,3 @@ User:
 Service manager not showing open and closed requests
 Fileshares and Exchange Rescources lists are too short
 Print gives differnt error
-
-Computer:
-Admin pwd gives error
-Managed by returns none
-Tasks: Get local admin password missing

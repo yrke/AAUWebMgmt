@@ -59,8 +59,7 @@ namespace ITSWebMgmt
 
             if (computer.AdminPasswordExpirationTime != null)
             {
-                long rawDate = (long)computer.AdminPasswordExpirationTime;
-                labelPwdExpireDate.Text = DateTimeConverter.Convert(rawDate);
+                labelPwdExpireDate.Text = computer.AdminPasswordExpirationTime;
             }
             else
             {
@@ -91,8 +90,7 @@ namespace ITSWebMgmt
         {
             if (computer.AdminPasswordExpirationTime != null)
             {
-                DateTime? expireDate = ADHelpers.convertADTimeToDateTime(computer.AdminPasswordExpirationTime);
-                labelPwdExpireDate.Text = DateTimeConverter.Convert(expireDate);
+                labelPwdExpireDate.Text = computer.AdminPasswordExpirationTime;
             }
             else
             {

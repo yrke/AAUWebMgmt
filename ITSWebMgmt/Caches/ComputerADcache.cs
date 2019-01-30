@@ -19,14 +19,6 @@ namespace ITSWebMgmt.Caches
             DE = new DirectoryEntry("LDAP://" + getDomain());
             var search = new DirectorySearcher(DE);
 
-            //propertyNames.Add("ms-Mcs-AdmPwd");
-            PropertyNames = new List<string> { "memberOf", "cn", "ms-Mcs-AdmPwdExpirationTime", "managedBy" };
-
-            foreach (string p in PropertyNames)
-            {
-                search.PropertiesToLoad.Add(p);
-            }
-
             search.Filter = string.Format("(&(objectClass=computer)(cn={0}))", ComputerName);
             result = search.FindOne();
 
@@ -37,20 +29,26 @@ namespace ITSWebMgmt.Caches
 
             ComputerFound = true;
 
-            saveDataFromDataBase(DE, result);
-
             adpath = result.Properties["ADsPath"][0].ToString();
             DE = new DirectoryEntry(adpath);
 
+            //propertyNames.Add("ms-Mcs-AdmPwd");
+            PropertyNames = new List<string> { "memberOf", "cn", "ms-Mcs-AdmPwdExpirationTime", "managedBy" };
+
+            search = new DirectorySearcher(DE);
+            foreach (string p in PropertyNames)
+            {
+                search.PropertiesToLoad.Add(p);
+            }
+            search.Filter = string.Format("(&(objectClass=computer)(cn={0}))", ComputerName);
+            result = search.FindOne();
+
+            addProperty("managedBy", result.Properties["managedBy"][0]);
+            addProperty("cn", result.Properties["cn"]);
+            addProperty("memberOf", result.Properties["memberOf"]);
+            addProperty("ms-Mcs-AdmPwdExpirationTime", result.Properties["ms-Mcs-AdmPwdExpirationTime"][0]);
+
             logger.Info("User {0} requesed info about computer {1}", userName, adpath);
-        }
-        
-        private void saveDataFromDataBase(DirectoryEntry de, SearchResult resultLocal)
-        {
-            addProperty("managedBy", de.Properties["managedBy"].Value);
-            addProperty("cn", resultLocal.Properties["cn"]);
-            addProperty("memberOf", resultLocal.Properties["memberOf"]);
-            addProperty("ms-Mcs-AdmPwdExpirationTime", de.Properties["ms-Mcs-AdmPwdExpirationTime"].Value);
         }
 
         private string getDomain()
