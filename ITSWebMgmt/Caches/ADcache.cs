@@ -103,10 +103,8 @@ namespace ITSWebMgmt.Caches
         public string[] getGroupsTransitive(string name)
         {
             string attName = $"msds-{name}Transitive";
-            result.GetDirectoryEntry().RefreshCache(attName.Split(','));
-            var temp = result.GetDirectoryEntry();
-            //TODO Does cannot find attName in DE or result
-            return result.GetDirectoryEntry().Properties[attName].Cast<string>().ToArray();
+            DE.RefreshCache(attName.Split(','));
+            return DE.Properties[attName].Cast<string>().ToArray();
         }
     }
 }

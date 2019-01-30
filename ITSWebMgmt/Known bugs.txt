@@ -1,9 +1,6 @@
 ﻿Bugs introduced after creading SCCMCache and ADCache:
-Group:
-Recursive groups not working
 
 User:
-LastLogon (approx.) different dates (Function gives the same Password Expire Date as before)
 Service manager not showing open and closed requests
 Fileshares and Exchange Rescources lists are too short
 Print gives differnt error
@@ -11,4 +8,4 @@ Print gives differnt error
 Computer:
 Admin pwd gives error
 Managed by returns none
-Get local admin password missing
+Tasks: Get local admin password missing

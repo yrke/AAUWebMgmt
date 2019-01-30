@@ -40,6 +40,7 @@ namespace ITSWebMgmt.Caches
             saveDataFromDataBase(DE, result);
 
             adpath = result.Properties["ADsPath"][0].ToString();
+            DE = new DirectoryEntry(adpath);
 
             logger.Info("User {0} requesed info about computer {1}", userName, adpath);
         }
