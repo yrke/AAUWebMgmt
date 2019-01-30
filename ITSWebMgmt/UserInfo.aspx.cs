@@ -410,8 +410,14 @@ namespace ITSWebMgmt
                 divComputerInformation.Text = "Service user does not have SCCM access.";
             }
         }
+
         private void buildWarningSegment()
         {
+            //TODO
+            //Create a tab called warnings
+            //Show the count of warnings in top of page instead of all the warnings
+            //Create an easy way to add new warnings/errors
+
             //Creates warning headers for differnt kinds of user errors 
 
             StringBuilder sb = new StringBuilder();
