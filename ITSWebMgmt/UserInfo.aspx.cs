@@ -55,6 +55,12 @@ namespace ITSWebMgmt
                     return;
                 }
             }
+            else
+            {
+                string adpath = (string)Session["adpath"];
+                user = new UserController();
+                user.adpath = adpath;
+            }
         }
 
         protected void lookupUser(string username)
@@ -93,6 +99,7 @@ namespace ITSWebMgmt
             else
             {
                 user.adpath = adpath;
+                Session["adpath"] = user.adpath;
                 buildUserLookup(adpath);
             }
 
@@ -154,7 +161,8 @@ namespace ITSWebMgmt
         }
 
         protected void button_toggle_userprofile(object sender, EventArgs e)
-        {            
+        {
+
             user.toggle_userprofile();
             
             //Set value

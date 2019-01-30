@@ -60,8 +60,9 @@ namespace ITSWebMgmt.Controllers.Computer
             return resourceID;
         }
 
-        public string getLocalAdminPassword()
+        public static string getLocalAdminPassword(String adpath)
         {
+
             if (string.IsNullOrEmpty(adpath))
             { //Error no session
                 return null;

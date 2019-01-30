@@ -43,7 +43,12 @@ namespace ITSWebMgmt.Caches
             search.Filter = string.Format("(&(objectClass=computer)(cn={0}))", ComputerName);
             result = search.FindOne();
 
-            addProperty("managedBy", result.Properties["managedBy"][0]);
+            if (result.Properties["managedBy"].Count > 0) { 
+                addProperty("managedBy", result.Properties["managedBy"][0]);
+            } else
+            {
+                addProperty("managedBy", "");
+            }
             addProperty("cn", result.Properties["cn"]);
             addProperty("memberOf", result.Properties["memberOf"]);
             addProperty("ms-Mcs-AdmPwdExpirationTime", result.Properties["ms-Mcs-AdmPwdExpirationTime"][0]);
