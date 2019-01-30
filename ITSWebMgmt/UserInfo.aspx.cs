@@ -223,11 +223,23 @@ namespace ITSWebMgmt
             System.Diagnostics.Debug.WriteLine("BuildSCSMSegment took: " + watch.ElapsedMilliseconds);
         }
 
+        private async System.Threading.Tasks.Task BuildSCSMSegment(DirectoryEntry result)
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var scsmtest = new SCSMConnector();
+            divServiceManager.Text = await scsmtest.getActiveIncidents((string)result.Properties["userPrincipalName"][0], (string)result.Properties["displayName"][0]);
+            var userID = scsmtest.userID;
+            Session["scsmuserID"] = userID;
+            Session["scsmuserUPN"] = (string)result.Properties["userPrincipalName"][0];
+            watch.Stop();
+            System.Diagnostics.Debug.WriteLine("BuildSCSMSegment took: " + watch.ElapsedMilliseconds);
+        }
+
         private void buildGroupsSegments()
         {
             var temp = TableGenerator.BuildGroupsSegments(user.getGroups("memberOf"), user.getGroupsTransitive("memberOf"), groupssegmentLabel, groupsAllsegmentLabel);
-            var groupsListAllConverted = temp.Item1;
-            var groupListConvert = temp.Item2;
+            var groupListConvert = temp.Item1;
+            var groupsListAllConverted = temp.Item2;
 
             if (groupsListAllConverted.Length > 0)
             {

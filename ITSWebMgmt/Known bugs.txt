@@ -1,6 +1,15 @@
-﻿Bugs introduced after creading SCCMCache and ADCache:
-
-User:
+﻿Potentional bugs introduced after creading SCCMCache and ADCache:
 Service manager not showing open and closed requests
-Fileshares and Exchange Rescources lists are too short
 Print gives differnt error
+
+Not sure if below should work in debug. If it should the bugs exist. If not the above is not bugs.
+"
+string domain = ConfigurationManager.AppSettings["cred:equitrac:domain"];
+string username = ConfigurationManager.AppSettings["cred:equitrac:username"];
+string secret = ConfigurationManager.AppSettings["cred:equitrac:password"];
+
+if (domain == null || username == null || secret == null )
+{
+    return "No valid creds for Equitrac";
+}
+"
