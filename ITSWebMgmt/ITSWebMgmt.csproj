@@ -142,6 +142,7 @@
     <Content Include="GroupsInfo.aspx" />
     <Content Include="Controls\ActiveChanges.ascx" />
     <Content Include="IDtoSystem.aspx" />
+    <Content Include="Known bugs.txt" />
     <Content Include="Redirector.aspx" />
     <Content Include="Site.Master" />
     <Content Include="packages.config">
