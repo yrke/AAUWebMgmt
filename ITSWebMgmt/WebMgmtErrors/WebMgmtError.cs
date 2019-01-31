@@ -1,5 +1,5 @@
 ﻿using ITSWebMgmt.Controllers;
-using System.Linq;
+using ITSWebMgmt.Caches;
 using System.Management;
 
 namespace ITSWebMgmt.WebMgmtErrors
@@ -48,10 +48,7 @@ namespace ITSWebMgmt.WebMgmtErrors
             Severeness = Severity.Warning;
         }
 
-        public override bool HaveError()
-        {
-            return (int.Parse(computer.LogicalDisk.OfType<ManagementObject>().FirstOrDefault().Properties["FreeSpace"].Value.ToString()) / 1024) <= 5;
-        }
+        public override bool HaveError() => computer.LogicalDisk.GetAttributeInGB("FreeSpace") <= 5;
     }
 
     public class NotStandardOU : UserWebMgmtError

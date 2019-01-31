@@ -70,7 +70,7 @@ namespace ITSWebMgmt.WebMgmtErrors
                 heading = "Infos";
             }
 
-            return messageType == "" ? "" : $"<div class=\"ui {messageType} message\" runat= \"server\">" +
+            return messageType == "No warnings found" ? "" : $"<div class=\"ui {messageType} message\" runat= \"server\">" +
                     $"<div class=\"header\">{heading} found</div>" +
                     $"<p>Found {ErrorCount[Severity.Error]} errors, {ErrorCount[Severity.Warning]} warnings, and {ErrorCount[Severity.Info]} infos.</p>" +
                     $"</div>";
