@@ -77,7 +77,7 @@ namespace ITSWebMgmt.Caches
                 {
                     return DateTimeConverter.Convert((long)temp);
                 }
-                return temp != null ? DateTimeConverter.Convert(ADHelpers.convertADTimeToDateTime(temp)) : null;
+                return temp != null ? DateTimeConverter.Convert(temp) : null;
             }
             return null;
         }
