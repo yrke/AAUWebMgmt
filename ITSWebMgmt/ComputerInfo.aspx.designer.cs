@@ -49,6 +49,24 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl ResultDiv;
         
         /// <summary>
+        /// warningsAndErrorDIV control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl warningsAndErrorDIV;
+        
+        /// <summary>
+        /// ErrorCountMessageLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ErrorCountMessageLabel;
+        
+        /// <summary>
         /// labelDomain control.
         /// </summary>
         /// <remarks>
@@ -281,5 +299,14 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label groupsAllsegmentLabel;
+        
+        /// <summary>
+        /// ErrorMessagesLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ErrorMessagesLabel;
     }
 }

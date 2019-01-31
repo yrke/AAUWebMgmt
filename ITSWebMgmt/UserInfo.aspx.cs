@@ -1,5 +1,4 @@
-﻿using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
@@ -9,12 +8,10 @@ using System.Management;
 using Microsoft.Exchange.WebServices.Data;
 using ITSWebMgmt.Functions;
 using ITSWebMgmt.Connectors;
-using System.Web.UI.WebControls;
-using ITSWebMgmt.Connectors.Active_Directory;
-using ITSWebMgmt;
 using ITSWebMgmt.Helpers;
 using ITSWebMgmt.Models;
 using ITSWebMgmt.Controllers;
+using ITSWebMgmt.WebMgmtErrors;
 
 namespace ITSWebMgmt
 {
@@ -421,52 +418,20 @@ namespace ITSWebMgmt
 
         private void buildWarningSegment()
         {
-            //TODO
-            //Create a tab called warnings
-            //Show the count of warnings in top of page instead of all the warnings
-            //Create an easy way to add new warnings/errors
-
-            //Creates warning headers for differnt kinds of user errors 
-
-            StringBuilder sb = new StringBuilder();
-
-            var flags = user.UserAccountControl;
-
-            //Account is disabled!
-            const int ufAccountDisable = 0x0002;
-            if (((flags & ufAccountDisable) == ufAccountDisable))
+            List<WebMgmtError> errors = new List<WebMgmtError>
             {
-                errorUserDisabled.Style.Clear();
-            }
+                new UserDisabled(user),
+                new UserLockedDiv(user),
+                new PasswordExpired(user),
+                new MissingAAUAttr(user),
+                new NotStandardOU(user)
+            };
 
-            //Accont is locked
-            if (user.IsAccountLocked == true)
-            {
-                errorUserLockedDiv.Style.Clear();
-            }
+            var errorList = new WebMgmtErrorList(errors);
+            ErrorCountMessageLabel.Text = errorList.getErrorCountMessage();
+            ErrorMessagesLabel.Text = errorList.ErrorMessages;
 
-            //Password Expired
-            const int UF_LOCKOUT = 0x0010;
-
-            int userFlags = (int)user.UserAccountControlComputed;
-
-            if ((userFlags & UF_LOCKOUT) == UF_LOCKOUT)
-            {
-                errorPasswordExpired.Style.Clear();
-            }
-
-            //Missing Attributes 
-            if (!(user.AAUUserClassification != null && user.AAUUserStatus != null && (user.AAUStaffID != null || user.AAUStudentID != null)))
-            {
-                errorMissingAAUAttr.Style.Clear();
-            }
-
-            if (!user.userIsInRightOU())
-            {
-                //Show warning
-                warningNotStandardOU.Style.Clear();
-            }
-            else
+            if (user.userIsInRightOU())
             {
                 divFixuserOU.Visible = false;
             }

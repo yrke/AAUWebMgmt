@@ -286,6 +286,7 @@
       <DependentUpon>UserInfo.aspx</DependentUpon>
     </Compile>
     <Compile Include="WebMgmtErrors\WebMgmtError.cs" />
+    <Compile Include="WebMgmtErrors\WebMgmtErrorList.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

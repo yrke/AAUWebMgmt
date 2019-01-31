@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace ITSWebMgmt.Functions
 {
