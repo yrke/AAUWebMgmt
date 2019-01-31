@@ -67,13 +67,10 @@ namespace ITSWebMgmt.Controllers
 
         public string globalSearch(string email)
         {
-
             DirectoryEntry de = new DirectoryEntry("GC://aau.dk");
             string filter = string.Format("(proxyaddresses=SMTP:{0})", email);
 
-
             DirectorySearcher search = new DirectorySearcher(de, filter);
-            //search.PropertiesToLoad.Add("userPrincipalName");
             SearchResult r = search.FindOne();
 
             if (r != null)
@@ -142,7 +139,7 @@ namespace ITSWebMgmt.Controllers
             string dn = DistinguishedName;
             string[] dnarray = dn.Split(',');
 
-            string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<string>();
+            string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
             int count = ou.Count();
             if (count < 2)
@@ -176,7 +173,7 @@ namespace ITSWebMgmt.Controllers
             string dn = DistinguishedName;
             string[] dnarray = dn.Split(',');
 
-            string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<string>();
+            string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
             int count = ou.Count();
 
@@ -260,13 +257,10 @@ namespace ITSWebMgmt.Controllers
         public void unlockUserAccount()
         {
             logger.Info("User {0} unlocked useraccont {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
-
-            DirectoryEntry uEntry = new DirectoryEntry(adpath);
-            uEntry.Properties["LockOutTime"].Value = 0; //unlock account
-
-            uEntry.CommitChanges(); //may not be needed but adding it anyways
-
-            uEntry.Close();
+            
+            ADcache.DE.Properties["LockOutTime"].Value = 0; //unlock account
+            ADcache.DE.CommitChanges(); //may not be needed but adding it anyways
+            ADcache.DE.Close();
         }
 
         public GetUserAvailabilityResults getFreeBusyResults()
@@ -275,7 +269,7 @@ namespace ITSWebMgmt.Controllers
             service.UseDefaultCredentials = true; // Use domain account for connecting 
             //service.Credentials = new WebCredentials("user1@contoso.com", "password"); // used if we need to enter a password, but for now we are using domain credentials
             //service.AutodiscoverUrl("kyrke@its.aau.dk");  //XXX we should use the service user for webmgmt!
-            service.Url = new System.Uri("https://mail.aau.dk/EWS/exchange.asmx");
+            service.Url = new Uri("https://mail.aau.dk/EWS/exchange.asmx");
 
             List<AttendeeInfo> attendees = new List<AttendeeInfo>();
 
@@ -284,7 +278,6 @@ namespace ITSWebMgmt.Controllers
                 SmtpAddress = UserPrincipalName,
                 AttendeeType = MeetingAttendeeType.Organizer
             });
-
 
             // Specify availability options.
             AvailabilityOptions myOptions = new AvailabilityOptions();
@@ -312,7 +305,7 @@ namespace ITSWebMgmt.Controllers
             }
             else
             {
-                string upn = ((string)ADcache.DE.Properties["userPrincipalName"][0]);
+                string upn = UserPrincipalName;
                 var tmp = upn.Split('@');
 
                 string path = string.Format("\\\\{0}\\profiles\\{1}", tmp[1], tmp[0]);

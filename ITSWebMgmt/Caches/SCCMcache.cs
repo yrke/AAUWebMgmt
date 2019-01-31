@@ -448,25 +448,25 @@ namespace ITSWebMgmt.Caches
     
     public static class ManagementObjectCollectionExtension
     {
-        public static object GetAttribute(this ManagementObjectCollection moc, string attribute)
+        public static object GetProperty(this ManagementObjectCollection moc, string property)
         {
-            return moc.OfType<ManagementObject>().FirstOrDefault().Properties[attribute].Value;
+            return moc.OfType<ManagementObject>().FirstOrDefault().Properties[property].Value;
         }
 
-        public static T GetAttributeAs<T>(this ManagementObjectCollection moc, string attribute)
+        public static T GetPropertyAs<T>(this ManagementObjectCollection moc, string property)
         {
             var tc = TypeDescriptor.GetConverter(typeof(T));
-            return (T)(tc.ConvertFromInvariantString(GetAttributeAsString(moc, attribute)));
+            return (T)(tc.ConvertFromInvariantString(GetPropertyAsString(moc, property)));
         }
 
-        public static int GetAttributeInGB(this ManagementObjectCollection moc, string attribute)
+        public static int GetPropertyInGB(this ManagementObjectCollection moc, string property)
         {
-            return GetAttributeAs<int>(moc, attribute) / 1024;
+            return GetPropertyAs<int>(moc, property) / 1024;
         }
 
-        public static string GetAttributeAsString(this ManagementObjectCollection moc, string attribute)
+        public static string GetPropertyAsString(this ManagementObjectCollection moc, string property)
         {
-            return GetAttribute(moc, attribute).ToString();
+            return GetProperty(moc, property).ToString();
         }
     }
 }
