@@ -1,8 +1,5 @@
 ﻿using ITSWebMgmt.Caches;
-using ITSWebMgmt.Connectors.Active_Directory;
-using ITSWebMgmt.Helpers;
 using Microsoft.Exchange.WebServices.Data;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
@@ -49,6 +46,7 @@ namespace ITSWebMgmt.Controllers
         public string AAUUUID { get => ADcache.getPropertyAsString("aauUUID"); }
         public string TelephoneNumber { get => ADcache.getPropertyAsString("telephoneNumber"); }
         public string LastLogon { get => ADcache.getPropertyAsDateString("lastLogon"); }
+        public string DistinguishedName { get => ADcache.getPropertyAsString("distinguishedName"); }
         public ManagementObjectCollection getUserMachineRelationshipFromUserName(string userName) => SCCMcache.getUserMachineRelationshipFromUserName(userName);
 
         public string[] getUserInfo()
@@ -141,8 +139,7 @@ namespace ITSWebMgmt.Controllers
 
         public bool userIsInRightOU()
         {
-
-            string dn = (string)ADcache.DE.Properties["distinguishedName"][0];
+            string dn = DistinguishedName;
             string[] dnarray = dn.Split(',');
 
             string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<string>();
@@ -176,7 +173,7 @@ namespace ITSWebMgmt.Controllers
             if (userIsInRightOU()) { return false; }
 
             //See if it can be fixed!
-            string dn = (string)ADcache.DE.Properties["distinguishedName"][0];
+            string dn = DistinguishedName;
             string[] dnarray = dn.Split(',');
 
             string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<string>();

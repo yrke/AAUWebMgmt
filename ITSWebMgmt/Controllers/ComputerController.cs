@@ -1,14 +1,12 @@
 ﻿using ITSWebMgmt.Caches;
 using ITSWebMgmt.Helpers;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
 using System.Management;
-using System.Web;
 
-namespace ITSWebMgmt.Controllers.Computer
+namespace ITSWebMgmt.Controllers
 {
     public class ComputerController : Controller<ComputerADcache>
     {

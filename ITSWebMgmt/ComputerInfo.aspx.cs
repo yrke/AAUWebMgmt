@@ -1,11 +1,10 @@
 ﻿using ITSWebMgmt.Connectors.Active_Directory;
-using ITSWebMgmt.Controllers.Computer;
+using ITSWebMgmt.Controllers;
 using ITSWebMgmt.Helpers;
+using ITSWebMgmt.WebMgmtErrors;
 using System;
 using System.Collections.Generic;
-using System.DirectoryServices;
 using System.Management;
-using System.Text;
 using System.Web;
 
 namespace ITSWebMgmt
@@ -77,8 +76,8 @@ namespace ITSWebMgmt
             buildSCCMInventory();
             buildSCCMAntivirus();
             biuldSCCMHardware();
-
             buildGroupsSegments();
+            buildWarningSegment();
 
             ResultDiv.Visible = true;
 
@@ -272,6 +271,20 @@ namespace ITSWebMgmt
         protected void buttonEnableBitlockerEncryption_Click(object sender, EventArgs e)
         {
             computer.EnableBitlockerEncryption();
+        }
+
+        private void buildWarningSegment()
+        {
+            List<WebMgmtError> errors = new List<WebMgmtError>
+            {
+                new DriveAlmostFull(computer)
+            };
+
+            var errorList = new WebMgmtErrorList(errors);
+            ErrorCountMessageLabel.Text = errorList.getErrorCountMessage();
+            ErrorMessagesLabel.Text = errorList.ErrorMessages;
+
+            //Password is expired and warning before expire (same timeline as windows displays warning)
         }
     }
 }

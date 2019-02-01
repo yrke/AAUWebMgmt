@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace ITSWebMgmt.Caches
 {
@@ -28,7 +24,8 @@ namespace ITSWebMgmt.Caches
             "aauAAUID",
             "aauUUID",
             "telephoneNumber",
-            "lastLogon"
+            "lastLogon",
+            "distinguishedName"
         })
         {
             string[] test = { "msDS-User-Account-Control-Computed", "msDS-UserPasswordExpiryTimeComputed" };

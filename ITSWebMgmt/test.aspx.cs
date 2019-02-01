@@ -1,7 +1,4 @@
 ﻿using System;
-using System.DirectoryServices;
-using ITSWebMgmt.Functions;
-using ITSWebMgmt.Connectors.Active_Directory;
 
 namespace ITSWebMgmt
 {
