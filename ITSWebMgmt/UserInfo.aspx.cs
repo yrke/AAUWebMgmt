@@ -185,7 +185,7 @@ namespace ITSWebMgmt
         }
 
         protected async void buildUserLookup(string adpath)
-        {          
+        {
             if (adpath != null)
             {
                 var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -204,7 +204,12 @@ namespace ITSWebMgmt
                 buildLoginscript();
                 buildPrint(); // XXX make async? 
 
+                try { 
                 await System.Threading.Tasks.Task.WhenAll(task1, task2);
+                } catch(InvalidCastException e)
+                {
+                    System.Console.Write(e.StackTrace);
+                }
 
                 //Save user in session
                 ResultDiv.Visible = true;
