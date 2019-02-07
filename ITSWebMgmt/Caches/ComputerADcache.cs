@@ -48,7 +48,10 @@ namespace ITSWebMgmt.Caches
             }
             addProperty("cn", result.Properties["cn"]);
             addProperty("memberOf", result.Properties["memberOf"]);
-            addProperty("ms-Mcs-AdmPwdExpirationTime", result.Properties["ms-Mcs-AdmPwdExpirationTime"][0]);
+
+            if (result.Properties["ms-Mcs-AdmPwdExpirationTime"].Count > 0) { 
+                addProperty("ms-Mcs-AdmPwdExpirationTime", result.Properties["ms-Mcs-AdmPwdExpirationTime"][0]);
+            }
 
             logger.Info("User {0} requesed info about computer {1}", userName, adpath);
         }
