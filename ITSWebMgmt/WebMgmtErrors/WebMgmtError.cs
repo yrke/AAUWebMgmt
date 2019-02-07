@@ -50,7 +50,13 @@ namespace ITSWebMgmt.WebMgmtErrors
 
         public override bool HaveError()
         {
-            return (int.Parse(computer.LogicalDisk.OfType<ManagementObject>().FirstOrDefault().Properties["FreeSpace"].Value.ToString()) / 1024) <= 5;
+            try {
+                return (int.Parse(computer.LogicalDisk.OfType<ManagementObject>().FirstOrDefault().Properties["FreeSpace"].Value.ToString()) / 1024) <= 5;
+            }
+            catch (System.Exception e) { 
+                return false;
+            }
+
         }
     }
 
