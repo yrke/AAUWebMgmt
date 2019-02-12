@@ -143,7 +143,10 @@ namespace ITSWebMgmt.Helpers
                 foreach (var p in keys)
                 {
                     var property = o.Properties[p];
-                    if (o.Properties[p].Name == "Size" || o.Properties[p].Name == "FreeSpace")
+                    if (o.Properties[p].Value == null) {
+                        tableHelper.AddRow(new string[] { names[i], "not found" });
+                    }
+                    else if (o.Properties[p].Name == "Size" || o.Properties[p].Name == "FreeSpace")
                     {
                         tableHelper.AddRow(new string[] { names[i], (int.Parse(o.Properties[p].Value.ToString()) / 1024).ToString() });
                     }
