@@ -29,7 +29,7 @@ namespace ITSWebMgmt.Caches
             adpath = result.Properties["ADsPath"][0].ToString();
             DE = new DirectoryEntry(adpath);
 
-            //propertyNames.Add("ms-Mcs-AdmPwd");
+            /*//propertyNames.Add("ms-Mcs-AdmPwd");
             PropertyNames = new List<string> { "memberOf", "cn", "ms-Mcs-AdmPwdExpirationTime", "managedBy" };
 
             search = new DirectorySearcher(DE);
@@ -51,7 +51,7 @@ namespace ITSWebMgmt.Caches
 
             if (result.Properties["ms-Mcs-AdmPwdExpirationTime"].Count > 0) { 
                 addProperty("ms-Mcs-AdmPwdExpirationTime", result.Properties["ms-Mcs-AdmPwdExpirationTime"][0]);
-            }
+            }*/
 
             logger.Info("User {0} requesed info about computer {1}", userName, adpath);
         }

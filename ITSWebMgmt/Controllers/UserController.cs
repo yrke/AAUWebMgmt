@@ -20,33 +20,26 @@ namespace ITSWebMgmt.Controllers
 
         public override string adpath { get => ADcache.adpath; set { ADcache = new UserADcache(value); ADcache.adpath = value; } }
         public string Guid { get => ADcache.DE.Path; }
-        public string UserPrincipalName { get => ADcache.getPropertyAsString("userPrincipalName"); }
-        public string DisplayName { get => ADcache.getPropertyAsString("displayName"); }
-        public string[] ProxyAddresses
-        {
-            get
-            {
-                var proxyAddressesAD = (object[])ADcache.getProperty("proxyAddresses");
-                return proxyAddressesAD.Cast<string>().ToArray<string>();
-            }
-        }
-        public int? UserAccountControlComputed { get => ADcache.getPropertyAs<int>("msDS-User-Account-Control-Computed"); }
-        public int? UserAccountControl { get => ADcache.getPropertyAs<int>("userAccountControl"); }
+        public string UserPrincipalName { get => ADcache.getProperty("userPrincipalName"); }
+        public string DisplayName { get => ADcache.getProperty("displayName"); }
+        public string[] ProxyAddresses { get =>ADcache.getProperty("proxyAddresses");}
+        public int? UserAccountControlComputed { get => ADcache.getPropertyAs<int>("msDS-User-Account-Control-Computed");}
+        public int UserAccountControl { get => ADcache.getProperty("userAccountControl"); }
         public string UserPasswordExpiryTimeComputed{ get => ADcache.getPropertyAsDateString("msDS-UserPasswordExpiryTimeComputed"); }
-        public string GivenName { get => ADcache.getPropertyAsString("givenName"); }
-        public string SN { get => ADcache.getPropertyAsString("sn"); }
-        public string AAUStaffID { get => ADcache.getPropertyAsString("aauStaffID"); }
-        public string AAUStudentID { get => ADcache.getPropertyAsString("aauStudentID"); }
+        public string GivenName { get => ADcache.getProperty("givenName"); }
+        public string SN { get => ADcache.getProperty("sn"); }
+        public string AAUStaffID { get => ADcache.getProperty("aauStaffID").ToString(); }
+        public string AAUStudentID { get => ADcache.getProperty("aauStudentID").ToString(); }
         public object Profilepath { get => ADcache.getProperty("profilepath"); }
         public object AAUUserClassification { get => ADcache.getProperty("aauUserClassification"); }
         public object AAUUserStatus { get => ADcache.getProperty("aauUserStatus"); }
-        public string ScriptPath { get => ADcache.getPropertyAsString("scriptPath"); }
-        public bool? IsAccountLocked { get => ADcache.getPropertyAs<bool>("IsAccountLocked"); }
-        public string AAUAAUID { get => ADcache.getPropertyAsString("aauAAUID"); }
-        public string AAUUUID { get => ADcache.getPropertyAsString("aauUUID"); }
-        public string TelephoneNumber { get => ADcache.getPropertyAsString("telephoneNumber"); }
+        public string ScriptPath { get => ADcache.getProperty("scriptPath"); }
+        public bool IsAccountLocked { get => ADcache.getProperty("IsAccountLocked"); }
+        public string AAUAAUID { get => ADcache.getProperty("aauAAUID").ToString(); }
+        public string AAUUUID { get => ADcache.getProperty("aauUUID").ToString(); }
+        public string TelephoneNumber { get => ADcache.getProperty("telephoneNumber"); }
         public string LastLogon { get => ADcache.getPropertyAsDateString("lastLogon"); }
-        public string DistinguishedName { get => ADcache.getPropertyAsString("distinguishedName"); }
+        public string DistinguishedName { get => ADcache.getProperty("distinguishedName"); }
         public ManagementObjectCollection getUserMachineRelationshipFromUserName(string userName) => SCCMcache.getUserMachineRelationshipFromUserName(userName);
 
         public string[] getUserInfo()

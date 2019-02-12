@@ -204,6 +204,7 @@ namespace ITSWebMgmt
                 buildLoginscript();
                 buildPrint(); // XXX make async? 
 
+                //TODO: Fix bug and remove try catch
                 try { 
                 await System.Threading.Tasks.Task.WhenAll(task1, task2);
                 } catch(InvalidCastException e)
