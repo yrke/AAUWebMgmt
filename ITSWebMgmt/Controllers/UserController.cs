@@ -44,7 +44,7 @@ namespace ITSWebMgmt.Controllers
         public bool IsAccountLocked { get => ADcache.getProperty("IsAccountLocked"); }
         public string AAUAAUID { get => ADcache.getProperty("aauAAUID"); }
         public string AAUUUID { get => ADcache.getProperty("aauUUID"); }
-        public string TelephoneNumber { get => ADcache.getProperty("telephoneNumber"); }
+        public string TelephoneNumber { get => ADcache.getProperty("telephoneNumber"); set => ADcache.saveProperty("telephoneNumber", value); }
         public string LastLogon { get => ADcache.getProperty("lastLogon"); }
         public string DistinguishedName { get => ADcache.getProperty("distinguishedName"); }
         public ManagementObjectCollection getUserMachineRelationshipFromUserName(string userName) => SCCMcache.getUserMachineRelationshipFromUserName(userName);

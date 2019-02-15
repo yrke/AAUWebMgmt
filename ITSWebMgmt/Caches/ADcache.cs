@@ -119,6 +119,17 @@ namespace ITSWebMgmt.Caches
             return null;
         }
 
+        public void saveProperty(string property, dynamic value)
+        {
+            if (properties[property].Type.Equals(value.GetType()))
+            {
+                DE.Properties[property].Value = value;
+                DE.CommitChanges();
+            }
+            else
+                Debug.WriteLine($"Not saved due to wrong type");
+        }
+
         public void addProperty(string property, Property value)
         {
             properties.Add(property, value);
