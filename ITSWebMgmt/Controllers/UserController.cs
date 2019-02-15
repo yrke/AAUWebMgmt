@@ -22,23 +22,23 @@ namespace ITSWebMgmt.Controllers
         public string Guid { get => ADcache.DE.Path; }
         public string UserPrincipalName { get => ADcache.getProperty("userPrincipalName"); }
         public string DisplayName { get => ADcache.getProperty("displayName"); }
-        public string[] ProxyAddresses { get =>ADcache.getProperty("proxyAddresses");}
-        public int? UserAccountControlComputed { get => ADcache.getPropertyAs<int>("msDS-User-Account-Control-Computed");}
+        public string[] ProxyAddresses { get => ADcache.getProperty("proxyAddresses"); }
+        public int UserAccountControlComputed { get => ADcache.getProperty("msDS-User-Account-Control-Computed");}
         public int UserAccountControl { get => ADcache.getProperty("userAccountControl"); }
-        public string UserPasswordExpiryTimeComputed{ get => ADcache.getPropertyAsDateString("msDS-UserPasswordExpiryTimeComputed"); }
+        public string UserPasswordExpiryTimeComputed{ get => ADcache.getProperty("msDS-UserPasswordExpiryTimeComputed"); }
         public string GivenName { get => ADcache.getProperty("givenName"); }
         public string SN { get => ADcache.getProperty("sn"); }
         public string AAUStaffID { get => ADcache.getProperty("aauStaffID").ToString(); }
         public string AAUStudentID { get => ADcache.getProperty("aauStudentID").ToString(); }
         public object Profilepath { get => ADcache.getProperty("profilepath"); }
-        public object AAUUserClassification { get => ADcache.getProperty("aauUserClassification"); }
-        public object AAUUserStatus { get => ADcache.getProperty("aauUserStatus"); }
+        public string AAUUserClassification { get => ADcache.getProperty("aauUserClassification"); }
+        public string AAUUserStatus { get => ADcache.getProperty("aauUserStatus").ToString(); }
         public string ScriptPath { get => ADcache.getProperty("scriptPath"); }
         public bool IsAccountLocked { get => ADcache.getProperty("IsAccountLocked"); }
-        public string AAUAAUID { get => ADcache.getProperty("aauAAUID").ToString(); }
-        public string AAUUUID { get => ADcache.getProperty("aauUUID").ToString(); }
+        public string AAUAAUID { get => ADcache.getProperty("aauAAUID"); }
+        public string AAUUUID { get => ADcache.getProperty("aauUUID"); }
         public string TelephoneNumber { get => ADcache.getProperty("telephoneNumber"); }
-        public string LastLogon { get => ADcache.getPropertyAsDateString("lastLogon"); }
+        public string LastLogon { get => ADcache.getProperty("lastLogon"); }
         public string DistinguishedName { get => ADcache.getProperty("distinguishedName"); }
         public ManagementObjectCollection getUserMachineRelationshipFromUserName(string userName) => SCCMcache.getUserMachineRelationshipFromUserName(userName);
 
@@ -49,10 +49,10 @@ namespace ITSWebMgmt.Controllers
                 UserPrincipalName,
                 AAUAAUID,
                 AAUUUID,
-                AAUUserStatus.ToString(),
+                AAUUserStatus,
                 AAUStaffID,
                 AAUStudentID,
-                AAUUserClassification.ToString(),
+                AAUUserClassification,
                 TelephoneNumber,
                 LastLogon
             };

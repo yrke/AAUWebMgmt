@@ -34,11 +34,23 @@ namespace ITSWebMgmt.Caches
 
         public ADcache() { }
 
-        public ADcache(string adpath, List<Property> properties)
+        public ADcache(string adpath, List<Property> properties, List<Property> propertiesToRefresh)
         {
             this.adpath = adpath;
             DE = new DirectoryEntry(adpath);
             var search = new DirectorySearcher(DE);
+
+            if (propertiesToRefresh != null)
+            {
+                List<string> propertiesNamesToRefresh = new List<string>();
+                foreach (var p in propertiesToRefresh)
+                {
+                    propertiesNamesToRefresh.Add(p.Name);
+                    properties.Add(p);
+                }
+
+                DE.RefreshCache(propertiesNamesToRefresh.ToArray());
+            }
 
             foreach (var p in properties)
             {
@@ -65,9 +77,24 @@ namespace ITSWebMgmt.Caches
                 else
                 {
                     //Print the type
-                    Debug.WriteLine(p + ": " + value.GetType().ToString());
-                    if (p.Type.Equals(typeof(object[])))
-                        value = value.ToString(); //((object[])value).Cast<string>().ToArray();
+                    Debug.WriteLine($"{p.Name}: {value.GetType().ToString()}, value: {value.ToString()}");
+
+                    //Handle special types
+                    if (value.GetType().Equals(typeof(object[])))
+                    {
+                        if (value.GetType().Equals(typeof(string)))
+                        {
+                            value = new string[] { value.ToString() };
+                        }
+                        else
+                        {
+                            value = ((object[])value).Cast<string>().ToArray<string>();
+                        }
+                    }
+                    if (value.GetType().ToString() == "System.__ComObject")
+                    {
+                        value = DateTimeConverter.Convert(value);
+                    }
                 }
 
                 p.Value = value;
@@ -109,11 +136,11 @@ namespace ITSWebMgmt.Caches
             if (properties.ContainsKey(property))
             {
                 var temp = getProperty(property);
-                if (temp.GetType() == typeof(long))
+                if (temp.GetType().Equals(typeof(long)))
                 {
                     return DateTimeConverter.Convert((long)temp);
                 }
-                return temp != null ? DateTimeConverter.Convert(temp) : null;
+                return temp != null ? DateTimeConverter.Convert(temp.Value) : null;
             }
             return null;
         }

@@ -26,16 +26,12 @@ namespace ITSWebMgmt.Caches
             new Property("aauUUID", typeof(string)),
             new Property("telephoneNumber", typeof(string)),
             new Property("lastLogon", typeof(object)), //System.__ComObject
-            new Property("distinguishedName", typeof(string))
-        })
+            new Property("distinguishedName", typeof(string)),
+        }, new List<Property>
         {
-            string[] test = { "msDS-User-Account-Control-Computed", "msDS-UserPasswordExpiryTimeComputed" };
-            DE.RefreshCache(test);
-            for (int i = 0; i < 2; i++)
-            {
-                var value = DE.Properties[test[i]].Value;
-                addProperty(test[i], new Property(test[i], typeof(object)) { Value = value });//TODO check type
-            }
-        }
+            new Property("msDS-User-Account-Control-Computed", typeof(int)),
+            new Property("msDS-UserPasswordExpiryTimeComputed", typeof(object)) //System.__ComObject
+        })
+        { }
     }
 }

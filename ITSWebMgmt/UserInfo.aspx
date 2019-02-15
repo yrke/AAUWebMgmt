@@ -109,6 +109,10 @@
                                         <td><asp:Label runat="server" ID="lblbasicInfoOfficePDS"></asp:Label></td>
                                     </tr>
                                     <tr>
+                                        <td>Password Expired</td>
+                                        <td><asp:Label runat="server" ID="basicInfoPasswordExpired"></asp:Label></td>
+                                    </tr>
+                                    <tr>
                                         <td>Password Expire Date</td>
                                         <td><asp:Label runat="server" ID="basicInfoPasswordExpireDate"></asp:Label></td>
                                     </tr>
