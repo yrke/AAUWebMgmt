@@ -112,6 +112,33 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label labelManagedBy;
         
         /// <summary>
+        /// EditManagedByButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button EditManagedByButton;
+        
+        /// <summary>
+        /// labelManagedByText control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox labelManagedByText;
+        
+        /// <summary>
+        /// SaveEditManagedByButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button SaveEditManagedByButton;
+        
+        /// <summary>
         /// ResultGetPassword2 control.
         /// </summary>
         /// <remarks>

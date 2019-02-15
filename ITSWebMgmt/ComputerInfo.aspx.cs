@@ -45,7 +45,6 @@ namespace ITSWebMgmt
             {
 
             }
-
         }
 
         protected void buildlookupComputer()
@@ -122,6 +121,27 @@ namespace ITSWebMgmt
         protected void MoveOU_Click(object sender, EventArgs e)
         {
             computer.moveOU(HttpContext.Current.User.Identity.Name);
+        }
+
+        protected void EditManagedBy_Click(object sender, EventArgs e)
+        {
+            tuggleVisibility();
+            labelManagedByText.Text = labelManagedBy.Text;
+            //TODO find a smart way to not refrech the hole page
+        }
+
+        protected void SaveEditManagedBy_Click(object sender, EventArgs e)
+        {
+            tuggleVisibility();
+            computer.ManagedBy = labelManagedByText.Text;
+        }
+
+        private void tuggleVisibility()
+        {
+            labelManagedBy.Visible = !labelManagedBy.Visible;
+            EditManagedByButton.Visible = !EditManagedByButton.Visible;
+            labelManagedByText.Visible = !labelManagedByText.Visible;
+            SaveEditManagedByButton.Visible = !SaveEditManagedByButton.Visible;
         }
 
         protected void ResultGetPassword_Click(object sender, EventArgs e)
