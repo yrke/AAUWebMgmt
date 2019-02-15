@@ -59,6 +59,11 @@ namespace ITSWebMgmt.Caches
 
             result = search.FindOne();
 
+            saveCache(properties, propertiesToRefresh);
+        }
+
+        protected void saveCache(List<Property> properties, List<Property> propertiesToRefresh)
+        {
             foreach (var p in properties)
             {
                 var value = DE.Properties[p.Name].Value;
@@ -72,7 +77,7 @@ namespace ITSWebMgmt.Caches
                     else if (p.Type.Equals(typeof(string)))
                         value = "";
                     else if (p.Type.Equals(typeof(object[])))
-                        value = new string[]{""};
+                        value = new string[] { "" };
                 }
                 else
                 {
@@ -117,40 +122,6 @@ namespace ITSWebMgmt.Caches
             if (properties.ContainsKey(property))
             {
                 return properties[property].Value;
-            }
-            return null;
-        }
-
-        public string getPropertyAsString(string property)
-        {
-            if (properties.ContainsKey(property))
-            {
-                var temp = getProperty(property);
-                return temp != null ? temp.ToString() : null;
-            }
-            return null;
-        }
-
-        public string getPropertyAsDateString(string property)
-        {
-            if (properties.ContainsKey(property))
-            {
-                var temp = getProperty(property);
-                if (temp.GetType().Equals(typeof(long)))
-                {
-                    return DateTimeConverter.Convert((long)temp);
-                }
-                return temp != null ? DateTimeConverter.Convert(temp.Value) : null;
-            }
-            return null;
-        }
-
-        public T? getPropertyAs<T>(string property) where T : struct
-        {
-            if (properties.ContainsKey(property))
-            {
-                var temp = getProperty(property);
-                return temp != null ? (T)temp : (T?)null;
             }
             return null;
         }
