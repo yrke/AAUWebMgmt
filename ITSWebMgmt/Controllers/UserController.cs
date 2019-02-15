@@ -22,7 +22,14 @@ namespace ITSWebMgmt.Controllers
         public string Guid { get => ADcache.DE.Path; }
         public string UserPrincipalName { get => ADcache.getProperty("userPrincipalName"); }
         public string DisplayName { get => ADcache.getProperty("displayName"); }
-        public string[] ProxyAddresses { get => ADcache.getProperty("proxyAddresses"); }
+        public string[] ProxyAddresses
+        {
+            get
+            {
+                var temp = ADcache.getProperty("proxyAddresses");
+                return temp.GetType().Equals(typeof(string)) ? (new string[] { temp }) : temp;
+            }
+        }
         public int UserAccountControlComputed { get => ADcache.getProperty("msDS-User-Account-Control-Computed");}
         public int UserAccountControl { get => ADcache.getProperty("userAccountControl"); }
         public string UserPasswordExpiryTimeComputed{ get => ADcache.getProperty("msDS-UserPasswordExpiryTimeComputed"); }

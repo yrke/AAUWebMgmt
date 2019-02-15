@@ -87,14 +87,7 @@ namespace ITSWebMgmt.Caches
                     //Handle special types
                     if (value.GetType().Equals(typeof(object[])))
                     {
-                        if (value.GetType().Equals(typeof(string)))
-                        {
-                            value = new string[] { value.ToString() };
-                        }
-                        else
-                        {
-                            value = ((object[])value).Cast<string>().ToArray<string>();
-                        }
+                        value = ((object[])value).Cast<string>().ToArray();
                     }
                     if (value.GetType().ToString() == "System.__ComObject")
                     {
