@@ -13,6 +13,7 @@ namespace ITSWebMgmt.Caches
             new Property("name", typeof(string)),
             new Property("managedBy", typeof(string)),
             new Property("groupType", typeof(int)),
+            new Property("distinguishedName", typeof(string)),
         }, null)
         { }
     }

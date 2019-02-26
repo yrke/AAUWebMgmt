@@ -67,14 +67,10 @@ namespace ITSWebMgmt.Helpers
             return CreateGroupTable(groupsAsList);
         }
         
-        public static Tuple<String[], String[]> BuildGroupsSegments(string[] groupsList, string[] groupsListTransitive, Label groupssegmentLabel, Label groupsAllsegmentLabel)
+        public static void BuildGroupsSegments(string[] groupsList, string[] groupsListTransitive, Label groupssegmentLabel, Label groupsAllsegmentLabel)
         {
-            // Names of items in tuple is c# 7 feature: (String[] groupListConvert, String[] groupsListAllConverted)
-
             groupssegmentLabel.Text = buildgroupssegmentLabel(groupsList);
             groupsAllsegmentLabel.Text = buildgroupssegmentLabel(groupsListTransitive);
-
-            return Tuple.Create(groupsList, groupsListTransitive);
         }
 
         public static string buildRawTable(List<PropertyValueCollection> properties)

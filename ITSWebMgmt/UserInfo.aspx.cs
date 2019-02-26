@@ -140,12 +140,8 @@ namespace ITSWebMgmt
             var helper = new HTMLTableHelper(new string[] { "Type", "Domain", "Name", "Access" });
 
             //Filter fileshare groups and convert to Fileshare Objects
-            var fileshareList = groupsList.Where<string>((string value)=> {
-                var split = value.Split(',');
-                var oupath = split.Where<string>(s => s.StartsWith("OU=")).ToArray<string>();
-                int count = oupath.Count();
-
-                return ((count == 3 && oupath[count - 1].Equals("OU=Groups") && oupath[count - 2].Equals("OU=Resource Access")));
+            var fileshareList = groupsList.Where((string value)=> {
+                return GroupController.isFileShare(value);
             }).Select(x => new Fileshare(x));
 
             foreach (Fileshare f in fileshareList)
@@ -248,19 +244,19 @@ namespace ITSWebMgmt
 
         private void buildGroupsSegments()
         {
-            var temp = TableGenerator.BuildGroupsSegments(user.getGroups("memberOf"), user.getGroupsTransitive("memberOf"), groupssegmentLabel, groupsAllsegmentLabel);
-            var groupListConvert = temp.Item1;
-            var groupsListAllConverted = temp.Item2;
+            var groupList = user.getGroups("memberOf");
+            var groupsListAll = user.getGroupsTransitive("memberOf");
+            TableGenerator.BuildGroupsSegments(groupList, groupsListAll, groupssegmentLabel, groupsAllsegmentLabel);
 
-            if (groupsListAllConverted.Length > 0)
+            if (groupsListAll.Length > 0)
             {
-                buildExchangeLabel(groupsListAllConverted, true);
-                buildFilesharessegmentLabel(groupsListAllConverted, true);
+                buildExchangeLabel(groupsListAll, true);
+                buildFilesharessegmentLabel(groupsListAll, true);
             }
             else
             {   //If we dont have transitive data
-                buildExchangeLabel(groupListConvert, false);
-                buildFilesharessegmentLabel(groupListConvert, false);
+                buildExchangeLabel(groupList, false);
+                buildFilesharessegmentLabel(groupList, false);
             }
         }
 

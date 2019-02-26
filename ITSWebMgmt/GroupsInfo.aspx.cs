@@ -29,6 +29,13 @@ namespace ITSWebMgmt
                 if (groupPath != null)
                 {
                     group = new GroupController(groupPath);
+                    
+                    if (GroupController.isFileShare(group.DistinguishedName))
+                    {
+                        //View as fileshare
+                        Response.Redirect(string.Format("/FileShareInfo.aspx?grouppath={0}\">{1}", HttpUtility.UrlEncode("LDAP://" + groupPath), groupName));
+                        //TODO create view for fileshare
+                    }
                     Session["group"] = group;
                     if (group.isGroup())
                     {
