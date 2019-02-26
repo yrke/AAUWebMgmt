@@ -91,6 +91,8 @@
                                             <asp:Button ID="EditManagedByButton" runat="server" value="" Text="Edit" OnClick="EditManagedBy_Click" CssClass="ui button" style="float:right"/>
                                             <asp:TextBox ID="labelManagedByText" runat="server" TextMode="SingleLine" Visible = "false"></asp:TextBox>
                                             <asp:Button ID="SaveEditManagedByButton" runat="server" value="" Text="Save" OnClick="SaveEditManagedBy_Click" CssClass="ui button" Visible = "false" style="float:right"/>
+                                            <br>
+                                            <asp:Label runat="server" ID="labelManagedByError" />
                                         </td>
                                     </tr>
                                 </tbody>

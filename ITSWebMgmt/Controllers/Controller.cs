@@ -7,7 +7,7 @@ namespace ITSWebMgmt.Controllers
 {
     public class Controller<T> where T : ADcache
     {
-        protected T ADcache;
+        public T ADcache;
         public string Path { get => ADcache.Path; }
         public static Logger logger = LogManager.GetCurrentClassLogger();
         public virtual string adpath { get => ADcache.adpath; set { ADcache.adpath = value; } }

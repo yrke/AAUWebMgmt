@@ -6,12 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Management;
 using System.Web;
+using System.Web.UI.WebControls;
 
 namespace ITSWebMgmt
 {
     public partial class ComputerInfo : System.Web.UI.Page
     {
-        protected string ComputerName = "ITS\\AAU804396";
+        protected string ComputerName = "ITS\\AAU114811"; //Test computer
         private ComputerController computer;
 
         public void Page_Init(object o, EventArgs e)
@@ -39,11 +40,13 @@ namespace ITSWebMgmt
                     buildlookupComputer();
 
                     Session["adpath"] = computer.adpath;
+                    Session["computer"] = computer;
                 }
             }
             else
             {
-
+                computer = (ComputerController)Session["computer"];
+                buildlookupComputer();
             }
         }
 
@@ -125,15 +128,20 @@ namespace ITSWebMgmt
 
         protected void EditManagedBy_Click(object sender, EventArgs e)
         {
-            tuggleVisibility();
             labelManagedByText.Text = labelManagedBy.Text;
-            //TODO find a smart way to not refrech the hole page
+            tuggleVisibility();
         }
 
         protected void SaveEditManagedBy_Click(object sender, EventArgs e)
         {
-            tuggleVisibility();
-            computer.ManagedBy = labelManagedByText.Text;
+            ManagedByChanger managedByChanger = new ManagedByChanger(computer.ADcache);
+            managedByChanger.SaveEditManagedBy(labelManagedByText.Text);
+            labelManagedByError.Text = managedByChanger.ErrorMessage;
+            if (managedByChanger.ErrorMessage == "")
+            {
+                tuggleVisibility();
+                labelManagedBy.Text = labelManagedByText.Text;
+            }
         }
 
         private void tuggleVisibility()
