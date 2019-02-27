@@ -42,6 +42,7 @@ namespace ITSWebMgmt.Caches
 
             List<Property> properties = new List<Property>
             {
+                new Property("distinguishedName", typeof(string)),
                 new Property("managedBy", typeof(string)),
                 new Property("cn", typeof(string)),
                 new Property("memberOf", typeof(string)),

@@ -63,6 +63,18 @@ namespace ITSWebMgmt.WebMgmtErrors
         public override bool HaveError() => !user.userIsInRightOU();
     }
 
+    public class NotStandardComputerOU : ComputerWebMgmtError
+    {
+        public NotStandardComputerOU(ComputerController computer) : base(computer)
+        {
+            Heading = "Computer is in a wrong OU";
+            Description = "The computer is getting wroung GPO settings. Fix by using task \"Move computer to OU Clients.\" ";
+            Severeness = Severity.Error;
+        }
+
+        public override bool HaveError() => !computer.computerIsInRightOU();
+    }
+
     public class MissingAAUAttr : UserWebMgmtError
     {
         public MissingAAUAttr(UserController user) : base(user)
