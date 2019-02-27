@@ -305,7 +305,8 @@ namespace ITSWebMgmt
         {
             List<WebMgmtError> errors = new List<WebMgmtError>
             {
-                new DriveAlmostFull(computer)
+                new DriveAlmostFull(computer),
+                new NotStandardComputerOU(computer), 
             };
 
             var errorList = new WebMgmtErrorList(errors);

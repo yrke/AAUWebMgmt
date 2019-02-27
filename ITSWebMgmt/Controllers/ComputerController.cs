@@ -29,12 +29,15 @@ namespace ITSWebMgmt.Controllers
         public ManagementObjectCollection System { get => SCCMcache.System; private set { } }
         public ManagementObjectCollection Collection { get => SCCMcache.Collection; private set { } }
 
+
         //ADcache
         public string ComputerName { get => ADcache.ComputerName; }
         public string Domain { get => ADcache.Domain; }
         public bool ComputerFound { get => ADcache.ComputerFound; } 
         public string AdminPasswordExpirationTime { get => ADcache.getProperty("ms-Mcs-AdmPwdExpirationTime"); }
         public string ManagedBy { get => ADcache.getProperty("managedBy"); set => ADcache.saveProperty("managedBy", value); }
+        public string DistinguishedName { get => ADcache.getProperty("distinguishedName"); }
+
 
         public ComputerController(string computername, string username)
         {
@@ -43,6 +46,25 @@ namespace ITSWebMgmt.Controllers
             ADcache = new ComputerADcache(computername, username);
             ResourceID = getSCCMResourceIDFromComputerName();
             SCCMcache.ResourceID = ResourceID;
+        }
+
+        internal bool computerIsInRightOU()
+        {
+            string dn = DistinguishedName;
+            string[] dnarray = dn.Split(',');
+
+            string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray();
+
+            int count = ou.Count();
+
+            //Check root is people
+            if ((ou[0]).Equals("OU=Clients", StringComparison.CurrentCultureIgnoreCase))
+            {
+                //Computer should be in OU Clients
+                return true;
+            }
+            
+            return false;
         }
 
         public string getSCCMResourceIDFromComputerName()
