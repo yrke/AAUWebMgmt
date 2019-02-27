@@ -191,6 +191,7 @@
     <Compile Include="Connectors\SCSMConnector.cs" />
     <Compile Include="Controllers\Controller.cs" />
     <Compile Include="Controllers\GroupController.cs" />
+    <Compile Include="Controllers\ManagedByChanger.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="DefendpointChallengeResponse.aspx.cs">
       <DependentUpon>DefendpointChallengeResponse.aspx</DependentUpon>

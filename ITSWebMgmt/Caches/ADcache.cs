@@ -31,6 +31,7 @@ namespace ITSWebMgmt.Caches
         public static Logger logger = LogManager.GetCurrentClassLogger();
         public string adpath;
         private List<Type> types = new List<Type>();
+        private List<PropertyValueCollection> AllProperties;
 
         public ADcache() { }
 
@@ -102,12 +103,15 @@ namespace ITSWebMgmt.Caches
 
         public List<PropertyValueCollection> getAllProperties()
         {
-            List<PropertyValueCollection> propertyValueCollections = new List<PropertyValueCollection>();
-            foreach (string k in DE.Properties.PropertyNames)
+            if (AllProperties == null)
             {
-                propertyValueCollections.Add(DE.Properties[k]);
+                AllProperties = new List<PropertyValueCollection>();
+                foreach (string k in DE.Properties.PropertyNames)
+                {
+                    AllProperties.Add(DE.Properties[k]);
+                }
             }
-            return propertyValueCollections;
+            return AllProperties;
         }
 
         public dynamic getProperty(string property)

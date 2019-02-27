@@ -448,7 +448,7 @@ namespace ITSWebMgmt.Caches
     
     public static class ManagementObjectCollectionExtension
     {
-        public static object GetProperty(this ManagementObjectCollection moc, string property)
+        public static dynamic GetProperty(this ManagementObjectCollection moc, string property)
         {
             return moc.OfType<ManagementObject>().FirstOrDefault().Properties[property].Value;
         }

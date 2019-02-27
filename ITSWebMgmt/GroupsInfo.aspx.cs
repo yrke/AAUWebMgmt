@@ -29,7 +29,7 @@ namespace ITSWebMgmt
                 if (groupPath != null)
                 {
                     group = new GroupController(groupPath);
-
+                    Session["group"] = group;
                     if (group.isGroup())
                     {
                         buildResult();
@@ -38,12 +38,40 @@ namespace ITSWebMgmt
             }
             else //Is postback
             {
+                group = (GroupController)Session["group"];
+                buildResult();
             }
         }
 
         protected void sumbit_Click(object sender, EventArgs e)
         {
             //Search button i pressed, do stuff
+        }
+
+        protected void EditManagedBy_Click(object sender, EventArgs e)
+        {
+            labelManagedByText.Text = labelManagedBy.Text;
+            tuggleVisibility();
+        }
+
+        protected void SaveEditManagedBy_Click(object sender, EventArgs e)
+        {
+            ManagedByChanger managedByChanger = new ManagedByChanger(group.ADcache);
+            managedByChanger.SaveEditManagedBy(labelManagedByText.Text);
+            labelManagedByError.Text = managedByChanger.ErrorMessage;
+            if (managedByChanger.ErrorMessage == "")
+            {
+                tuggleVisibility();
+                labelManagedBy.Text = labelManagedByText.Text;
+            }
+        }
+
+        private void tuggleVisibility()
+        {
+            labelManagedBy.Visible = !labelManagedBy.Visible;
+            EditManagedByButton.Visible = !EditManagedByButton.Visible;
+            labelManagedByText.Visible = !labelManagedByText.Visible;
+            SaveEditManagedByButton.Visible = !SaveEditManagedByButton.Visible;
         }
 
         protected void buildResult()
@@ -75,20 +103,9 @@ namespace ITSWebMgmt
             var sb = new StringBuilder();
 
 
-            sb.Append("<table class=\"ui definition table\">");
-
-            sb.Append("<tr><td>");
-            sb.Append("Name");
-            sb.Append("</td><td>");
-            sb.Append(group.Name);
-            sb.Append("</td></tr>");
-
-            sb.Append("<tr><td>");
-            sb.Append("Domain");
-            sb.Append("</td><td>");
+            labelName.Text = group.Name;
             var dom = group.Path.Split(',').Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
-            sb.Append(dom);
-            sb.Append("</td></tr>");
+            labelDomain.Text = dom;
 
             string managedByString = "none";
             if (group.ManagedBy != "")
@@ -102,12 +119,8 @@ namespace ITSWebMgmt
                 managedByString = string.Format("<a href=\"/Redirector.aspx?adpath={0}\">{1}</a>", HttpUtility.HtmlEncode("LDAP://"+manager), domain + "\\" + name);
 
             }
-            sb.Append("<tr><td>");
-            sb.Append("Managed By");
-            sb.Append("</td><td>");
-            sb.Append(managedByString);
-            sb.Append("</td></tr>");
-            
+            labelManagedBy.Text = managedByString;
+
             //IsDistributionGroup?
             //ManamgedBy
 
@@ -140,45 +153,22 @@ namespace ITSWebMgmt
                     break;
             }
 
-            sb.Append("<tr><td>");
-            sb.Append("Is Security group");
-            sb.Append("</td><td>");
-            sb.Append((!isDistgrp).ToString());
-            sb.Append("</td></tr>");
-
-            sb.Append("<tr><td>");
-            sb.Append("Group Scope");
-            sb.Append("</td><td>");
-            sb.Append(groupType);
-            sb.Append("</td></tr>");
+            labelSecurityGroup.Text = (!isDistgrp).ToString();
+            labelGroupScope.Text = groupType;
 
             if (group.Description != null)
             {
-                sb.Append("<tr><td>");
-                sb.Append("Description");
-                sb.Append("</td><td>");
-                sb.Append(group.Description);
-                sb.Append("</td></tr>");
+                labelGroupDescription.Text = group.Description;
             }
 
             //I found a object that had a attrib that was info not description?
             if (group.Info != null)
             {
-                sb.Append("<tr><td>");
-                sb.Append("Info");
-                sb.Append("</td><td>");
-                sb.Append(group.Info);
-                sb.Append("</td></tr>");
+                labelGroupInfo.Text = group.Info;
             }
             
             //TODO: IsRequrceGroup (is exchange, fileshare or other resource type group?)
             
-
-
-            sb.Append("</table>");
-            lblBasicInfo.Text = sb.ToString();
         }
-
-
     }
 }

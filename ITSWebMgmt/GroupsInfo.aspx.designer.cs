@@ -40,13 +40,103 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl ResultDiv;
         
         /// <summary>
-        /// lblBasicInfo control.
+        /// labelName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblBasicInfo;
+        protected global::System.Web.UI.WebControls.Label labelName;
+        
+        /// <summary>
+        /// labelDomain control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelDomain;
+        
+        /// <summary>
+        /// labelManagedBy control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelManagedBy;
+        
+        /// <summary>
+        /// EditManagedByButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button EditManagedByButton;
+        
+        /// <summary>
+        /// labelManagedByText control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox labelManagedByText;
+        
+        /// <summary>
+        /// SaveEditManagedByButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button SaveEditManagedByButton;
+        
+        /// <summary>
+        /// labelManagedByError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelManagedByError;
+        
+        /// <summary>
+        /// labelSecurityGroup control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelSecurityGroup;
+        
+        /// <summary>
+        /// labelGroupScope control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelGroupScope;
+        
+        /// <summary>
+        /// labelGroupDescription control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelGroupDescription;
+        
+        /// <summary>
+        /// labelGroupInfo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label labelGroupInfo;
         
         /// <summary>
         /// groupssegmentLabel control.
