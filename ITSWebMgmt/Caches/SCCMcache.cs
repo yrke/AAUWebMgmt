@@ -1,4 +1,7 @@
-﻿using System.Management;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Management;
 
 namespace ITSWebMgmt.Caches
 {
@@ -440,6 +443,30 @@ namespace ITSWebMgmt.Caches
             }
 
             return _cache[i];
+        }
+    }
+    
+    public static class ManagementObjectCollectionExtension
+    {
+        public static object GetProperty(this ManagementObjectCollection moc, string property)
+        {
+            return moc.OfType<ManagementObject>().FirstOrDefault().Properties[property].Value;
+        }
+
+        public static T GetPropertyAs<T>(this ManagementObjectCollection moc, string property)
+        {
+            var tc = TypeDescriptor.GetConverter(typeof(T));
+            return (T)(tc.ConvertFromInvariantString(GetPropertyAsString(moc, property)));
+        }
+
+        public static int GetPropertyInGB(this ManagementObjectCollection moc, string property)
+        {
+            return GetPropertyAs<int>(moc, property) / 1024;
+        }
+
+        public static string GetPropertyAsString(this ManagementObjectCollection moc, string property)
+        {
+            return GetProperty(moc, property).ToString();
         }
     }
 }

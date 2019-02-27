@@ -29,8 +29,8 @@ namespace ITSWebMgmt.Caches
             adpath = result.Properties["ADsPath"][0].ToString();
             DE = new DirectoryEntry(adpath);
 
+            var PropertyNames = new List<string> { "memberOf", "cn", "ms-Mcs-AdmPwdExpirationTime", "managedBy" };
             //propertyNames.Add("ms-Mcs-AdmPwd");
-            PropertyNames = new List<string> { "memberOf", "cn", "ms-Mcs-AdmPwdExpirationTime", "managedBy" };
 
             search = new DirectorySearcher(DE);
             foreach (string p in PropertyNames)
@@ -40,18 +40,15 @@ namespace ITSWebMgmt.Caches
             search.Filter = string.Format("(&(objectClass=computer)(cn={0}))", ComputerName);
             result = search.FindOne();
 
-            if (result.Properties["managedBy"].Count > 0) { 
-                addProperty("managedBy", result.Properties["managedBy"][0]);
-            } else
+            List<Property> properties = new List<Property>
             {
-                addProperty("managedBy", "");
-            }
-            addProperty("cn", result.Properties["cn"]);
-            addProperty("memberOf", result.Properties["memberOf"]);
+                new Property("managedBy", typeof(string)),
+                new Property("cn", typeof(string)),
+                new Property("memberOf", typeof(string)),
+                new Property("ms-Mcs-AdmPwdExpirationTime", typeof(object)) //System.__ComObject
+            };
 
-            if (result.Properties["ms-Mcs-AdmPwdExpirationTime"].Count > 0) { 
-                addProperty("ms-Mcs-AdmPwdExpirationTime", result.Properties["ms-Mcs-AdmPwdExpirationTime"][0]);
-            }
+            saveCache(properties, null);
 
             logger.Info("User {0} requesed info about computer {1}", userName, adpath);
         }

@@ -33,8 +33,8 @@ namespace ITSWebMgmt.Controllers
         public string ComputerName { get => ADcache.ComputerName; }
         public string Domain { get => ADcache.Domain; }
         public bool ComputerFound { get => ADcache.ComputerFound; } 
-        public string AdminPasswordExpirationTime { get => ADcache.getPropertyAsDateString("ms-Mcs-AdmPwdExpirationTime"); }
-        public string ManagedBy { get => ADcache.getPropertyAsString("managedBy"); }
+        public string AdminPasswordExpirationTime { get => ADcache.getProperty("ms-Mcs-AdmPwdExpirationTime"); }
+        public string ManagedBy { get => ADcache.getProperty("managedBy"); }
 
         public ComputerController(string computername, string username)
         {
@@ -60,7 +60,6 @@ namespace ITSWebMgmt.Controllers
 
         public static string getLocalAdminPassword(String adpath)
         {
-
             if (string.IsNullOrEmpty(adpath))
             { //Error no session
                 return null;

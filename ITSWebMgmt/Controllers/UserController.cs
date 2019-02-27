@@ -20,33 +20,33 @@ namespace ITSWebMgmt.Controllers
 
         public override string adpath { get => ADcache.adpath; set { ADcache = new UserADcache(value); ADcache.adpath = value; } }
         public string Guid { get => ADcache.DE.Path; }
-        public string UserPrincipalName { get => ADcache.getPropertyAsString("userPrincipalName"); }
-        public string DisplayName { get => ADcache.getPropertyAsString("displayName"); }
+        public string UserPrincipalName { get => ADcache.getProperty("userPrincipalName"); }
+        public string DisplayName { get => ADcache.getProperty("displayName"); }
         public string[] ProxyAddresses
         {
             get
             {
-                var proxyAddressesAD = (object[])ADcache.getProperty("proxyAddresses");
-                return proxyAddressesAD.Cast<string>().ToArray<string>();
+                var temp = ADcache.getProperty("proxyAddresses");
+                return temp.GetType().Equals(typeof(string)) ? (new string[] { temp }) : temp;
             }
         }
-        public int? UserAccountControlComputed { get => ADcache.getPropertyAs<int>("msDS-User-Account-Control-Computed"); }
-        public int? UserAccountControl { get => ADcache.getPropertyAs<int>("userAccountControl"); }
-        public string UserPasswordExpiryTimeComputed{ get => ADcache.getPropertyAsDateString("msDS-UserPasswordExpiryTimeComputed"); }
-        public string GivenName { get => ADcache.getPropertyAsString("givenName"); }
-        public string SN { get => ADcache.getPropertyAsString("sn"); }
-        public string AAUStaffID { get => ADcache.getPropertyAsString("aauStaffID"); }
-        public string AAUStudentID { get => ADcache.getPropertyAsString("aauStudentID"); }
+        public int UserAccountControlComputed { get => ADcache.getProperty("msDS-User-Account-Control-Computed");}
+        public int UserAccountControl { get => ADcache.getProperty("userAccountControl"); }
+        public string UserPasswordExpiryTimeComputed{ get => ADcache.getProperty("msDS-UserPasswordExpiryTimeComputed"); }
+        public string GivenName { get => ADcache.getProperty("givenName"); }
+        public string SN { get => ADcache.getProperty("sn"); }
+        public string AAUStaffID { get => ADcache.getProperty("aauStaffID").ToString(); }
+        public string AAUStudentID { get => ADcache.getProperty("aauStudentID").ToString(); }
         public object Profilepath { get => ADcache.getProperty("profilepath"); }
-        public object AAUUserClassification { get => ADcache.getProperty("aauUserClassification"); }
-        public object AAUUserStatus { get => ADcache.getProperty("aauUserStatus"); }
-        public string ScriptPath { get => ADcache.getPropertyAsString("scriptPath"); }
-        public bool? IsAccountLocked { get => ADcache.getPropertyAs<bool>("IsAccountLocked"); }
-        public string AAUAAUID { get => ADcache.getPropertyAsString("aauAAUID"); }
-        public string AAUUUID { get => ADcache.getPropertyAsString("aauUUID"); }
-        public string TelephoneNumber { get => ADcache.getPropertyAsString("telephoneNumber"); }
-        public string LastLogon { get => ADcache.getPropertyAsDateString("lastLogon"); }
-        public string DistinguishedName { get => ADcache.getPropertyAsString("distinguishedName"); }
+        public string AAUUserClassification { get => ADcache.getProperty("aauUserClassification"); }
+        public string AAUUserStatus { get => ADcache.getProperty("aauUserStatus").ToString(); }
+        public string ScriptPath { get => ADcache.getProperty("scriptPath"); }
+        public bool IsAccountLocked { get => ADcache.getProperty("IsAccountLocked"); }
+        public string AAUAAUID { get => ADcache.getProperty("aauAAUID"); }
+        public string AAUUUID { get => ADcache.getProperty("aauUUID"); }
+        public string TelephoneNumber { get => ADcache.getProperty("telephoneNumber"); set => ADcache.saveProperty("telephoneNumber", value); }
+        public string LastLogon { get => ADcache.getProperty("lastLogon"); }
+        public string DistinguishedName { get => ADcache.getProperty("distinguishedName"); }
         public ManagementObjectCollection getUserMachineRelationshipFromUserName(string userName) => SCCMcache.getUserMachineRelationshipFromUserName(userName);
 
         public string[] getUserInfo()
@@ -56,10 +56,10 @@ namespace ITSWebMgmt.Controllers
                 UserPrincipalName,
                 AAUAAUID,
                 AAUUUID,
-                AAUUserStatus.ToString(),
+                AAUUserStatus,
                 AAUStaffID,
                 AAUStudentID,
-                AAUUserClassification.ToString(),
+                AAUUserClassification,
                 TelephoneNumber,
                 LastLogon
             };
@@ -67,13 +67,10 @@ namespace ITSWebMgmt.Controllers
 
         public string globalSearch(string email)
         {
-
             DirectoryEntry de = new DirectoryEntry("GC://aau.dk");
             string filter = string.Format("(proxyaddresses=SMTP:{0})", email);
 
-
             DirectorySearcher search = new DirectorySearcher(de, filter);
-            //search.PropertiesToLoad.Add("userPrincipalName");
             SearchResult r = search.FindOne();
 
             if (r != null)
@@ -142,7 +139,7 @@ namespace ITSWebMgmt.Controllers
             string dn = DistinguishedName;
             string[] dnarray = dn.Split(',');
 
-            string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<string>();
+            string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
             int count = ou.Count();
             if (count < 2)
@@ -176,7 +173,7 @@ namespace ITSWebMgmt.Controllers
             string dn = DistinguishedName;
             string[] dnarray = dn.Split(',');
 
-            string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray<string>();
+            string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
             int count = ou.Count();
 
@@ -260,13 +257,10 @@ namespace ITSWebMgmt.Controllers
         public void unlockUserAccount()
         {
             logger.Info("User {0} unlocked useraccont {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
-
-            DirectoryEntry uEntry = new DirectoryEntry(adpath);
-            uEntry.Properties["LockOutTime"].Value = 0; //unlock account
-
-            uEntry.CommitChanges(); //may not be needed but adding it anyways
-
-            uEntry.Close();
+            
+            ADcache.DE.Properties["LockOutTime"].Value = 0; //unlock account
+            ADcache.DE.CommitChanges(); //may not be needed but adding it anyways
+            ADcache.DE.Close();
         }
 
         public GetUserAvailabilityResults getFreeBusyResults()
@@ -275,7 +269,7 @@ namespace ITSWebMgmt.Controllers
             service.UseDefaultCredentials = true; // Use domain account for connecting 
             //service.Credentials = new WebCredentials("user1@contoso.com", "password"); // used if we need to enter a password, but for now we are using domain credentials
             //service.AutodiscoverUrl("kyrke@its.aau.dk");  //XXX we should use the service user for webmgmt!
-            service.Url = new System.Uri("https://mail.aau.dk/EWS/exchange.asmx");
+            service.Url = new Uri("https://mail.aau.dk/EWS/exchange.asmx");
 
             List<AttendeeInfo> attendees = new List<AttendeeInfo>();
 
@@ -284,7 +278,6 @@ namespace ITSWebMgmt.Controllers
                 SmtpAddress = UserPrincipalName,
                 AttendeeType = MeetingAttendeeType.Organizer
             });
-
 
             // Specify availability options.
             AvailabilityOptions myOptions = new AvailabilityOptions();
@@ -312,7 +305,7 @@ namespace ITSWebMgmt.Controllers
             }
             else
             {
-                string upn = ((string)ADcache.DE.Properties["userPrincipalName"][0]);
+                string upn = UserPrincipalName;
                 var tmp = upn.Split('@');
 
                 string path = string.Format("\\\\{0}\\profiles\\{1}", tmp[1], tmp[0]);

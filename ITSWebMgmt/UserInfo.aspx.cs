@@ -204,6 +204,7 @@ namespace ITSWebMgmt
                 buildLoginscript();
                 buildPrint(); // XXX make async? 
 
+                //TODO: Fix bug and remove try catch
                 try { 
                 await System.Threading.Tasks.Task.WhenAll(task1, task2);
                 } catch(InvalidCastException e)
@@ -314,18 +315,17 @@ namespace ITSWebMgmt
             }
             sb.Append($"<tr><td>E-mails</td><td>{email}</td></tr>");
 
-            //TODO
             const int UF_LOCKOUT = 0x0010;
-            int userFlags = (int)user.UserAccountControlComputed;
+            int userFlags = user.UserAccountControlComputed;
 
-            //basicInfoPasswordExpired.Text = "False";
+            basicInfoPasswordExpired.Text = "False";
 
             if ((userFlags & UF_LOCKOUT) == UF_LOCKOUT)
             {
-            //    basicInfoPasswordExpired.Text = "True";
+                basicInfoPasswordExpired.Text = "True";
             }
 
-            if (user.UserPasswordExpiryTimeComputed == null)
+            if (user.UserPasswordExpiryTimeComputed == "")
             {
                 basicInfoPasswordExpireDate.Text = "Never";
             }

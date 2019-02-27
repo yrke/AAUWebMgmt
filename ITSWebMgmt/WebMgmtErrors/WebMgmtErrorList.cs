@@ -24,6 +24,10 @@ namespace ITSWebMgmt.WebMgmtErrors
                     ErrorMessages += generateMessage(error);
                 }
             }
+            if (ErrorMessages == null)
+            {
+                ErrorMessages = "No warnings found";
+            }
         }
 
         private string generateMessage(WebMgmtError error)

@@ -91,7 +91,7 @@ namespace ITSWebMgmt
             sb.Append("</td></tr>");
 
             string managedByString = "none";
-            if (group.ManagedBy != null)
+            if (group.ManagedBy != "")
             {
                 var manager = group.ManagedBy;
 

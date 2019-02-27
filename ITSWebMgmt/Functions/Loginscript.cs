@@ -16,7 +16,7 @@ namespace ITSWebMgmt.Functions
         //Return the loginscript of the user or null for none
         public string getLoginScript(string scriptName, string path)
         {
-            if (scriptName != null)
+            if (scriptName != "")
             {
                 //Get DCpath
                 //\\adm.aau.dk\SYSVOL\adm.aau.dk\scripts
