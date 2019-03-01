@@ -13,6 +13,15 @@ namespace ITSWebMgmt {
     public partial class GroupsInfo {
         
         /// <summary>
+        /// headingLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label headingLabel;
+        
+        /// <summary>
         /// txtbxGroupName control.
         /// </summary>
         /// <remarks>
@@ -139,6 +148,15 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.WebControls.Label labelGroupInfo;
         
         /// <summary>
+        /// memberInfoLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label memberInfoLabel;
+        
+        /// <summary>
         /// groupssegmentLabel control.
         /// </summary>
         /// <remarks>
@@ -155,6 +173,15 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label groupsAllsegmentLabel;
+        
+        /// <summary>
+        /// memberOfInfoLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label memberOfInfoLabel;
         
         /// <summary>
         /// groupofsegmentLabel control.

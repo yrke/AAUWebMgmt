@@ -139,7 +139,6 @@
     <Content Include="CreateWorkItem.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="DefendpointChallengeResponse.aspx" />
-    <Content Include="FileShareInfo.aspx" />
     <Content Include="GroupsInfo.aspx" />
     <Content Include="Controls\ActiveChanges.ascx" />
     <Content Include="IDtoSystem.aspx" />
@@ -191,7 +190,6 @@
     <Compile Include="Connectors\PrintConnector.cs" />
     <Compile Include="Connectors\SCSMConnector.cs" />
     <Compile Include="Controllers\Controller.cs" />
-    <Compile Include="Controllers\FileshareController.cs" />
     <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Controllers\ManagedByChanger.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -201,13 +199,6 @@
     </Compile>
     <Compile Include="DefendpointChallengeResponse.aspx.designer.cs">
       <DependentUpon>DefendpointChallengeResponse.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="FileShareInfo.aspx.cs">
-      <DependentUpon>FileShareInfo.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="FileShareInfo.aspx.designer.cs">
-      <DependentUpon>FileShareInfo.aspx</DependentUpon>
     </Compile>
     <Compile Include="Functions\Loginscript.cs" />
     <Compile Include="Controls\ActiveChanges.ascx.cs">

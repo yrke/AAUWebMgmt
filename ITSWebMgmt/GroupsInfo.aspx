@@ -11,7 +11,7 @@
 
         <!-- page seach header -->
         <div>
-            <h1>Group Info</h1>
+            <h1><asp:Label runat="server" ID="headingLabel" /></h1>
             <!--
         Group Name
         <div class="ui action input">
@@ -104,6 +104,7 @@
                         </div>
                     <div class="ui tab segment" data-tab="members">
                         <h2>Members</h2>
+                        <asp:Label ID="memberInfoLabel" runat="server"></asp:Label>
                         <div class="ui two item menu">
                             <a data-tab="groups-direct" class="item">Direct Groups</a> 
                             <a data-tab="groups-all" class="item"> Recursive groups</a>
@@ -119,6 +120,7 @@
                     </div>
                     <div class="ui tab segment" data-tab="memberOf">
                         <h2>Member Of</h2>
+                        <asp:Label ID="memberOfInfoLabel" runat="server"></asp:Label>
                         <div class="ui two item menu">
                             <a data-tab="groups-direct" class="item">Direct Groups</a> 
                             <a data-tab="groups-all" class="item"> Recursive groups</a>
