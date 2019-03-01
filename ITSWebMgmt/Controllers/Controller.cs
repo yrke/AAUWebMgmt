@@ -11,8 +11,8 @@ namespace ITSWebMgmt.Controllers
         public string Path { get => ADcache.Path; }
         public static Logger logger = LogManager.GetCurrentClassLogger();
         public virtual string adpath { get => ADcache.adpath; set { ADcache.adpath = value; } }
-        public string[] getGroups(string name) => ADcache.getGroups(name);
-        public string[] getGroupsTransitive(string name) => ADcache.getGroupsTransitive(name);
+        public List<string> getGroups(string name) => ADcache.getGroups(name);
+        public List<string> getGroupsTransitive(string name) => ADcache.getGroupsTransitive(name);
         public List<PropertyValueCollection> getAllProperties() => ADcache.getAllProperties();
     }
 }

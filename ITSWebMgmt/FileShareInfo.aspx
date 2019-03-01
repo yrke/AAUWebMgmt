@@ -1,4 +1,5 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="GroupsInfo.aspx.cs" Inherits="ITSWebMgmt.GroupsInfo" %>
+﻿
+<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="FileShareInfo.aspx.cs" Inherits="ITSWebMgmt.FileShareInfo" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <form runat="server">
@@ -10,35 +11,18 @@
         </div>
 
         <!-- page seach header -->
-        <div>
-            <h1>Group Info</h1>
-            <!--
-        Group Name
-        <div class="ui action input">
-            <asp:TextBox ID="txtbxGroupName" runat="server" Text="" CssClass="ui input focus" placeholder="Search..." />
-            <asp:Button runat="server" CssClass="ui button" ID="sumbit" OnClick="sumbit_Click" Text="Søg" OnClientClick='$("#loader > div").show("fast");' />
-        </div>
-        -->
-        </div>
-
+       <h1>Fileshare Info</h1>
 
 
         <!-- page content -->
-
-
         <script>
             $(document).ready(function () {
                 $('.menu .item').tab({ history: false });
             });
         </script>
-
         <br />
         <br />
         <div runat="server" id="ResultDiv">
-
-
-
-
             <div class="ui grid">
                 <div class="four wide column">
                     <div class="ui vertical fluid tabular menu">
@@ -47,7 +31,6 @@
                         <a class="item" data-tab="memberOf">Member Of</a>
                         <!--<a class="item" data-tab="">Recurs memeberof?</a>-->
                         <a class="item" data-tab="rawData">Raw Data</a>
-
                     </div>
                 </div>
                 <div class="twelve wide stretched column">
@@ -70,14 +53,6 @@
                                     </tr>
                                     <tr>
                                         <td>Managed By:</td>
-                                        <td>
-                                            <asp:Label runat="server" ID="labelManagedBy" />
-                                            <asp:Button ID="EditManagedByButton" runat="server" value="" Text="Edit" OnClick="EditManagedBy_Click" CssClass="ui button" style="float:right"/>
-                                            <asp:TextBox ID="labelManagedByText" runat="server" TextMode="SingleLine" Visible = "false"></asp:TextBox>
-                                            <asp:Button ID="SaveEditManagedByButton" runat="server" value="" Text="Save" OnClick="SaveEditManagedBy_Click" CssClass="ui button" Visible = "false" style="float:right"/>
-                                            <br>
-                                            <asp:Label runat="server" ID="labelManagedByError" />
-                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Is Security group:</td>

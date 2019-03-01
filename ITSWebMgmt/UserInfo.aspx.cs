@@ -102,7 +102,7 @@ namespace ITSWebMgmt
 
         }
 
-        protected void buildExchangeLabel(string[] groupsList, bool isTransitiv)
+        protected void buildExchangeLabel(List<string> groupsList, bool isTransitiv)
         {
             string transitiv = "";
 
@@ -128,7 +128,7 @@ namespace ITSWebMgmt
             lblexchange.Text = transitiv + helper.GetTable();
         }
 
-        protected void buildFilesharessegmentLabel(string[] groupsList, bool isTransitiv)
+        protected void buildFilesharessegmentLabel(List<string> groupsList, bool isTransitiv)
         {
             string transitiv = "";
 
@@ -248,7 +248,7 @@ namespace ITSWebMgmt
             var groupsListAll = user.getGroupsTransitive("memberOf");
             TableGenerator.BuildGroupsSegments(groupList, groupsListAll, groupssegmentLabel, groupsAllsegmentLabel);
 
-            if (groupsListAll.Length > 0)
+            if (groupsListAll.Count > 0)
             {
                 buildExchangeLabel(groupsListAll, true);
                 buildFilesharessegmentLabel(groupsListAll, true);

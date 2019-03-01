@@ -139,16 +139,16 @@ namespace ITSWebMgmt.Caches
             properties.Add(property, value);
         }
 
-        public string[] getGroups(string name)
+        public List<string> getGroups(string name)
         {
-            return result.Properties[name].Cast<string>().ToArray();
+            return result.Properties[name].Cast<string>().ToList();
         }
 
-        public string[] getGroupsTransitive(string name)
+        public List<string> getGroupsTransitive(string name)
         {
             string attName = $"msds-{name}Transitive";
             DE.RefreshCache(attName.Split(','));
-            return DE.Properties[attName].Cast<string>().ToArray();
+            return DE.Properties[attName].Cast<string>().ToList();
         }
     }
 }
