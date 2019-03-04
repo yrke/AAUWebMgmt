@@ -68,7 +68,7 @@ namespace ITSWebMgmt.Controllers
         public string globalSearch(string email)
         {
             DirectoryEntry de = new DirectoryEntry("GC://aau.dk");
-            string filter = string.Format("(proxyaddresses=SMTP:{0})", email);
+            string filter = string.Format("(|(proxyaddresses=SMTP:{0})(userPrincipalName={0}))", email);
 
             DirectorySearcher search = new DirectorySearcher(de, filter);
             SearchResult r = search.FindOne();
