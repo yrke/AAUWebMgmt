@@ -9,6 +9,8 @@
           <div class="ui right internal attached rail" style="margin-top:50px;">
     <div class="ui segment" style="">
       <h3>Nyheder</h3>
+        <li>2019-03-04 -  Now UserInfo searches on proxyAddress and UPN
+        <br /><br />
         <li>2019-02-27 -  Managed By can now be set on computeres from webmgmt
         <br /><br />
         <li>2019-02-01 -  Inventory details added for computer
@@ -18,8 +20,6 @@
         <li>2017-07-05 -  Groups now shows direct and recursive memberships 
         <br /><br />
         <li>2017-03-31 -  More print information from EquiTrac
-        <br /><br />
-        <li>2017-02-27 -  Userinfo now shows information about print form EquiTrac
         <br /><br />
         
 
