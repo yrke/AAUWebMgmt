@@ -22,13 +22,22 @@ namespace ITSWebMgmt {
         protected global::ITSWebMgmt.Helpers.ActiveChanges changes;
         
         /// <summary>
-        /// btnSample control.
+        /// rawdatabutton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSample;
+        protected global::System.Web.UI.WebControls.Button rawdatabutton;
+        
+        /// <summary>
+        /// hardwarebutton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button hardwarebutton;
         
         /// <summary>
         /// UserNameLabel control.

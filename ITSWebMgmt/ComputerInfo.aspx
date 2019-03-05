@@ -34,7 +34,8 @@
 
     <div id="content">
         <form runat="server">
-            <asp:Button runat="server" ID="btnSample" Text="" style="visibility:hidden" OnClick="RawData_Click" />
+            <asp:Button runat="server" ID="rawdatabutton" Text="" style="visibility:hidden" OnClick="RawData_Click" />
+            <asp:Button runat="server" ID="hardwarebutton" Text="" style="visibility:hidden" OnClick="Hardware_Click" />
             <script>
                 $(document).ready(function () {
                     $('.menu .item').tab({
@@ -42,7 +43,10 @@
                         {
                             switch ($(this).attr("data-tab")) {
                                 case "rawdata":
-                                    document.getElementById('<%= btnSample.ClientID %>').click();
+                                    document.getElementById('<%= rawdatabutton.ClientID %>').click();
+                                    break;
+                                case "sccmHW":
+                                    document.getElementById('<%= hardwarebutton.ClientID %>').click();
                                     break;
                             }
                         }

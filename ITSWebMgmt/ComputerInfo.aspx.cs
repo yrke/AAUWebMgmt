@@ -95,6 +95,12 @@ namespace ITSWebMgmt
             Session["ActiveTab"] = "rawdata";
         }
 
+        protected void Hardware_Click(object sender, EventArgs e)
+        {
+            biuldSCCMHardware();
+            Session["ActiveTab"] = "sccmHW";
+        }
+
         protected void buildBasicInfo()
         {
             if (computer.AdminPasswordExpirationTime != null)
