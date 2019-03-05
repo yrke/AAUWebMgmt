@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace ITSWebMgmt.Functions
 {
@@ -19,7 +16,7 @@ namespace ITSWebMgmt.Functions
         //Return the loginscript of the user or null for none
         public string getLoginScript(string scriptName, string path)
         {
-            if (scriptName != null)
+            if (scriptName != "")
             {
                 //Get DCpath
                 //\\adm.aau.dk\SYSVOL\adm.aau.dk\scripts

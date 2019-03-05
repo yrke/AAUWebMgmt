@@ -1,18 +1,18 @@
 ﻿using ITSWebMgmt.Connectors.Active_Directory;
-using ITSWebMgmt.Controllers.Computer;
+using ITSWebMgmt.Controllers;
 using ITSWebMgmt.Helpers;
+using ITSWebMgmt.WebMgmtErrors;
 using System;
 using System.Collections.Generic;
-using System.DirectoryServices;
 using System.Management;
-using System.Text;
 using System.Web;
+using System.Web.UI.WebControls;
 
 namespace ITSWebMgmt
 {
     public partial class ComputerInfo : System.Web.UI.Page
     {
-        protected string ComputerName = "ITS\\AAU804396";
+        protected string ComputerName = "ITS\\AAU114811"; //Test computer
         private ComputerController computer;
 
         public void Page_Init(object o, EventArgs e)
@@ -38,13 +38,16 @@ namespace ITSWebMgmt
                     ComputerName = HttpUtility.HtmlEncode(computername);
                     computer = new ComputerController(ComputerName, HttpContext.Current.User.Identity.Name);
                     buildlookupComputer();
+
+                    Session["adpath"] = computer.adpath;
+                    Session["computer"] = computer;
                 }
             }
             else
             {
-
+                computer = (ComputerController)Session["computer"];
+                buildlookupComputer();
             }
-
         }
 
         protected void buildlookupComputer()
@@ -75,8 +78,8 @@ namespace ITSWebMgmt
             buildSCCMInventory();
             buildSCCMAntivirus();
             biuldSCCMHardware();
-
             buildGroupsSegments();
+            buildWarningSegment();
 
             ResultDiv.Visible = true;
 
@@ -123,11 +126,38 @@ namespace ITSWebMgmt
             computer.moveOU(HttpContext.Current.User.Identity.Name);
         }
 
+        protected void EditManagedBy_Click(object sender, EventArgs e)
+        {
+            labelManagedByText.Text = labelManagedBy.Text;
+            tuggleVisibility();
+        }
+
+        protected void SaveEditManagedBy_Click(object sender, EventArgs e)
+        {
+            ManagedByChanger managedByChanger = new ManagedByChanger(computer.ADcache);
+            managedByChanger.SaveEditManagedBy(labelManagedByText.Text);
+            labelManagedByError.Text = managedByChanger.ErrorMessage;
+            if (managedByChanger.ErrorMessage == "")
+            {
+                tuggleVisibility();
+                labelManagedBy.Text = labelManagedByText.Text;
+            }
+        }
+
+        private void tuggleVisibility()
+        {
+            labelManagedBy.Visible = !labelManagedBy.Visible;
+            EditManagedByButton.Visible = !EditManagedByButton.Visible;
+            labelManagedByText.Visible = !labelManagedByText.Visible;
+            SaveEditManagedByButton.Visible = !SaveEditManagedByButton.Visible;
+        }
+
         protected void ResultGetPassword_Click(object sender, EventArgs e)
         {
-            ComputerController.logger.Info("User {0} requesed localadmin password for computer {1}", System.Web.HttpContext.Current.User.Identity.Name, computer.adpath);
-
-            var passwordRetuned = computer.getLocalAdminPassword();
+            string adpath = (string)Session["adpath"];
+            ComputerController.logger.Info("User {0} requesed localadmin password for computer {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
+            
+            var passwordRetuned = ComputerController.getLocalAdminPassword(adpath);
 
             if (string.IsNullOrEmpty(passwordRetuned))
             {
@@ -269,6 +299,21 @@ namespace ITSWebMgmt
         protected void buttonEnableBitlockerEncryption_Click(object sender, EventArgs e)
         {
             computer.EnableBitlockerEncryption();
+        }
+
+        private void buildWarningSegment()
+        {
+            List<WebMgmtError> errors = new List<WebMgmtError>
+            {
+                new DriveAlmostFull(computer),
+                new NotStandardComputerOU(computer), 
+            };
+
+            var errorList = new WebMgmtErrorList(errors);
+            ErrorCountMessageLabel.Text = errorList.getErrorCountMessage();
+            ErrorMessagesLabel.Text = errorList.ErrorMessages;
+
+            //Password is expired and warning before expire (same timeline as windows displays warning)
         }
     }
 }

@@ -1,19 +1,15 @@
 ﻿using ITSWebMgmt.Caches;
 using System;
-using System.Collections.Generic;
-using System.DirectoryServices;
-using System.Linq;
-using System.Web;
 
 namespace ITSWebMgmt.Controllers
 {
     public class GroupController : Controller<GroupADcache>
     {
-        public string Description { get => ADcache.getPropertyAsString("description"); }
-        public string Info { get => ADcache.getPropertyAsString("info"); }
-        public string Name { get => ADcache.getPropertyAsString("name"); }
-        public string ManagedBy { get => ADcache.getPropertyAsString("managedBy"); }
-        public string GroupType { get => ADcache.getPropertyAsString("groupType"); }
+        public string Description { get => ADcache.getProperty("description"); }
+        public string Info { get => ADcache.getProperty("info"); }
+        public string Name { get => ADcache.getProperty("name"); }
+        public string ManagedBy { get => ADcache.getProperty("managedBy"); }
+        public string GroupType { get => ADcache.getProperty("groupType").ToString(); }
 
         public GroupController(string adpath)
         {

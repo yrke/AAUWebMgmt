@@ -56,7 +56,52 @@
                     </div>
                     <div class="ui active tab segment" data-tab="basicinfo">
                         <h2>Basic Info</h2>
-                        <asp:Label runat="server" ID="lblBasicInfo" />
+                            <table class="ui definition table">
+                                <tbody>
+                                    <tr>
+                                        <td>Name:</td>
+                                        <td>
+                                            <asp:Label runat="server" ID="labelName" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Domain:</td>
+                                        <td>
+                                            <asp:Label runat="server" ID="labelDomain" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Managed By:</td>
+                                        <td>
+                                            <asp:Label runat="server" ID="labelManagedBy" />
+                                            <asp:Button ID="EditManagedByButton" runat="server" value="" Text="Edit" OnClick="EditManagedBy_Click" CssClass="ui button" style="float:right"/>
+                                            <asp:TextBox ID="labelManagedByText" runat="server" TextMode="SingleLine" Visible = "false"></asp:TextBox>
+                                            <asp:Button ID="SaveEditManagedByButton" runat="server" value="" Text="Save" OnClick="SaveEditManagedBy_Click" CssClass="ui button" Visible = "false" style="float:right"/>
+                                            <br>
+                                            <asp:Label runat="server" ID="labelManagedByError" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Is Security group:</td>
+                                        <td>
+                                            <asp:Label runat="server" ID="labelSecurityGroup" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Group Scope:</td>
+                                        <td>
+                                            <asp:Label runat="server" ID="labelGroupScope" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Group Description:</td>
+                                        <td>
+                                            <asp:Label runat="server" ID="labelGroupDescription" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Group Info:</td>
+                                        <td>
+                                            <asp:Label runat="server" ID="labelGroupInfo" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="ui tab segment" data-tab="members">
                         <h2>Members</h2>

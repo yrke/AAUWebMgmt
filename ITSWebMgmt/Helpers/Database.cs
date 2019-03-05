@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Management;
-using System.Text;
-using System.Web;
+﻿using System.Management;
 
 namespace ITSWebMgmt.Helpers
 {

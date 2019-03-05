@@ -3,98 +3,138 @@ using ITSWebMgmt.Helpers;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.DirectoryServices;
 using System.Linq;
-using System.Web;
 
 namespace ITSWebMgmt.Caches
 {
+    public class Property
+    {
+        public string Name;
+        public Type Type;
+        public object Value;
+
+        public Property(string name, Type type)
+        {
+            Name = name;
+            Type = type;
+        }
+    }
+
     public abstract class ADcache
     {
-        protected Dictionary<string, object> properties = new Dictionary<string, object>();
-        public List<string> PropertyNames;
+        protected Dictionary<string, Property> properties = new Dictionary<string, Property>();
         public DirectoryEntry DE;
         public SearchResult result;
         public string Path { get => DE.Path; }
         public static Logger logger = LogManager.GetCurrentClassLogger();
         public string adpath;
+        private List<Type> types = new List<Type>();
+        private List<PropertyValueCollection> AllProperties;
 
         public ADcache() { }
 
-        public ADcache(string adpath, List<string> propertyNemes)
+        public ADcache(string adpath, List<Property> properties, List<Property> propertiesToRefresh)
         {
-            PropertyNames = propertyNemes;
             this.adpath = adpath;
             DE = new DirectoryEntry(adpath);
             var search = new DirectorySearcher(DE);
 
-            foreach (string p in PropertyNames)
+            if (propertiesToRefresh != null)
             {
-                search.PropertiesToLoad.Add(p);
+                List<string> propertiesNamesToRefresh = new List<string>();
+                foreach (var p in propertiesToRefresh)
+                {
+                    propertiesNamesToRefresh.Add(p.Name);
+                    properties.Add(p);
+                }
+
+                DE.RefreshCache(propertiesNamesToRefresh.ToArray());
+            }
+
+            foreach (var p in properties)
+            {
+                search.PropertiesToLoad.Add(p.Name);
             }
 
             result = search.FindOne();
 
-            foreach (string p in PropertyNames)
+            saveCache(properties, propertiesToRefresh);
+        }
+
+        protected void saveCache(List<Property> properties, List<Property> propertiesToRefresh)
+        {
+            foreach (var p in properties)
             {
-                addProperty(p, DE.Properties[p].Value);
+                var value = DE.Properties[p.Name].Value;
+                //TODO Handle all null values here and give then default values
+                if (value == null)
+                {
+                    if (p.Type.Equals(typeof(bool)))
+                        value = false;
+                    else if (p.Type.Equals(typeof(int)))
+                        value = -1;
+                    else if (p.Type.Equals(typeof(string)))
+                        value = "";
+                    else if (p.Type.Equals(typeof(object[])))
+                        value = new string[] { "" };
+                }
+                else
+                {
+                    //Print the type
+                    Debug.WriteLine($"{p.Name}: {value.GetType().ToString()}, value: {value.ToString()}");
+
+                    //Handle special types
+                    if (value.GetType().Equals(typeof(object[])))
+                    {
+                        value = ((object[])value).Cast<string>().ToArray();
+                    }
+                    if (value.GetType().ToString() == "System.__ComObject")
+                    {
+                        value = DateTimeConverter.Convert(value);
+                    }
+                }
+
+                p.Value = value;
+                addProperty(p.Name, p);
             }
         }
 
         public List<PropertyValueCollection> getAllProperties()
         {
-            List<PropertyValueCollection> propertyValueCollections = new List<PropertyValueCollection>();
-            foreach (string k in DE.Properties.PropertyNames)
+            if (AllProperties == null)
             {
-                propertyValueCollections.Add(DE.Properties[k]);
-            }
-            return propertyValueCollections;
-        }
-
-        public object getProperty(string property)
-        {
-            if (properties.ContainsKey(property))
-            {
-                return properties[property];
-            }
-            return null;
-        }
-
-        public string getPropertyAsString(string property)
-        {
-            if (properties.ContainsKey(property))
-            {
-                var temp = getProperty(property);
-                return temp != null ? temp.ToString() : null;
-            }
-            return null;
-        }
-
-        public string getPropertyAsDateString(string property)
-        {
-            if (properties.ContainsKey(property))
-            {
-                var temp = getProperty(property);
-                if (temp.GetType() == typeof(long))
+                AllProperties = new List<PropertyValueCollection>();
+                foreach (string k in DE.Properties.PropertyNames)
                 {
-                    return DateTimeConverter.Convert((long)temp);
+                    AllProperties.Add(DE.Properties[k]);
                 }
-                return temp != null ? DateTimeConverter.Convert(ADHelpers.convertADTimeToDateTime(temp)) : null;
             }
-            return null;
+            return AllProperties;
         }
 
-        public T? getPropertyAs<T>(string property) where T : struct
+        public dynamic getProperty(string property)
         {
             if (properties.ContainsKey(property))
             {
-                var temp = getProperty(property);
-                return temp != null ? (T)temp : (T?)null;
+                return properties[property].Value;
             }
             return null;
         }
 
-        public void addProperty(string property, object value)
+        public void saveProperty(string property, dynamic value)
+        {
+            if (properties[property].Type.Equals(value.GetType()))
+            {
+                DE.Properties[property].Value = value;
+                DE.CommitChanges();
+            }
+            else
+                Debug.WriteLine($"Not saved due to wrong type");
+        }
+
+        public void addProperty(string property, Property value)
         {
             properties.Add(property, value);
         }

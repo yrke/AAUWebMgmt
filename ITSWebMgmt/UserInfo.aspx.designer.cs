@@ -58,49 +58,13 @@ namespace ITSWebMgmt {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl warningsAndErrorDIV;
         
         /// <summary>
-        /// errorUserDisabled control.
+        /// ErrorCountMessageLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl errorUserDisabled;
-        
-        /// <summary>
-        /// errorUserLockedDiv control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl errorUserLockedDiv;
-        
-        /// <summary>
-        /// errorPasswordExpired control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl errorPasswordExpired;
-        
-        /// <summary>
-        /// errorMissingAAUAttr control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl errorMissingAAUAttr;
-        
-        /// <summary>
-        /// warningNotStandardOU control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl warningNotStandardOU;
+        protected global::System.Web.UI.WebControls.Label ErrorCountMessageLabel;
         
         /// <summary>
         /// UserNameLabel control.
@@ -164,6 +128,15 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblbasicInfoOfficePDS;
+        
+        /// <summary>
+        /// basicInfoPasswordExpired control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label basicInfoPasswordExpired;
         
         /// <summary>
         /// basicInfoPasswordExpireDate control.
@@ -326,5 +299,14 @@ namespace ITSWebMgmt {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnPostbackfixUserOUButton;
+        
+        /// <summary>
+        /// ErrorMessagesLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ErrorMessagesLabel;
     }
 }

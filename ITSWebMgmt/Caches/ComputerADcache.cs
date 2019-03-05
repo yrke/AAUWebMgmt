@@ -1,9 +1,6 @@
-﻿using ITSWebMgmt.Controllers.Computer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
-using System.Linq;
-using System.Web;
 
 namespace ITSWebMgmt.Caches
 {
@@ -32,8 +29,8 @@ namespace ITSWebMgmt.Caches
             adpath = result.Properties["ADsPath"][0].ToString();
             DE = new DirectoryEntry(adpath);
 
+            var PropertyNames = new List<string> { "memberOf", "cn", "ms-Mcs-AdmPwdExpirationTime", "managedBy" };
             //propertyNames.Add("ms-Mcs-AdmPwd");
-            PropertyNames = new List<string> { "memberOf", "cn", "ms-Mcs-AdmPwdExpirationTime", "managedBy" };
 
             search = new DirectorySearcher(DE);
             foreach (string p in PropertyNames)
@@ -43,10 +40,16 @@ namespace ITSWebMgmt.Caches
             search.Filter = string.Format("(&(objectClass=computer)(cn={0}))", ComputerName);
             result = search.FindOne();
 
-            addProperty("managedBy", result.Properties["managedBy"][0]);
-            addProperty("cn", result.Properties["cn"]);
-            addProperty("memberOf", result.Properties["memberOf"]);
-            addProperty("ms-Mcs-AdmPwdExpirationTime", result.Properties["ms-Mcs-AdmPwdExpirationTime"][0]);
+            List<Property> properties = new List<Property>
+            {
+                new Property("distinguishedName", typeof(string)),
+                new Property("managedBy", typeof(string)),
+                new Property("cn", typeof(string)),
+                new Property("memberOf", typeof(string)),
+                new Property("ms-Mcs-AdmPwdExpirationTime", typeof(object)) //System.__ComObject
+            };
+
+            saveCache(properties, null);
 
             logger.Info("User {0} requesed info about computer {1}", userName, adpath);
         }

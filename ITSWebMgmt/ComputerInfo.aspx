@@ -1,7 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ComputerInfo.aspx.cs" Inherits="ITSWebMgmt.ComputerInfo" MasterPageFile="~/Site.Master" %>
 <%@ Register TagPrefix="uc" TagName="Changes" Src="~/Controls/ActiveChanges.ascx" %>
 
-
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
     <script>
@@ -16,37 +15,30 @@
         </div>
     </div>
 
-    <uc:Changes id="changes" runat="server" />
+    <uc:Changes ID="changes" runat="server" />
 
     <h1>Computer Info</h1>
     <div>
-        
-        
-        
         <form method="get">
             Computername: 
         <div class="ui action input">
 
-            <input name="computername" class="ui input focus" value="<% =ComputerName %>"   />
+            <input name="computername" class="ui input focus" value="<% =ComputerName %>" />
 
             <input type="submit" value="Search" onclick='$("#loader > div").show("fast");'>
         </div>
         </form>
-
-
         <br />
     </div>
 
     <div id="content">
         <form runat="server">
-            <h2>
-                <asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
-
-
+            <h2><asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
             <asp:Label ID="ResultLabel" runat="server"></asp:Label>
-
             <div runat="server" id="ResultDiv">
-
+                <div runat="server" id="warningsAndErrorDIV">
+                    <asp:Label ID="ErrorCountMessageLabel" runat="server"></asp:Label>
+                </div>
                 <div class="ui grid">
                     <div class="four wide column">
                         <div class="ui vertical fluid tabular menu">
@@ -61,8 +53,8 @@
                             <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
                             <a class="item" data-tab="rawdata">Raw Data</a>
                             <a class="item" data-tab="tasks">Tasks</a>
-                            <!--                    <a class="item" data-tab="statustest">Statustest</a> -->
-
+                            <a class="item" data-tab="warnings">Warnings</a>
+                            <!--<a class="item" data-tab="statustest">Statustest</a> -->
                         </div>
                     </div>
                     <div class="twelve wide stretched column">
@@ -70,8 +62,6 @@
                             none<!-- spacer as the fist elemen else is placed differencet -->
                         </div>
                         <div class="ui active tab segment" data-tab="basicinfo">
-
-
                             <table class="ui definition table">
                                 <tbody>
                                     <tr>
@@ -97,16 +87,19 @@
                                     <tr>
                                         <td>Managed By:</td>
                                         <td>
-                                            <asp:Label runat="server" ID="labelManagedBy" /></td>
+                                            <asp:Label runat="server" ID="labelManagedBy" />
+                                            <asp:Button ID="EditManagedByButton" runat="server" value="" Text="Edit" OnClick="EditManagedBy_Click" CssClass="ui button" style="float:right"/>
+                                            <asp:TextBox ID="labelManagedByText" runat="server" TextMode="SingleLine" Visible = "false"></asp:TextBox>
+                                            <asp:Button ID="SaveEditManagedByButton" runat="server" value="" Text="Save" OnClick="SaveEditManagedBy_Click" CssClass="ui button" Visible = "false" style="float:right"/>
+                                            <br>
+                                            <asp:Label runat="server" ID="labelManagedByError" />
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                             <br />
                             <asp:Button ID="ResultGetPassword2" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click" CssClass="ui button" />
                         </div>
-
-
-
 
                         <div class="ui tab segment" data-tab="userInformation">
                         </div>
@@ -127,14 +120,12 @@
                                 Only do this if you know what you are doing!
                             </div>
 
-
-
                         </div>
                         <div class="ui tab segment" data-tab="sccmInfo">
                             <h2>SCCM Info</h2>
                             <h3>Computer Details</h3>
                             <asp:Label runat="server" ID="labelSCCMCollecionsTable" />
-                            
+
                             <h3>Collections</h3>
                             <asp:Label runat="server" ID="labelSCCMComputers" />
 
@@ -145,7 +136,7 @@
                         <div class="ui tab segment" data-tab="sccmInventory">
                             <h2>SCCM Info</h2>
                             <asp:Label runat="server" ID="labelSSCMInventoryTable" />
-                           
+
                             <h3>Software Details</h3>
                             <asp:Label runat="server" ID="labelSCCMCollecionsSoftware" />
 
@@ -174,23 +165,26 @@
                             <asp:Label runat="server" ID="labelSCCMDisk" />
                         </div>
 
-
-                         <div class="ui tab segment" data-tab="groups">
+                        <div class="ui tab segment" data-tab="groups">
                             <h2>Groups</h2>
                             <div class="ui two item menu">
-                                <a data-tab="groups-direct" class="item">Direct Groups</a> 
-                                <a data-tab="groups-all" class="item"> Recursive groups</a>
+                                <a data-tab="groups-direct" class="item">Direct Groups</a>
+                                <a data-tab="groups-all" class="item">Recursive groups</a>
                             </div>
 
                             <div class="ui active tab segment" data-tab="groups-direct">
                                 <asp:Label ID="groupssegmentLabel" runat="server"></asp:Label>
-                                </div>
+                            </div>
 
                             <div class="ui tab segment" data-tab="groups-all">
                                 <asp:Label ID="groupsAllsegmentLabel" runat="server"></asp:Label>
                             </div>
-                          </div>
-                     </div>
+                        </div>
+                        <div class="ui tab segment" data-tab="warnings">
+                            <h2>Warnings</h2>
+                            <asp:Label ID="ErrorMessagesLabel" runat="server"></asp:Label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
