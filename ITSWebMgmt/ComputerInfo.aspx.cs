@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Management;
 using System.Web;
+using System.Web.Services;
 using System.Web.UI.WebControls;
 
 namespace ITSWebMgmt
@@ -41,6 +42,7 @@ namespace ITSWebMgmt
 
                     Session["adpath"] = computer.adpath;
                     Session["computer"] = computer;
+                    Session["AvtiveTab"] = "basicinfo";
                 }
             }
             else
@@ -69,17 +71,15 @@ namespace ITSWebMgmt
                 labelPwdExpireDate.Text = "LAPS not Enabled";
             }
 
-            ResultLabelRaw.Text = TableGenerator.buildRawTable(computer.getAllProperties());
-
             buildBasicInfo();
 
             //XXX check resourceID 
-            buildSCCMInfo();
-            buildSCCMInventory();
-            buildSCCMAntivirus();
-            biuldSCCMHardware();
-            buildGroupsSegments();
-            buildWarningSegment();
+            //buildSCCMInfo();
+            //buildSCCMInventory();
+            //buildSCCMAntivirus();
+            //biuldSCCMHardware();
+            //buildGroupsSegments();
+            //buildWarningSegment();
 
             ResultDiv.Visible = true;
 
@@ -87,6 +87,12 @@ namespace ITSWebMgmt
             {
                 MoveComputerOUdiv.Visible = true;
             }
+        }
+
+        protected void RawData_Click(object sender, EventArgs e)
+        {
+            ResultLabelRaw.Text = TableGenerator.buildRawTable(computer.getAllProperties());
+            Session["ActiveTab"] = "rawdata";
         }
 
         protected void buildBasicInfo()

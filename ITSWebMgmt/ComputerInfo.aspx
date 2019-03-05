@@ -6,9 +6,10 @@
     <script>
         $(document).ready(function () {
             $('.menu .item').tab({ history: false });
+            var active_tab = '<%= Session["ActiveTab"] %>';
+            $('.menu .item').tab('change tab', active_tab);
         });
     </script>
-
     <div id="loader">
         <div class="ui active dimmer" style="display: none">
             <div class="ui text loader">Loading</div>
@@ -33,6 +34,21 @@
 
     <div id="content">
         <form runat="server">
+            <asp:Button runat="server" ID="btnSample" Text="" style="visibility:hidden" OnClick="RawData_Click" />
+            <script>
+                $(document).ready(function () {
+                    $('.menu .item').tab({
+                        'onVisible': function ()
+                        {
+                            switch ($(this).attr("data-tab")) {
+                                case "rawdata":
+                                    document.getElementById('<%= btnSample.ClientID %>').click();
+                                    break;
+                            }
+                        }
+                    });
+                });
+            </script>
             <h2><asp:Label ID="UserNameLabel" runat="server"></asp:Label></h2>
             <asp:Label ID="ResultLabel" runat="server"></asp:Label>
             <div runat="server" id="ResultDiv">
