@@ -136,6 +136,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="Controls\GroupMembersView.ascx" />
     <Content Include="CreateWorkItem.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="DefendpointChallengeResponse.aspx" />
@@ -154,6 +155,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="FileshareInfo.aspx" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -193,6 +195,13 @@
     <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Controllers\ManagedByChanger.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controls\GroupMembersView.ascx.cs">
+      <DependentUpon>GroupMembersView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\GroupMembersView.ascx.designer.cs">
+      <DependentUpon>GroupMembersView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="DefendpointChallengeResponse.aspx.cs">
       <DependentUpon>DefendpointChallengeResponse.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -285,6 +294,13 @@
     </Compile>
     <Compile Include="UserInfo.aspx.designer.cs">
       <DependentUpon>UserInfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FileshareInfo.aspx.cs">
+      <DependentUpon>FileshareInfo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FileshareInfo.aspx.designer.cs">
+      <DependentUpon>FileshareInfo.aspx</DependentUpon>
     </Compile>
     <Compile Include="WebMgmtErrors\WebMgmtError.cs" />
     <Compile Include="WebMgmtErrors\WebMgmtErrorList.cs" />
