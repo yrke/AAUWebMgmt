@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <uc:Changes ID="changes" runat="server" />
+    <%-- <uc:Changes ID="changes" runat="server" /> --%>
 
     <h1>Computer Info</h1>
     <div>

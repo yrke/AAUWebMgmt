@@ -3,7 +3,7 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-<uc:Changes id="changes" runat="server" />
+<%-- <uc:Changes ID="changes" runat="server" /> --%>
     
     <div class="ui segment">
           <div class="ui right internal attached rail" style="margin-top:50px;">

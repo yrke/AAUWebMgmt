@@ -13,15 +13,6 @@ namespace ITSWebMgmt {
     public partial class ComputerInfo {
         
         /// <summary>
-        /// changes control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ITSWebMgmt.Helpers.ActiveChanges changes;
-        
-        /// <summary>
         /// UserNameLabel control.
         /// </summary>
         /// <remarks>
