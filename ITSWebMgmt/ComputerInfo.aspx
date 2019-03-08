@@ -34,21 +34,17 @@
 
     <div id="content">
         <form runat="server">
-            <asp:Button runat="server" ID="rawdatabutton" Text="" style="visibility:hidden" OnClick="RawData_Click" />
-            <asp:Button runat="server" ID="hardwarebutton" Text="" style="visibility:hidden" OnClick="Hardware_Click" />
+            <asp:hiddenfield id="tabName" value="test" runat="server"/>
+            <asp:Button runat="server" ID="tabChangedButton" Text="" style="visibility:hidden" OnClick="TabChanged_Click" />
             <script>
                 $(document).ready(function () {
                     $('.menu .item').tab({
                         'onVisible': function ()
                         {
-                            switch ($(this).attr("data-tab")) {
-                                case "rawdata":
-                                    document.getElementById('<%= rawdatabutton.ClientID %>').click();
-                                    break;
-                                case "sccmHW":
-                                    document.getElementById('<%= hardwarebutton.ClientID %>').click();
-                                    break;
-                            }
+                            var tabName = $(this).attr("data-tab");
+                            document.getElementById("<%= tabName.ClientID %>").value = tabName;
+                            //Calling ASP cause blinks
+                            document.getElementById('<%= tabChangedButton.ClientID %>').click();
                         }
                     });
                 });

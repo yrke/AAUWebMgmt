@@ -22,22 +22,22 @@ namespace ITSWebMgmt {
         protected global::ITSWebMgmt.Helpers.ActiveChanges changes;
         
         /// <summary>
-        /// rawdatabutton control.
+        /// tabName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button rawdatabutton;
+        protected global::System.Web.UI.WebControls.HiddenField tabName;
         
         /// <summary>
-        /// hardwarebutton control.
+        /// tabChangedButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button hardwarebutton;
+        protected global::System.Web.UI.WebControls.Button tabChangedButton;
         
         /// <summary>
         /// UserNameLabel control.

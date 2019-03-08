@@ -4,7 +4,9 @@ using ITSWebMgmt.Helpers;
 using ITSWebMgmt.WebMgmtErrors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Management;
+using System.Threading;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI.WebControls;
@@ -40,6 +42,7 @@ namespace ITSWebMgmt
                     computer = new ComputerController(ComputerName, HttpContext.Current.User.Identity.Name);
                     buildlookupComputer();
 
+                    Session.Clear();
                     Session["adpath"] = computer.adpath;
                     Session["computer"] = computer;
                     Session["AvtiveTab"] = "basicinfo";
@@ -72,14 +75,38 @@ namespace ITSWebMgmt
             }
 
             buildBasicInfo();
+            buildWarningSegment();
 
-            //XXX check resourceID 
-            //buildSCCMInfo();
-            //buildSCCMInventory();
-            //buildSCCMAntivirus();
-            //biuldSCCMHardware();
-            //buildGroupsSegments();
-            //buildWarningSegment();
+            List<string> loadedRapNames = new List<string> { "basicinfo", "tasks", "warnings"};
+            foreach (string TabName in loadedRapNames)
+            {
+                Session[TabName + "build"] = true;
+            }
+
+            //XXX check resourceID
+
+            //Load the data for the other tabs in background, I am not sure if this thread can access the asp labels
+            //This does not work properly: if the user presses a tab before all tabs is loaded
+            List<string> tapNames = new List<string>{ "groups", "sccmInfo", "sccmInventory", "sccmAV", "sccmHW", "rawdata"};
+            /*Thread backgroundThread = new Thread(_ =>
+            {
+                foreach (string tap in tapNames)
+                {
+                    LoadTab(tap);
+                    Debug.WriteLine("Is it waiting for this?");//YES
+                }
+            });
+            backgroundThread.IsBackground = true;
+            backgroundThread.Start();*/
+
+            ThreadPool.QueueUserWorkItem(_ =>
+            {
+                foreach (string tap in tapNames)
+                {
+                    LoadTab(tap);    
+                    Debug.WriteLine("Is it waiting for this?");//NO
+                }
+            }, null);
 
             ResultDiv.Visible = true;
 
@@ -89,16 +116,44 @@ namespace ITSWebMgmt
             }
         }
 
-        protected void RawData_Click(object sender, EventArgs e)
+        protected void TabChanged_Click(object sender, EventArgs e)
         {
-            ResultLabelRaw.Text = TableGenerator.buildRawTable(computer.getAllProperties());
-            Session["ActiveTab"] = "rawdata";
+            string TabName = tabName.Value;
+            Session["ActiveTab"] = TabName;
+            LoadTab(TabName);
         }
 
-        protected void Hardware_Click(object sender, EventArgs e)
+        protected void LoadTab(string TabName)
         {
-            biuldSCCMHardware();
-            Session["ActiveTab"] = "sccmHW";
+            //Do not build if allready build
+            /*if (Session[TabName + "build"] != null)
+            {
+                return;
+            }*/
+
+            switch (TabName)
+            {
+                case "groups":
+                    buildGroupsSegments();
+                    break;
+                case "sccmInfo":
+                    buildSCCMInfo();
+                    break;
+                case "sccmInventory":
+                    buildSCCMInventory();
+                    break;
+                case "sccmAV":
+                    buildSCCMAntivirus();
+                    break;
+                case "sccmHW":
+                    biuldSCCMHardware();
+                    break;
+                case "rawdata":
+                    ResultLabelRaw.Text = TableGenerator.buildRawTable(computer.getAllProperties());
+                    break;
+            }
+
+            Session[TabName + "build"] = true;
         }
 
         protected void buildBasicInfo()
@@ -228,8 +283,8 @@ namespace ITSWebMgmt
              * 
              */
 
-            //XXX: remeber to filter out computers that are obsolite in sccm (not active)
-            string error = "";
+        //XXX: remeber to filter out computers that are obsolite in sccm (not active)
+        string error = "";
             HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Collection Name" });
             var names = computer.setConfig();
             
