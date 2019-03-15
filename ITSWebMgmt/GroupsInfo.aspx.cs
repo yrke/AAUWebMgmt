@@ -77,9 +77,26 @@ namespace ITSWebMgmt
         protected void buildResult()
         {
             buildBasicInfo();
-            buildMembers();
-            buildMemberOf();
             buildRaw();
+
+            if (GroupController.isFileShare(group.DistinguishedName))
+            {
+                string[] tables = group.GetFileshareTables();
+                groupssegmentLabel.Text = tables[0];
+                groupsAllsegmentLabel.Text = tables[1];
+                groupofsegmentLabel.Text = tables[2];
+                groupofAllsegmentLabel.Text = tables[3];
+
+                memberInfoLabel.Text = "Contains information from the other fileshares with the other accesses<br>";
+                memberOfInfoLabel.Text = memberInfoLabel.Text;
+                headingLabel.Text = "Fileshare Info";
+            }
+            else
+            {
+                buildMembers();
+                buildMemberOf();
+                headingLabel.Text = "Group Info";
+            }
 
             ResultDiv.Visible = true;
         }

@@ -19,7 +19,7 @@ namespace ITSWebMgmt.Controllers
         }
 
         public override string adpath { get => ADcache.adpath; set { ADcache = new UserADcache(value); ADcache.adpath = value; } }
-        public string Guid { get => ADcache.DE.Path; }
+        public string Guid { get => new Guid((byte[]) (ADcache.getProperty("objectGUID"))).ToString(); }
         public string UserPrincipalName { get => ADcache.getProperty("userPrincipalName"); }
         public string DisplayName { get => ADcache.getProperty("displayName"); }
         public string[] ProxyAddresses

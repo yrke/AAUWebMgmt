@@ -36,7 +36,8 @@ namespace ITSWebMgmt.Connectors
             {
                 // do whatever you want as this user.
 
-                SqlConnection myConnection = new SqlConnection("Data Source = ad-sql1-i13.aau.dk\\sqlequitrac; Database = eqcas; Integrated Security=SSPI");
+                //SqlConnection myConnection = new SqlConnection("Data Source = ad-sql1-i13.aau.dk\\sqlequitrac; Database = eqcas; Integrated Security=SSPI");
+                SqlConnection myConnection = new SqlConnection("Data Source = AD-SQL2-MISC.AAU.DK; Database = eqcas; Integrated Security=SSPI");
 
                 try { 
                     myConnection.Open();

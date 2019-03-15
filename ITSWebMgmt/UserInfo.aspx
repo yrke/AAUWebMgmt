@@ -56,7 +56,7 @@
             <asp:Label ID="ResultErrorLabel" runat="server"></asp:Label>
         </div>
 
-        <uc:Changes ID="changes" runat="server" />
+        <%-- <uc:Changes ID="changes" runat="server" /> --%>
 
         <div runat="server" id="ResultDiv">
             <div runat="server" id="warningsAndErrorDIV">
