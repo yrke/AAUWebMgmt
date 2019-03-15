@@ -43,6 +43,7 @@
                         {
                             var dataTabName = $(this).attr("data-tab");
                             document.getElementById("<%= tabName.ClientID %>").value = dataTabName; //$('#<%= tabName.ClientID %>').val(dataTabName); does the same
+                            $("#load").show("fast");
                             document.getElementById('<%= tabChangedButton.ClientID %>').click();
 
                             // TODO: Make only load tab first time in JS to avoid blink on button click and server contact
@@ -173,6 +174,7 @@
                         </div>
 
                         <div class="ui tab segment" data-tab="sccmHW">
+                            <div class="ui active loader" style="display: none" id="load"></div>
                             <h2>Hardware Info</h2>
                             <h3>RAM</h3>
                             <asp:Label runat="server" ID="labelSCCMRAM" />

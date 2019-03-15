@@ -85,7 +85,6 @@ namespace ITSWebMgmt
                 Session[TabName + "build"] = true;
             }
 
-
             //XXX check resourceID
 
             // Load the data for the other tabs in background. I am not sure if this work properly if the user presses a tab before all tabs is loaded in the background
@@ -282,8 +281,8 @@ namespace ITSWebMgmt
              * 
              */
 
-        //XXX: remeber to filter out computers that are obsolite in sccm (not active)
-        string error = "";
+            //XXX: remeber to filter out computers that are obsolite in sccm (not active)
+            string error = "";
             HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Collection Name" });
             var names = computer.setConfig();
             
