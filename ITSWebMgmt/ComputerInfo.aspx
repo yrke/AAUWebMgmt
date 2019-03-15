@@ -42,11 +42,13 @@
                         'onVisible': function ()
                         {
                             var dataTabName = $(this).attr("data-tab");
-                            document.getElementById("<%= tabName.ClientID %>").value = dataTabName;
+                            document.getElementById("<%= tabName.ClientID %>").value = dataTabName; //$('#<%= tabName.ClientID %>').val(dataTabName); does the same
                             document.getElementById('<%= tabChangedButton.ClientID %>').click();
 
                             // TODO: Make only load tab first time in JS to avoid blink on button click and server contact
                             // The code below should do it, but it returns false for all tabs after first case where it is true
+                            // The hidden field is properly only updated on postback and it will therefore not be possible to do the above
+                            // alert(dataTabName + " " + document.getElementById("<%= tabName.ClientID %>").value +" " +'<%= tabName.Value %>');
                             // if ('<%= Session[tabName.Value + "build"] == null %>' == 'True') {
                             //     document.getElementById('<%= tabChangedButton.ClientID %>').click();
                             // }

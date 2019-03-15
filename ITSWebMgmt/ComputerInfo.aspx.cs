@@ -73,7 +73,7 @@ namespace ITSWebMgmt
             {
                 labelPwdExpireDate.Text = "LAPS not Enabled";
             }
-
+            
             buildBasicInfo();
             buildSCCMInfo();
             buildWarningSegment();
@@ -85,9 +85,6 @@ namespace ITSWebMgmt
                 Session[TabName + "build"] = true;
             }
 
-            Session["ActiveTab"] = tabName.Value;
-            string test = (string) Session["AvtiveTab"];
-            Debug.Write(test);
 
             //XXX check resourceID
 
