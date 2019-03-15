@@ -48,6 +48,11 @@ namespace ITSWebMgmt.Controllers
             SCCMcache.ResourceID = ResourceID;
         }
 
+        public void LoadIntoSCCMcache()
+        {
+            SCCMcache.LoadAllIntoCache();
+        }
+
         internal bool computerIsInRightOU()
         {
             string dn = DistinguishedName;

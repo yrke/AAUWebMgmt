@@ -32,6 +32,8 @@ namespace ITSWebMgmt.Caches
         public string adpath;
         private List<Type> types = new List<Type>();
         private List<PropertyValueCollection> AllProperties;
+        private Dictionary<string, List<string>> groups = new Dictionary<string, List<string>>();
+        private Dictionary<string, List<string>> groupsTransitive = new Dictionary<string, List<string>>();
 
         public ADcache() { }
 
@@ -141,14 +143,22 @@ namespace ITSWebMgmt.Caches
 
         public List<string> getGroups(string name)
         {
-            return result.Properties[name].Cast<string>().ToList();
+            if (!groups.ContainsKey(name))
+            {
+                groups.Add(name, result.Properties[name].Cast<string>().ToList());
+            }
+            return groups[name];
         }
 
         public List<string> getGroupsTransitive(string name)
         {
             string attName = $"msds-{name}Transitive";
-            DE.RefreshCache(attName.Split(','));
-            return DE.Properties[attName].Cast<string>().ToList();
+            if (!groupsTransitive.ContainsKey(attName))
+            {
+                DE.RefreshCache(attName.Split(','));
+                groupsTransitive.Add(attName, DE.Properties[attName].Cast<string>().ToList());
+            }
+            return groupsTransitive[attName];
         }
     }
 }

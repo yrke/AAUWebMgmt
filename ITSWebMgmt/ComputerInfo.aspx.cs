@@ -75,37 +75,38 @@ namespace ITSWebMgmt
             }
 
             buildBasicInfo();
+            buildSCCMInfo();
             buildWarningSegment();
 
-            List<string> loadedRapNames = new List<string> { "basicinfo", "tasks", "warnings"};
-            foreach (string TabName in loadedRapNames)
+            List<string> loadedTapNames = new List<string> { "basicinfo", "sccmInfo", "tasks", "warnings"};
+            
+            foreach (string TabName in loadedTapNames)
             {
                 Session[TabName + "build"] = true;
             }
 
+            Session["ActiveTab"] = tabName.Value;
+            string test = (string) Session["AvtiveTab"];
+            Debug.Write(test);
+
             //XXX check resourceID
 
-            //Load the data for the other tabs in background, I am not sure if this thread can access the asp labels
-            //This does not work properly: if the user presses a tab before all tabs is loaded
-            List<string> tapNames = new List<string>{ "groups", "sccmInfo", "sccmInventory", "sccmAV", "sccmHW", "rawdata"};
-            /*Thread backgroundThread = new Thread(_ =>
-            {
-                foreach (string tap in tapNames)
-                {
-                    LoadTab(tap);
-                    Debug.WriteLine("Is it waiting for this?");//YES
-                }
-            });
-            backgroundThread.IsBackground = true;
-            backgroundThread.Start();*/
+            // Load the data for the other tabs in background. I am not sure if this work properly if the user presses a tab before all tabs is loaded in the background
+            // If not it does not the load time will be longer
+            // backgroundLoadedTapNames = "groups", "sccmInventory", "sccmAV", "sccmHW", "rawdata"
 
+            //Load data into ADcache in the background
             ThreadPool.QueueUserWorkItem(_ =>
             {
-                foreach (string tap in tapNames)
-                {
-                    LoadTab(tap);    
-                    Debug.WriteLine("Is it waiting for this?");//NO
-                }
+                computer.getGroups("memberOf");
+                computer.getGroupsTransitive("memberOf");
+                computer.getAllProperties();
+            }, null);
+
+            //Load data into SCCMcache in the background
+            ThreadPool.QueueUserWorkItem(_ =>
+            {
+                computer.LoadIntoSCCMcache();
             }, null);
 
             ResultDiv.Visible = true;
@@ -119,6 +120,10 @@ namespace ITSWebMgmt
         protected void TabChanged_Click(object sender, EventArgs e)
         {
             string TabName = tabName.Value;
+            if (TabName == "groups-all")
+            {
+                TabName = "groups";
+            }
             Session["ActiveTab"] = TabName;
             LoadTab(TabName);
         }
@@ -126,18 +131,15 @@ namespace ITSWebMgmt
         protected void LoadTab(string TabName)
         {
             //Do not build if allready build
-            /*if (Session[TabName + "build"] != null)
+            if (Session[TabName + "build"] != null)
             {
                 return;
-            }*/
+            }
 
             switch (TabName)
             {
                 case "groups":
                     buildGroupsSegments();
-                    break;
-                case "sccmInfo":
-                    buildSCCMInfo();
                     break;
                 case "sccmInventory":
                     buildSCCMInventory();
