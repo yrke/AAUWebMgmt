@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 
 namespace ITSWebMgmt.Connectors
 {
@@ -67,9 +67,7 @@ namespace ITSWebMgmt.Connectors
                 return sb.ToString();
             }
 
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            js.MaxJsonLength = Int32.MaxValue;
-            dynamic json = js.Deserialize<dynamic>(userjson);
+            dynamic json = JsonConvert.DeserializeObject<dynamic>(userjson);
 
             sb.Append("<br /><br />" + string.Format("<a href=\"{0}{1}\">Servie Portal User Info</a>", "https://service.aau.dk/user/UserRelatedInfoById/", userID) + "<br/>");
 
@@ -155,9 +153,7 @@ namespace ITSWebMgmt.Connectors
 
             //string sMatchUPN = ",\\\"UPN\\\":\\\"(.)*\\\",";
 
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            js.MaxJsonLength = Int32.MaxValue;
-            dynamic jsonString = js.Deserialize<dynamic>(responseText);
+            dynamic jsonString = JsonConvert.DeserializeObject<dynamic>(responseText);
 
             //dynamic json = js.Deserialize<dynamic>((string)jsonString);
             return jsonString;
@@ -192,8 +188,7 @@ namespace ITSWebMgmt.Connectors
 
             var responseText = streamReader.ReadToEnd();
 
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            dynamic json = js.Deserialize<dynamic>(responseText);
+            dynamic json = JsonConvert.DeserializeObject<dynamic>(responseText);
 
             StringBuilder sb = new StringBuilder();
             string userjson = null;
@@ -203,9 +198,8 @@ namespace ITSWebMgmt.Connectors
             {
                 //sb.Append((string)obj["Id"]);
                 userjson = await lookupUserByUUID((string)obj["Id"], authkey);
-                JavaScriptSerializer jss = new JavaScriptSerializer();
-                jss.MaxJsonLength = Int32.MaxValue;
-                dynamic jsonString = jss.Deserialize<dynamic>(userjson);
+
+                dynamic jsonString = JsonConvert.DeserializeObject<dynamic>(userjson);
                 userID = (string)obj["Id"];
 
                 if (upn.Equals((string)jsonString["UPN"], StringComparison.CurrentCultureIgnoreCase))
