@@ -78,7 +78,7 @@ namespace ITSWebMgmt.Connectors
                     locality = adr.SelectSingleNode("span[5]").InnerText;
                     countryName = adr.SelectSingleNode("span[6]").InnerText;
                 }
-                catch (NullReferenceException e)
+                catch (NullReferenceException)
                 {
                     //Do nothing, just value missing, default value empty
                 }

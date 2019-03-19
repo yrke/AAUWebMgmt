@@ -22,9 +22,10 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.6.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Exchange.WebServices" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Exchange.WebServices.NETStandard" Version="1.1.3" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="2.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.1" />
     <PackageReference Include="SimpleImpersonation" Version="3.0.0" />
   </ItemGroup>

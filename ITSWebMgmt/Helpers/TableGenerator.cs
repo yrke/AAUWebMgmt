@@ -5,17 +5,16 @@ using System.Linq;
 using System.Management;
 using System.Text;
 using System.Web;
-using System.Web.UI.WebControls;
 
 namespace ITSWebMgmt.Helpers
 {
     public class TableGenerator
     {
-        private static string CreateGroupTable(List<string> groups)
+        private static string CreateGroupTable(List<string> group)
         {
             HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Domain", "Name" });
 
-            createGroupTableRows(groups, groupTableHelper, null);
+            createGroupTableRows(group, groupTableHelper, null);
 
             return groupTableHelper.GetTable();
         }
@@ -93,7 +92,7 @@ namespace ITSWebMgmt.Helpers
             }
         }
 
-        private static string buildgroupssegmentLabel(List<string> groups)
+        private static string buildgroupssegmentLabel(List<string> group)
         {
             /*Func<string[], string, bool> startsWith = delegate (string[] prefix, string value)
             {
@@ -107,7 +106,7 @@ namespace ITSWebMgmt.Helpers
             bool startsWithMBXorACL(string value) => StartsWith(prefixMBX_ACL, value);
 
             //Sort MBX and ACL Last
-            groups.Sort((a, b) =>
+            group.Sort((a, b) =>
             {
                 if (startsWithMBXorACL(a) && startsWithMBXorACL(b))
                 {
@@ -127,13 +126,7 @@ namespace ITSWebMgmt.Helpers
                 }
             });
 
-            return CreateGroupTable(groups);
-        }
-        
-        public static void BuildGroupsSegments(List<string> groups, List<string> groupsTransitive, Label groupssegmentLabel, Label groupsAllsegmentLabel)
-        {
-            groupssegmentLabel.Text = buildgroupssegmentLabel(groups);
-            groupsAllsegmentLabel.Text = buildgroupssegmentLabel(groupsTransitive);
+            return CreateGroupTable(group);
         }
 
         public static string buildRawTable(List<PropertyValueCollection> properties)

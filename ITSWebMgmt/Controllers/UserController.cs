@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
 using System.Management;
+using System.Threading.Tasks;
 
 namespace ITSWebMgmt.Controllers
 {
@@ -216,7 +217,7 @@ namespace ITSWebMgmt.Controllers
                 string newOU = string.Format("{0},{1}", ou[count - 2], ou[count - 1]);
                 string newPath = string.Format("{0}{1}/{2},{3}", protocol, string.Join(".", dcpath).Replace("dc=", ""), newOU, string.Join(",", dcpath));
 
-                logger.Info("user " + System.Web.HttpContext.Current.User.Identity.Name + " changed OU on user to: " + newPath + " from " + adpath + ".");
+                logger.Info("user " + ControllerContext.HttpContext.User.Identity.Name + " changed OU on user to: " + newPath + " from " + adpath + ".");
 
                 var newLocaltion = new DirectoryEntry(newPath);
                 ADcache.DE.MoveTo(newLocaltion);
@@ -231,7 +232,7 @@ namespace ITSWebMgmt.Controllers
         public string getADPathFromUsername(string username)
         {
             //XXX, this is a use input, might not be save us use in log 
-            logger.Info("User {0} lookedup user {1}", System.Web.HttpContext.Current.User.Identity.Name, username);
+            logger.Info("User {0} lookedup user {1}", ControllerContext.HttpContext.User.Identity.Name, username);
 
             if (username.Contains("\\"))
             {
@@ -262,14 +263,14 @@ namespace ITSWebMgmt.Controllers
 
         public void unlockUserAccount()
         {
-            logger.Info("User {0} unlocked useraccont {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
+            logger.Info("User {0} unlocked useraccont {1}", ControllerContext.HttpContext.User.Identity.Name, adpath);
             
             ADcache.DE.Properties["LockOutTime"].Value = 0; //unlock account
             ADcache.DE.CommitChanges(); //may not be needed but adding it anyways
             ADcache.DE.Close();
         }
 
-        public GetUserAvailabilityResults getFreeBusyResults()
+        public Task<GetUserAvailabilityResults> getFreeBusyResults()
         {
             ExchangeService service = new ExchangeService(ExchangeVersion.Exchange2010_SP2);
             service.UseDefaultCredentials = true; // Use domain account for connecting 
@@ -300,7 +301,7 @@ namespace ITSWebMgmt.Controllers
         public void toggle_userprofile()
         {
             //XXX log what the new value of profile is :)
-            logger.Info("User {0} toggled romaing profile for user  {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
+            logger.Info("User {0} toggled romaing profile for user  {1}", ControllerContext.HttpContext.User.Identity.Name, adpath);
 
             //string profilepath = (string)(ADcache.DE.Properties["profilePath"])[0];
 

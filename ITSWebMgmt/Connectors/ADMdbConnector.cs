@@ -127,7 +127,7 @@ namespace ITSWebMgmt.Connectors
 
                     return "" + endYear + "-" + month[endMonth.ToLower()] + "-" + endday;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     logger.Debug("User not found on key username: " + domain + "\\" + username);
                     return "UserInfo Error on Lookup";

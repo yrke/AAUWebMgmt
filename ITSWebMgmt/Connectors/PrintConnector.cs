@@ -31,24 +31,31 @@ namespace ITSWebMgmt.Connectors
                 return "No valid creds for Equitrac";
             }
 
-
-            using (Impersonation.LogonUser(domain, username, secret, LogonType.NewCredentials))
+            var credentials = new UserCredentials(domain, username, secret);
+            Impersonation.RunAsUser(credentials, LogonType.NewCredentials, () =>
             {
                 // do whatever you want as this user.
 
                 //SqlConnection myConnection = new SqlConnection("Data Source = ad-sql1-i13.aau.dk\\sqlequitrac; Database = eqcas; Integrated Security=SSPI");
                 SqlConnection myConnection = new SqlConnection("Data Source = AD-SQL2-MISC.AAU.DK; Database = eqcas; Integrated Security=SSPI");
 
-                try { 
+                bool SQLSuccess = true;
+
+                try
+                {
                     myConnection.Open();
-                }catch (SqlException e) {
+                }
+                catch (SqlException)
+                {
                     sb.Append("Error connection to equitrac database.");
-                    return sb.ToString();
+                    SQLSuccess = false;
                 }
 
-                string adguid = "AD:{" + userGuid + "}";
+                if (SQLSuccess)
+                {
+                    string adguid = "AD:{" + userGuid + "}";
 
-                string sqlcommand = @"
+                    string sqlcommand = @"
                     	SELECT 
                     		account.creation, 
                     		account.lastmodified, 
@@ -68,74 +75,77 @@ namespace ITSWebMgmt.Connectors
                     		LEFT JOIN cas_location             loc  ON loc.id     = account.locationid
                     		Where syncidentifier = @adguid;
                    ";
-                var command = new SqlCommand(sqlcommand, myConnection);
-                command.Parameters.AddWithValue("@adguid", adguid);
 
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
+                    var command = new SqlCommand(sqlcommand, myConnection);
+                    command.Parameters.AddWithValue("@adguid", adguid);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        //sb.Append("User: " + reader["AAUCardXerox"]);
-                        string AAUCardXerox = reader["AAUCardXerox"] as string;
-                        string AAUCardKonica = reader["AAUCardKonica"] as string;
-                        string departmentThing = reader["departmentThing"] as string;
-                        int state = reader.GetByte(reader.GetOrdinal("state"));
-
-                        decimal free = reader.GetDecimal(reader.GetOrdinal("freemoney"));
-                        decimal balance = reader.GetDecimal(reader.GetOrdinal("balance"));
-                        decimal paid = balance - free;
-
-
-
-                        //sb.Append("stuff:" + AAUCardXerox);
-                        //sb.Append("stuff1:" + AAUCardKonica);
-                        //sb.Append("stuff2:" + state);
-
-                        bool cardok = true;
-
-                        if (state != 1)
+                        if (reader.Read())
                         {
-                            sb.Append("Error! Users is disabled in Equitrac<br/>");
-                            cardok = false;
-                        } 
-                        if (String.IsNullOrWhiteSpace(AAUCardKonica))
-                        {
-                            sb.Append("Error! Users is missing AAUCard information in Konica format <br/>");
-                            cardok = false;
+                            //sb.Append("User: " + reader["AAUCardXerox"]);
+                            string AAUCardXerox = reader["AAUCardXerox"] as string;
+                            string AAUCardKonica = reader["AAUCardKonica"] as string;
+                            string departmentThing = reader["departmentThing"] as string;
+                            int state = reader.GetByte(reader.GetOrdinal("state"));
+
+                            decimal free = reader.GetDecimal(reader.GetOrdinal("freemoney"));
+                            decimal balance = reader.GetDecimal(reader.GetOrdinal("balance"));
+                            decimal paid = balance - free;
+
+
+
+                            //sb.Append("stuff:" + AAUCardXerox);
+                            //sb.Append("stuff1:" + AAUCardKonica);
+                            //sb.Append("stuff2:" + state);
+
+                            bool cardok = true;
+
+                            if (state != 1)
+                            {
+                                sb.Append("Error! Users is disabled in Equitrac<br/>");
+                                cardok = false;
+                            }
+                            if (String.IsNullOrWhiteSpace(AAUCardKonica))
+                            {
+                                sb.Append("Error! Users is missing AAUCard information in Konica format <br/>");
+                                cardok = false;
+                            }
+                            if (String.IsNullOrWhiteSpace(AAUCardXerox))
+                            {
+                                sb.Append("Error! Users is missing AAUCard information in Xerox format <br/>");
+                                cardok = false;
+                            }
+
+                            if (cardok)
+                            {
+                                sb.Append("AAU Card OK <br/>");
+                            }
+
+                            if (String.IsNullOrEmpty(departmentThing))
+                            {
+
+                                sb.Append("<br/>");
+                                sb.Append("Free Credits: " + free);
+                                sb.Append("<br/>");
+                                sb.Append("Paid Credits: " + paid);
+                                sb.Append("<br/>");
+                                sb.Append("Remaning Credits: " + balance);
+
+                            }
+                            else
+                            {
+                                sb.Append("User has \"free print\"");
+                            }
+
                         }
-                        if (String.IsNullOrWhiteSpace(AAUCardXerox))
-                        {
-                            sb.Append("Error! Users is missing AAUCard information in Xerox format <br/>");
-                            cardok = false;
-                        }
-
-                        if (cardok)
-                        {
-                            sb.Append("AAU Card OK <br/>");
-                        }
-
-                        if ( String.IsNullOrEmpty(departmentThing)){ 
-
-                            sb.Append("<br/>");
-                            sb.Append("Free Credits: " + free);
-                            sb.Append("<br/>");
-                            sb.Append("Paid Credits: " + paid);
-                            sb.Append("<br/>");
-                            sb.Append("Remaning Credits: " + balance);
-
-                        } else
-                        {
-                            sb.Append("User has \"free print\"");
-                        }
-
                     }
+
+                    myConnection.Close();
                 }
 
-                myConnection.Close();
-
-
                 //ad:{8d0ef212-766e-44b8-8900-ead976e4f7cb} // kyrke
-            }
+            });
 
 
 
