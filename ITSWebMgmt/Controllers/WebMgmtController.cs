@@ -1,11 +1,12 @@
 ﻿using ITSWebMgmt.Caches;
+using Microsoft.AspNetCore.Mvc;
 using NLog;
 using System.Collections.Generic;
 using System.DirectoryServices;
 
 namespace ITSWebMgmt.Controllers
 {
-    public class Controller<T> where T : ADcache
+    public abstract class WebMgmtController<T> : Controller where T : ADcache
     {
         public T ADcache;
         public string Path { get => ADcache.Path; }

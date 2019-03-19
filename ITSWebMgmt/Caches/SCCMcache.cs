@@ -464,7 +464,12 @@ namespace ITSWebMgmt.Caches
         public static T GetPropertyAs<T>(this ManagementObjectCollection moc, string property)
         {
             var tc = TypeDescriptor.GetConverter(typeof(T));
-            return (T)(tc.ConvertFromInvariantString(GetPropertyAsString(moc, property)));
+            var temp = GetPropertyAsString(moc, property);
+            if (temp == "")
+            {
+                return default(T);
+            }
+            return (T)(tc.ConvertFromInvariantString(temp));
         }
 
         public static int GetPropertyInGB(this ManagementObjectCollection moc, string property)
@@ -474,7 +479,8 @@ namespace ITSWebMgmt.Caches
 
         public static string GetPropertyAsString(this ManagementObjectCollection moc, string property)
         {
-            return GetProperty(moc, property).ToString();
+            var temp = GetProperty(moc, property);
+            return temp == null ? ""  : temp.ToString();
         }
     }
 }

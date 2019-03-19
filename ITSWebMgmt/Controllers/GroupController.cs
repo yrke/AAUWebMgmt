@@ -1,5 +1,6 @@
 ﻿using ITSWebMgmt.Caches;
 using ITSWebMgmt.Helpers;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,13 @@ using System.Web;
 
 namespace ITSWebMgmt.Controllers
 {
-    public class GroupController : Controller<GroupADcache>
+    public class GroupController : WebMgmtController<GroupADcache>
     {
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         public string Description { get => ADcache.getProperty("description"); }
         public string Info { get => ADcache.getProperty("info"); }
         public string Name { get => ADcache.getProperty("name"); }

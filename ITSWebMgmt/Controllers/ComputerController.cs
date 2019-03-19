@@ -1,15 +1,21 @@
-﻿using ITSWebMgmt.Caches;
-using ITSWebMgmt.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.DirectoryServices;
 using System.Linq;
+using ITSWebMgmt.Caches;
+using Microsoft.AspNetCore.Mvc;
+using System.DirectoryServices;
 using System.Management;
+using ITSWebMgmt.Helpers;
 
 namespace ITSWebMgmt.Controllers
 {
-    public class ComputerController : Controller<ComputerADcache>
+    public class ComputerController : WebMgmtController<ComputerADcache>
     {
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         public string ResourceID;
         private SCCMcache SCCMcache;
         public string ConfigPC = "Unknown";
@@ -33,7 +39,7 @@ namespace ITSWebMgmt.Controllers
         //ADcache
         public string ComputerName { get => ADcache.ComputerName; }
         public string Domain { get => ADcache.Domain; }
-        public bool ComputerFound { get => ADcache.ComputerFound; } 
+        public bool ComputerFound { get => ADcache.ComputerFound; }
         public string AdminPasswordExpirationTime { get => ADcache.getProperty("ms-Mcs-AdmPwdExpirationTime"); }
         public string ManagedBy { get => ADcache.getProperty("managedBy"); set => ADcache.saveProperty("managedBy", value); }
         public string DistinguishedName { get => ADcache.getProperty("distinguishedName"); }
@@ -68,7 +74,7 @@ namespace ITSWebMgmt.Controllers
                 //Computer should be in OU Clients
                 return true;
             }
-            
+
             return false;
         }
 

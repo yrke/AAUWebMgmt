@@ -1,4 +1,5 @@
 ﻿using ITSWebMgmt.Caches;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Exchange.WebServices.Data;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,13 @@ using System.Management;
 
 namespace ITSWebMgmt.Controllers
 {
-    public class UserController : Controller<UserADcache>
+    public class UserController : WebMgmtController<UserADcache>
     {
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         private SCCMcache SCCMcache;
 
         public UserController()
