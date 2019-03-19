@@ -48,7 +48,12 @@ namespace ITSWebMgmt.WebMgmtErrors
             Severeness = Severity.Warning;
         }
 
-        public override bool HaveError() => computer.LogicalDisk.GetPropertyInGB("FreeSpace") <= 5;
+        public override bool HaveError()
+        {
+            int space = computer.LogicalDisk.GetPropertyInGB("FreeSpace");
+            if (space == 0) return false;
+            return computer.LogicalDisk.GetPropertyInGB("FreeSpace") <= 5;
+        }
     }
 
     public class NotStandardOU : UserWebMgmtError
