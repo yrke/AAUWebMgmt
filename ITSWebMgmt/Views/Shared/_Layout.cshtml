@@ -1,11 +1,13 @@
 ﻿<!DOCTYPE html>
-<html>
-<head>
+
+<html lang="en">
+<head runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ITSWebMgmt</title>
+    <title>@ViewData["Title"] - ITS Web Mgmt</title>
 
-    <environment include="Development">
+    <!--<environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     </environment>
     <environment exclude="Development">
@@ -13,12 +15,86 @@
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
               crossorigin="anonymous"
-              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"/>
-    </environment>
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
+    </environment>-->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.8/semantic.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.8/semantic.min.css">
     <link rel="stylesheet" href="~/css/site.css" />
+
+    <style type="text/css">
+        body {
+            background-color: #FFFFFF;
+        }
+
+        .ui.menu .item img.logo {
+            margin-right: 1.5em;
+        }
+
+        .main.container {
+            margin-top: 7em;
+        }
+
+        .wireframe {
+            margin-top: 2em;
+        }
+
+        .ui.footer.segment {
+            margin: 5em 0em 0em;
+            padding: 5em 0em;
+        }
+    </style>
+
+    <!--
+    To collect end-user usage analytics about your application,
+    insert the following script into each page you want to track.
+    Place this code immediately before the closing </head> tag,
+    and before any other scripts. Your first data will appear
+    automatically in just a few seconds.
+    -->
+    <script type="text/javascript">
+        var appInsights = window.appInsights || function (config) {
+            function r(config) { t[config] = function () { var i = arguments; t.queue.push(function () { t[config].apply(t, i) }) } } var t = { config: config }, u = document, e = window, o = "script", s = u.createElement(o), i, f; for (s.src = config.url || "//az416426.vo.msecnd.net/scripts/a/ai.0.js", u.getElementsByTagName(o)[0].parentNode.appendChild(s), t.cookie = u.cookie, t.queue = [], i = ["Event", "Exception", "Metric", "PageView", "Trace"]; i.length;)r("track" + i.pop()); return r("setAuthenticatedUserContext"), r("clearAuthenticatedUserContext"), config.disableExceptionTracking || (i = "onerror", r("_" + i), f = e[i], e[i] = function (config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t["_" + i](config, r, u, e, o), s }), t
+        }({
+            instrumentationKey: "ac0e2229-e584-45dd-8e1f-b9a48b4207be"
+        });
+
+        window.appInsights = appInsights;
+        appInsights.trackPageView();
+    </script>
 </head>
 <body>
     <header>
+        <div class="ui fixed inverted menu">
+            <div class="ui container">
+                <div href="#" class="header item">
+                    <img class="logo" src="http://www.resources.aau.dk/design2013/images/logo.png">
+                    ITS Webmgmt
+                </div>
+                <a href="/" class="item">Home</a>
+                <div href="#" class="ui simple dropdown item">
+                    Tools <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a class="item" href="/UserInfo.aspx">User Info</a>
+                        <a class="item" href="/ComputerInfo.aspx">Computer Info</a>
+                        <a class="item" href="/DefendpointChallengeResponse.aspx">Defendpoint</a>
+                    </div>
+                </div>
+                <a href="onenote:https://docs.its.aau.dk/Documentation/SupportDokumentation" class="item">Dokumentation (onenote)</a>
+
+
+            </div>
+        </div>
+    </header>
+
+    <div class="ui main text container">
+        <asp:ContentPlaceHolder ID="MainContent" runat="server">
+        </asp:ContentPlaceHolder>
+    </div>
+
+    <!--<header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ITSWebMgmt</a>
@@ -38,19 +114,13 @@
                 </div>
             </div>
         </nav>
-    </header>
+    </header>-->
     <div class="container">
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2019 - ITSWebMgmt - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -73,5 +143,18 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @RenderSection("Scripts", required: false)
+
+
+    <div class="ui inverted vertical footer segment">
+        <div class="ui center aligned container">
+            <img src="http://www.resources.aau.dk/design2013/images/logo.png" class="ui centered mini image">
+            <p>&copy; <%: DateTime.Now.Year %> - ITS Web Manager by kyrke</p>
+        </div>
+    </div>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2019 - ITSWebMgmt - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
 </body>
 </html>

@@ -2,7 +2,55 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
+
+    <div class="ui segment">
+        <div class="ui right internal attached rail" style="margin-top:50px;">
+            <div class="ui segment" style="">
+                <h3>Nyheder</h3>
+                <ul>
+                <li>
+                    2019-03-04 -  Now UserInfo searches on proxyAddress and UPN
+                    <br /><br />
+                <li>
+                    2019-02-27 -  Managed By can now be set on computeres from webmgmt
+                    <br /><br />
+                <li>
+                    2019-02-01 -  Inventory details added for computer
+                    <br /><br />
+                <li>
+                    2017-12-04 -  Added feature to generate defendpoint challange/response keys
+                    <br /><br />
+                <li>
+                    2017-07-05 -  Groups now shows direct and recursive memberships
+                    <br /><br />
+                <li>
+                    2017-03-31 -  More print information from EquiTrac
+                    <br /><br />
+
+                    </ul>
+
+
+
+            </div>
+        </div>
+        <h1>ITSWebMgmt</h1>
+
+        <a href="/UserInfo.aspx">User Info</a><br />
+        <a href="/ComputerInfo.aspx">Computer Info</a><br />
+        <a class="item" href="/DefendpointChallengeResponse.aspx">Defendpoint</a><br />
+        <br /><br /><br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br /><br />
+    </div>
+    <div class="ui segment">
+        Du kan bidrage til udviklingen af Webmgmt på siden <a href="https://github.com/yrke/AAUWebMgmt">github.com/yrke/AAUWebMgmt</a>
+    </div>
+
+</asp:Content>
