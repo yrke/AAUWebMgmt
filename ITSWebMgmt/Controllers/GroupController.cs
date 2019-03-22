@@ -5,28 +5,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ITSWebMgmt.Models;
 using System.Web;
+using Group = ITSWebMgmt.Models.Group;
 
 namespace ITSWebMgmt.Controllers
 {
     public class GroupController : WebMgmtController<GroupADcache>
     {
-        public IActionResult Index()
+        //https://localhost:44322/group/index?grouppath=LDAP:%2f%2fCN%3dcm12_config_AAU10%2cOU%3dConfigMgr%2cOU%3dGroups%2cDC%3dsrv%2cDC%3daau%2cDC%3ddk
+        public IActionResult Index(string grouppath)
         {
-            return View();
+            ADcache = new GroupADcache(grouppath);
+            Group = new Group(this);
+            Group.buildResult();
+            return View(Group);
         }
 
+        public Group Group;
         public string Description { get => ADcache.getProperty("description"); }
         public string Info { get => ADcache.getProperty("info"); }
         public string Name { get => ADcache.getProperty("name"); }
         public string ManagedBy { get => ADcache.getProperty("managedBy"); }
         public string GroupType { get => ADcache.getProperty("groupType").ToString(); }
         public string DistinguishedName { get => ADcache.getProperty("distinguishedName").ToString(); }
-
-        public GroupController(string adpath)
-        {
-            ADcache = new GroupADcache(adpath);
-        }
 
         public bool isGroup()
         {
@@ -43,6 +45,24 @@ namespace ITSWebMgmt.Controllers
             return ((count == 3 && oupath[count - 1].Equals("OU=Groups") && oupath[count - 2].Equals("OU=Resource Access")));
         }
 
+        [HttpPost]
+        public void SaveEditManagedBy(SimpleModel model)//TODO use AJAX to avoid page reload https://stackoverflow.com/questions/2866063/submit-form-without-page-reloading
+        {
+            if (ModelState.IsValid)
+            {
+                ManagedByChanger managedByChanger = new ManagedByChanger(ADcache);
+                managedByChanger.SaveEditManagedBy(model.Text);
+                if (managedByChanger.ErrorMessage != "")
+                {
+                    //TODO Show error to user
+                }
+                else
+                {
+                    //TODO Show updated value
+                }
+            }
+        }
+
         public string[] GetFileshareTables()
         {
             //TODO Things to show in basic info: Type fileshare/department and Domain plan/its/adm
@@ -57,10 +77,10 @@ namespace ITSWebMgmt.Controllers
             foreach (string accessName in accessNames)
             {
                 string temp = Regex.Replace(adpath, @"_[a-zA-Z]*,OU", $"_{accessName},OU");
-                GroupController group = null;
+                ADcache group = null;
                 try
                 {
-                    group = new GroupController(temp);
+                    group = new GroupADcache(temp);
                 }
                 catch (Exception)
                 {

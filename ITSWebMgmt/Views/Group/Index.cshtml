@@ -1,0 +1,154 @@
+﻿
+@model ITSWebMgmt.Models.Group
+@{
+    ViewData["Title"] = "GroupInfo";
+}
+
+        <!-- Loader -->
+        <div id="loader">
+            <div class="ui active dimmer" style="display: none">
+                <div class="ui text loader">Loading</div>
+            </div>
+        </div>
+
+        <!-- page seach header -->
+        <div>
+            <h1>@Html.DisplayFor(model => model.Title)</h1>
+            <!--
+            Group Name
+            <div class="ui action input">
+                <asp:TextBox ID="txtbxGroupName" runat="server" Text="" CssClass="ui input focus" placeholder="Search..." />
+                <asp:Button runat="server" CssClass="ui button" ID="sumbit" OnClick="sumbit_Click" Text="Søg" OnClientClick='$("#loader > div").show("fast");' />
+            </div>
+            -->
+        </div>
+
+
+
+        <!-- page content -->
+
+
+        <script>
+            $(document).ready(function () {
+                $('.menu .item').tab({ history: false });
+            });
+        </script>
+
+        <br />
+        <br />
+        <div runat="server" id="ResultDiv">
+
+
+
+
+            <div class="ui grid">
+                <div class="four wide column">
+                    <div class="ui vertical fluid tabular menu">
+                        <a class="active item" data-tab="basicinfo">Basic Info</a>
+                        <a class="item" data-tab="members">Members</a>
+                        <a class="item" data-tab="memberOf">Member Of</a>
+                        <!--<a class="item" data-tab="">Recurs memeberof?</a>-->
+                        <a class="item" data-tab="rawData">Raw Data</a>
+
+                    </div>
+                </div>
+                <div class="twelve wide stretched column">
+                    <div class="ui tab segment">
+                        none<!-- spacer as the fist elemen else is placed differencet -->
+                    </div>
+                    <div class="ui active tab segment" data-tab="basicinfo">
+                        <h2>Basic Info</h2>
+                        <table class="ui definition table">
+                            <tbody>
+                                <tr>
+                                    <td>Name:</td>
+                                    <td>
+                                        @Html.DisplayFor(model => model.group.Name)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Domain:</td>
+                                    <td>
+                                        @Html.DisplayFor(model => model.Domain)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Managed By:</td>
+                                    <td>
+                                        <!--Use AJAX insted of the below-->
+                                        @Html.Raw(Model.ManagedBy)
+                                        @using (Html.BeginForm("SaveEditManagedBy", "Group", FormMethod.Post))
+                                        {
+                                            <input type="text" name="Text" id="Text" />
+                                            <button type="submit">Save</button>
+                                        }
+                                        <br>
+                                        @Html.DisplayFor(model => model.ManagedByError)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Is Security group:</td>
+                                    <td>
+                                        @Html.DisplayFor(model => model.SecurityGroup)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Group Scope:</td>
+                                    <td>
+                                        @Html.DisplayFor(model => model.GroupScope)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Group Description:</td>
+                                    <td>
+                                        @Html.DisplayFor(model => model.Description)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Group Info:</td>
+                                    <td>
+                                        @Html.DisplayFor(model => model.Info)
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="ui tab segment" data-tab="members">
+                        <h2>Members</h2>
+                        @Html.Raw(Model.FileshareInfo)
+                        <div class="ui two item menu">
+                            <a data-tab="groups-direct" class="item">Direct Groups</a>
+                            <a data-tab="groups-all" class="item"> Recursive groups</a>
+                        </div>
+
+                        <div class="ui active tab segment" data-tab="groups-direct">
+                            @Html.Raw(Model.GroupSegment)
+                        </div>
+
+                        <div class="ui tab segment" data-tab="groups-all">
+                            @Html.Raw(Model.GroupsAllSegment)
+                        </div>
+                    </div>
+                    <div class="ui tab segment" data-tab="memberOf">
+                        <h2>Member Of</h2>
+                        @Html.Raw(Model.FileshareInfo)
+                        <div class="ui two item menu">
+                            <a data-tab="groups-direct" class="item">Direct Groups</a>
+                            <a data-tab="groups-all" class="item"> Recursive groups</a>
+                        </div>
+
+                        <div class="ui active tab segment" data-tab="groups-direct">
+                            @Html.Raw(Model.GroupOfSegment)
+                        </div>
+
+                        <div class="ui tab segment" data-tab="groups-all">
+                            @Html.Raw(Model.GroupsOfAllSegment)
+                        </div>
+                    </div>
+                    <div class="ui tab segment" data-tab="rawData">
+                        <h2>Raw Data</h2>
+                        @Html.Raw(Model.Raw)
+                    </div>
+                </div>
+            </div>
+        </div>

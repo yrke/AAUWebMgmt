@@ -92,7 +92,7 @@ namespace ITSWebMgmt.Helpers
             }
         }
 
-        private static string buildgroupssegmentLabel(List<string> group)
+        public static string BuildgroupssegmentLabel(List<string> groupMembers)
         {
             /*Func<string[], string, bool> startsWith = delegate (string[] prefix, string value)
             {
@@ -106,7 +106,7 @@ namespace ITSWebMgmt.Helpers
             bool startsWithMBXorACL(string value) => StartsWith(prefixMBX_ACL, value);
 
             //Sort MBX and ACL Last
-            group.Sort((a, b) =>
+            groupMembers.Sort((a, b) =>
             {
                 if (startsWithMBXorACL(a) && startsWithMBXorACL(b))
                 {
@@ -126,7 +126,7 @@ namespace ITSWebMgmt.Helpers
                 }
             });
 
-            return CreateGroupTable(group);
+            return CreateGroupTable(groupMembers);
         }
 
         public static string buildRawTable(List<PropertyValueCollection> properties)
