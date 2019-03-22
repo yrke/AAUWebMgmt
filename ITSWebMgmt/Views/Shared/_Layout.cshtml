@@ -21,31 +21,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.8/semantic.min.js"></script>
 
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.8/semantic.min.css">
     <link rel="stylesheet" href="~/css/site.css" />
-
-    <style type="text/css">
-        body {
-            background-color: #FFFFFF;
-        }
-
-        .ui.menu .item img.logo {
-            margin-right: 1.5em;
-        }
-
-        .main.container {
-            margin-top: 7em;
-        }
-
-        .wireframe {
-            margin-top: 2em;
-        }
-
-        .ui.footer.segment {
-            margin: 5em 0em 0em;
-            padding: 5em 0em;
-        }
-    </style>
 
     <!--
     To collect end-user usage analytics about your application,
@@ -73,87 +51,35 @@
                     <img class="logo" src="http://www.resources.aau.dk/design2013/images/logo.png">
                     ITS Webmgmt
                 </div>
-                <a href="/" class="item">Home</a>
+                <a class="item" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                 <div href="#" class="ui simple dropdown item">
                     Tools <i class="dropdown icon"></i>
                     <div class="menu">
                         <a class="item" href="/UserInfo.aspx">User Info</a>
                         <a class="item" href="/ComputerInfo.aspx">Computer Info</a>
                         <a class="item" href="/DefendpointChallengeResponse.aspx">Defendpoint</a>
+                        <a class="item" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </div>
                 </div>
                 <a href="onenote:https://docs.its.aau.dk/Documentation/SupportDokumentation" class="item">Dokumentation (onenote)</a>
-
-
             </div>
         </div>
     </header>
 
     <div class="ui main text container">
-        <asp:ContentPlaceHolder ID="MainContent" runat="server">
-        </asp:ContentPlaceHolder>
-    </div>
-
-    <!--<header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ITSWebMgmt</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>-->
-    <div class="container">
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
-        </script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
-        </script>
-    </environment>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
     @RenderSection("Scripts", required: false)
-
-
-    <div class="ui inverted vertical footer segment">
-        <div class="ui center aligned container">
-            <img src="http://www.resources.aau.dk/design2013/images/logo.png" class="ui centered mini image">
-            <p>&copy; <%: DateTime.Now.Year %> - ITS Web Manager by kyrke</p>
-        </div>
-    </div>
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2019 - ITSWebMgmt - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="ui inverted vertical footer segment">
+            <div class="ui center aligned container">
+                <img src="http://www.resources.aau.dk/design2013/images/logo.png" class="ui centered mini image">
+                <p>&copy; @DateTime.Now.Year - ITS Web Manager by kyrke</p>
+            </div>
         </div>
     </footer>
 </body>
