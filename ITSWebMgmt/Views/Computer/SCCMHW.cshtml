@@ -1,0 +1,16 @@
+﻿@model ITSWebMgmt.Models.Computer
+
+<div class="ui active loader" style="display: none" id="load"></div>
+<h2>Hardware Info</h2>
+<h3>RAM</h3>
+@Html.DisplayFor(model => model.SCCMRAM)
+<h3>Processor</h3>
+@Html.DisplayFor(model => model.SCCMProcessor)
+<h3>Video controller</h3>
+@Html.DisplayFor(model => model.SCCMVC)
+<h3>BIOS</h3>
+@Html.DisplayFor(model => model.SCCMBIOS)
+<h3>Logical Disk</h3>
+@Html.DisplayFor(model => model.SCCMLD)
+<h3>Disk</h3>
+@Html.DisplayFor(model => model.SCCMDisk)

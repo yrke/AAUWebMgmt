@@ -6,14 +6,31 @@ using Microsoft.AspNetCore.Mvc;
 using System.DirectoryServices;
 using System.Management;
 using ITSWebMgmt.Helpers;
+using ITSWebMgmt.Models;
+using System.Net;
+using ITSWebMgmt.Functions;
 
 namespace ITSWebMgmt.Controllers
 {
     public class ComputerController : WebMgmtController<ComputerADcache>
     {
-        public IActionResult Index()
+        public IActionResult Index(string computername)
         {
-            return View();
+            Computer ComputerModel = new Computer(this);
+
+            if (computername != null)
+            {
+                //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
+                ADcache = new ComputerADcache(computername, ControllerContext.HttpContext.User.Identity.Name);
+                SCCMcache = new SCCMcache();
+                ResourceID = getSCCMResourceIDFromComputerName();
+                SCCMcache.ResourceID = ResourceID;
+                ComputerModel.buildlookupComputer();
+                TempData.Put("test", ADcache);
+                //TempData.Put("sccmtest", SCCMcache); //Not working
+            }
+
+            return View(ComputerModel);
         }
 
         public string ResourceID;
@@ -44,14 +61,30 @@ namespace ITSWebMgmt.Controllers
         public string ManagedBy { get => ADcache.getProperty("managedBy"); set => ADcache.saveProperty("managedBy", value); }
         public string DistinguishedName { get => ADcache.getProperty("distinguishedName"); }
 
-
-        public ComputerController(string computername, string username)
+        [HttpGet]
+        public ActionResult LoadTab(string tabName)
         {
-            //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
-            SCCMcache = new SCCMcache();
-            ADcache = new ComputerADcache(computername, username);
-            ResourceID = getSCCMResourceIDFromComputerName();
-            SCCMcache.ResourceID = ResourceID;
+            //TODO get computername as argument to avoid naming colitions
+            Computer ComputerModel = TempData.Get<Computer>("Controller");
+            switch (tabName)
+            {
+                case "groups":
+                    ComputerModel.buildGroupsSegments();
+                    break;
+                case "sccmInventory":
+                    ComputerModel.buildSCCMInventory();
+                    break;
+                case "sccmAV":
+                    ComputerModel.buildSCCMAntivirus();
+                    break;
+                case "sccmHW":
+                    ComputerModel.biuldSCCMHardware();
+                    return PartialView("SCCMHW", ComputerModel);
+                case "rawdata":
+                    ComputerModel.buildRaw();
+                    return PartialView("Raw", ComputerModel);
+            }
+            return PartialView(tabName, ComputerModel);
         }
 
         public void LoadIntoSCCMcache()

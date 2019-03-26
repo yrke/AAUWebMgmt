@@ -1,0 +1,204 @@
+﻿@model ITSWebMgmt.Models.Computer
+@{
+    ViewData["Title"] = "Index";
+}
+    <script>
+        $(document).ready(function () {
+            $('.menu .item').tab({ history: false });
+        });
+    </script>
+    <div id="loader">
+        <div class="ui active dimmer" style="display: none">
+            <div class="ui text loader">Loading</div>
+        </div>
+    </div>
+
+    <h1>Computer Info</h1>
+    <div>
+        <form method="get">
+            Computername:
+            <div class="ui action input">
+
+                <input name="computername" class="ui input focus" value=@Html.DisplayFor(model => model.ComputerName) />
+
+                <input type="submit" value="Search" onclick='$("#loader > div").show("fast");'>
+            </div>
+        </form>
+        <br />
+    </div>
+
+    <div id="content">
+        <script>
+            $(document).ready(function () {
+                $('.menu .item').tab({
+                    'onVisible': function () {
+                        var dataTabName = $(this).attr("data-tab");
+                        $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("LoadTab", "Computer")',
+                            contentType: "application/html; charset=utf-8",
+                            data: { tabName: dataTabName},
+                            success: function (returnedData) {
+                                //document.getElementById(dataTabName).html(returnedData);
+                                $("#rawdata").html(returnedData);
+                            },
+                            error: function (response) {
+                                alert('error');
+                            }
+                        });
+
+                        // TODO: Make only load tab first time in JS to avoid blink on button click and server contact
+                        // The code below should do it, but it returns false for all tabs after first case where it is true
+                        // The hidden field is properly only updated on postback and it will therefore not be possible to do the above
+                        // alert(dataTabName + " " + document.getElementById("<%= tabName.ClientID %>").value +" " +'<%= tabName.Value %>');
+                        // if ('<%= Session[tabName.Value + "build"] == null %>' == 'True') {
+                        //     document.getElementById('<%= tabChangedButton.ClientID %>').click();
+                        // }
+                    }
+                });
+            });
+        </script>
+        @Html.DisplayFor(model => model.Result)
+        @if(Model.ShowResultDiv)
+        {
+            <div runat="server" id="warningsAndErrorDIV">
+                @Html.DisplayFor(model => model.ErrorCountMessage)
+            </div>
+            <div class="ui grid">
+                <div class="four wide column">
+                    <div class="ui vertical fluid tabular menu">
+                        <a class="active item" data-tab="basicinfo">Basic Info</a>
+                        <!--<a class="item" data-tab="userInformation">User Information</a>-->
+                        <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
+                        <a class="item" data-tab="groups">Groups</a>
+                        <a class="item" data-tab="sccmInfo">SCCM Info</a>
+                        <a class="item" data-tab="sccmInventory">Inventory</a>
+                        <a class="item" data-tab="sccmAV">Antivirus</a>
+                        <a class="item" data-tab="sccmHW">Hardware inventory</a>
+                        <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
+                        <a class="item" data-tab="rawdata">Raw Data</a>
+                        <a class="item" data-tab="tasks">Tasks</a>
+                        <a class="item" data-tab="warnings">Warnings</a>
+                        <!--<a class="item" data-tab="statustest">Statustest</a> -->
+                    </div>
+                </div>
+                <div class="twelve wide stretched column">
+                    <div class="ui tab segment">
+                        none<!-- spacer as the fist elemen else is placed differencet -->
+                    </div>
+                    <div class="ui active tab segment" data-tab="basicinfo">
+                        <table class="ui definition table">
+                            <tbody>
+                                <tr>
+                                    <td>Domain:</td>
+                                    <td>
+                                        @Html.DisplayFor(model => model.Domain)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Admin Pwd Expire:</td>
+                                    <td>
+                                        @Html.DisplayFor(model => model.PasswordExpireDate)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>PC Config:</td>
+                                    <td>
+                                        @Html.DisplayFor(model => model.BasicInfoPCConfig)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Bitlocker Enabled:</td>
+                                    <td>
+                                        @Html.DisplayFor(model => model.BasicInfoExtraConfig)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Managed By:</td>
+                                    <td>
+                                        TODO
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br />
+                        @if (Model.ShowResultGetPassword2)
+                        {
+                            <asp:Button ID="ResultGetPassword2" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click" CssClass="ui button" />
+                        }
+                    </div>
+
+                    <div class="ui tab segment" data-tab="userInformation">
+                    </div>
+                    <div id="rawdata" class="ui tab segment" data-tab="rawdata"></div>
+                    <div class="ui tab segment" data-tab="tasks">
+                        <h2>Tasks</h2>
+                        <br />
+                        @if (Model.ShowResultGetPassword)
+                        {
+                            <asp:Button ID="ResultGetPassword" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click" CssClass="ui button" />
+                        }
+                        <br />
+
+                        <asp:Button ID="buttonEnableBitlockerEncryption" runat="server" value="" Text="Enable Bitlocker Encryption" OnClick="buttonEnableBitlockerEncryption_Click" CssClass="ui button" />
+                        <br />
+                        @if (Model.ShowMoveComputerOUdiv)
+                        {
+                            <asp:Button ID="MoveComputerOU" runat="server" value="" Text="Move computer to OU Clients" OnClick="MoveOU_Click" CssClass="ui button" />
+                            <p>Only do this if you know what you are doing!</p>
+                        }
+                    </div>
+                    <div class="ui tab segment" data-tab="sccmInfo">
+                        <h2>SCCM Info</h2>
+                        <h3>Computer Details</h3>
+                        @Html.DisplayFor(model => model.SCCMCollectionsTable)
+
+                        <h3>Collections</h3>
+                        @Html.DisplayFor(model => model.SCCMComputers)
+
+                        <h3>Raw data</h3>
+                        @Html.DisplayFor(model => model.SCCMCollections)
+                    </div>
+
+                    <div class="ui tab segment" data-tab="sccmInventory">
+                        <h2>SCCM Info</h2>
+                        @Html.DisplayFor(model => model.SCCMCollectionsTable)
+
+                        <h3>Software Details</h3>
+                        @Html.DisplayFor(model => model.SCCMCollecionsSoftware)
+
+                        <h3>Raw</h3>
+                        @Html.DisplayFor(model => model.SCCMInventory)
+                    </div>
+
+                    <div class="ui tab segment" data-tab="sccmAV">
+                        <h2>Antivirus Info</h2>
+                        @Html.DisplayFor(model => model.SCCMAV)
+                    </div>
+
+                    <div id="sccmHW" class="ui tab segment" data-tab="sccmHW">
+
+                    </div>
+
+                    <div class="ui tab segment" data-tab="groups">
+                        <h2>Groups</h2>
+                        <div class="ui two item menu">
+                            <a data-tab="groups-direct" class="item">Direct Groups</a>
+                            <a data-tab="groups-all" class="item">Recursive groups</a>
+                        </div>
+
+                        <div class="ui active tab segment" data-tab="groups-direct">
+                            @Html.DisplayFor(model => model.GroupSegment)
+                        </div>
+
+                        <div class="ui tab segment" data-tab="groups-all">
+                            @Html.DisplayFor(model => model.GroupsAllSegment)
+                        </div>
+                    </div>
+                    <div class="ui tab segment" data-tab="warnings">
+                        <h2>Warnings</h2>
+                        @Html.DisplayFor(model => model.ErrorMessages)
+                    </div>
+                </div>
+            </div>}
+    </div>
