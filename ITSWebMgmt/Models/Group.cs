@@ -14,7 +14,6 @@ namespace ITSWebMgmt.Models
         public string FileshareInfo;
         public string Domain;
         public string ManagedBy;
-        public string ManagedByError;
         public string SecurityGroup;
         public string GroupScope;
         public string Description;

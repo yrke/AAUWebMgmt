@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using ITSWebMgmt.Models;
 using System.Web;
 using Group = ITSWebMgmt.Models.Group;
+using System.Net;
 
 namespace ITSWebMgmt.Controllers
 {
@@ -46,20 +47,20 @@ namespace ITSWebMgmt.Controllers
         }
 
         [HttpPost]
-        public void SaveEditManagedBy(SimpleModel model)//TODO use AJAX to avoid page reload https://stackoverflow.com/questions/2866063/submit-form-without-page-reloading
+        public ActionResult SaveEditManagedBy([FromBody]string email)
         {
-            if (ModelState.IsValid)
+            ManagedByChanger managedByChanger = new ManagedByChanger(ADcache);
+            managedByChanger.SaveEditManagedBy(email);
+            
+            if (managedByChanger.ErrorMessage == "")
             {
-                ManagedByChanger managedByChanger = new ManagedByChanger(ADcache);
-                managedByChanger.SaveEditManagedBy(model.Text);
-                if (managedByChanger.ErrorMessage != "")
-                {
-                    //TODO Show error to user
-                }
-                else
-                {
-                    //TODO Show updated value
-                }
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                return Json(new { success = true});
+            }
+            else
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(new { success = false, errorMessage = managedByChanger.ErrorMessage });
             }
         }
 
