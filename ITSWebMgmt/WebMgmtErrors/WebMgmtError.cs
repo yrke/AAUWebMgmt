@@ -52,7 +52,7 @@ namespace ITSWebMgmt.WebMgmtErrors
         {
             int space = computer.LogicalDisk.GetPropertyInGB("FreeSpace");
             if (space == 0) return false;
-            return computer.LogicalDisk.GetPropertyInGB("FreeSpace") <= 5;
+            return space <= 5;
         }
     }
 

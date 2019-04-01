@@ -450,7 +450,7 @@ namespace ITSWebMgmt.Caches
     {
         public static dynamic GetProperty(this ManagementObjectCollection moc, string property)
         {
-            return moc.OfType<ManagementObject>().FirstOrDefault().Properties[property].Value;
+            return moc.OfType<ManagementObject>().FirstOrDefault()?.Properties[property]?.Value;
         }
 
         public static T GetPropertyAs<T>(this ManagementObjectCollection moc, string property)
