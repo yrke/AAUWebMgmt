@@ -1,0 +1,12 @@
+﻿@model ITSWebMgmt.Models.ComputerModel
+@using ITSWebMgmt.Helpers
+@{
+    //DetectionID is required for UserName (SELECT * FROM SMS_G_System_Threats WHERE DetectionID='{04155F79-EB84-4828-9CEC-AC0749C4EDA6}' AND ResourceID=16787705)
+    //Only few computers with data, one them is AAU112782
+    Model.SCCMAV = TableGenerator.CreateTableFromDatabase(Model.Antivirus,
+        new List<string>() { "ThreatName", "PendingActions", "Process", "SeverityID", "Path" },
+        "Antivirus information not found");
+}
+
+<h2>Antivirus Info</h2>
+@Html.DisplayFor(model => model.SCCMAV)

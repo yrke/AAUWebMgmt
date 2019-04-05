@@ -1,0 +1,72 @@
+﻿@model ITSWebMgmt.Models.ComputerModel
+@using ITSWebMgmt.Connectors.Active_Directory
+@{
+    if (Model.AdminPasswordExpirationTime != null)
+    {
+        Model.PasswordExpireDate = Model.AdminPasswordExpirationTime;
+    }
+    else
+    {
+        Model.PasswordExpireDate = "LAPS not Enabled";
+    }
+
+    //Managed By
+    Model.ManagedBy = "none";
+
+    if (Model.ManagedByAD != null)
+    {
+        string managerVal = Model.ManagedByAD;
+
+        if (!string.IsNullOrWhiteSpace(managerVal))
+        {
+            string email = ADHelpers.DistinguishedNameToUPN(managerVal);
+            Model.ManagedBy = email;
+        }
+    }
+
+    if (Model.AdminPasswordExpirationTime != null)
+    {
+        Model.ShowResultGetPassword = true;
+        Model.ShowResultGetPassword2 = true;
+    }
+}
+
+<table class="ui definition table">
+    <tbody>
+        <tr>
+            <td>Domain:</td>
+            <td>
+                @Html.DisplayFor(model => model.Domain)
+            </td>
+        </tr>
+        <tr>
+            <td>Admin Pwd Expire:</td>
+            <td>
+                @Html.DisplayFor(model => model.PasswordExpireDate)
+            </td>
+        </tr>
+        <tr>
+            <td>PC Config:</td>
+            <td>
+                @Html.DisplayFor(model => model.BasicInfoPCConfig)
+            </td>
+        </tr>
+        <tr>
+            <td>Bitlocker Enabled:</td>
+            <td>
+                @Html.DisplayFor(model => model.BasicInfoExtraConfig)
+            </td>
+        </tr>
+        <tr>
+            <td>Managed By:</td>
+            <td>
+                TODO
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+@if (Model.ShowResultGetPassword2)
+{
+    <asp:Button ID="ResultGetPassword2" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click" CssClass="ui button" />
+}

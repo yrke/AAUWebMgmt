@@ -1,0 +1,21 @@
+﻿@model ITSWebMgmt.Models.ComputerModel
+@using ITSWebMgmt.Helpers
+@{
+    //XXX is memeber of an attribute
+    Model.GroupSegment = TableGenerator.BuildgroupssegmentLabel(Model.ADcache.getGroups("memberOf"));
+    Model.GroupsAllSegment = TableGenerator.BuildgroupssegmentLabel(Model.ADcache.getGroupsTransitive("memberOf"));
+}
+
+<h2>Groups</h2>
+<div class="ui two item menu">
+    <a data-tab="groups-direct" class="item">Direct Groups</a>
+    <a data-tab="groups-all" class="item">Recursive groups</a>
+</div>
+
+<div class="ui active tab segment" data-tab="groups-direct">
+    @Html.Raw(Model.GroupSegment)
+</div>
+
+<div class="ui tab segment" data-tab="groups-all">
+    @Html.Raw(Model.GroupsAllSegment)
+</div>

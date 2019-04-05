@@ -7,8 +7,6 @@ using System.DirectoryServices;
 using System.Management;
 using ITSWebMgmt.Helpers;
 using ITSWebMgmt.Models;
-using System.Net;
-using ITSWebMgmt.Functions;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace ITSWebMgmt.Controllers
@@ -49,25 +47,86 @@ namespace ITSWebMgmt.Controllers
         public ActionResult LoadTab(string tabName, string computername)
         {
             ComputerModel = _cache.Get<ComputerModel>(computername);
+            if (tabName == "groups-all")
+            {
+                tabName = "groups";
+            }
+            string viewName = tabName;
             switch (tabName)
             {
+                case "basicinfo":
+                    viewName = "BasicInfo";
+                    break;
                 case "groups":
-                    ComputerModel.buildGroupsSegments();
+                    viewName = "Groups";
+                    break;
+                case "tasks":
+                    viewName = "Tasks";
+                    break;
+                case "warnings":
+                    viewName = "Warnings";
+                    break;
+                case "sccminfo":
+                    viewName = "SCCMInfo";
                     break;
                 case "sccmInventory":
-                    ComputerModel.buildSCCMInventory();
+                    viewName = "SCCMInventory";
                     break;
                 case "sccmAV":
-                    ComputerModel.buildSCCMAntivirus();
+                    viewName = "SCCMAV";
                     break;
                 case "sccmHW":
-                    ComputerModel.biuldSCCMHardware();
-                    return PartialView("SCCMHW", ComputerModel);
+                    viewName = "SCCMHW";
+                    break;
                 case "rawdata":
-                    ComputerModel.buildRaw();
-                    return PartialView("Raw", ComputerModel);
+                    viewName = "Raw";
+                    break;
             }
-            return PartialView(tabName, ComputerModel);
+            return PartialView(viewName, ComputerModel);
+        }
+
+        //TODO fix buttons
+        protected void MoveOU_Click(object sender, EventArgs e)
+        {
+            moveOU(ControllerContext.HttpContext.User.Identity.Name, adpath);
+        }
+
+        protected void ResultGetPassword_Click(object sender, EventArgs e)
+        {
+            logger.Info("User {0} requesed localadmin password for computer {1}", ControllerContext.HttpContext.User.Identity.Name, adpath);
+
+            var passwordRetuned = getLocalAdminPassword(adpath);
+
+            if (string.IsNullOrEmpty(passwordRetuned))
+            {
+                ComputerModel.Result = "Not found";
+            }
+            else
+            {
+                Func<string, string, string> appendColor = (string x, string color) => { return "<font color=\"" + color + "\">" + x + "</font>"; };
+
+                string passwordWithColor = "";
+                foreach (char c in passwordRetuned)
+                {
+                    var color = "green";
+                    if (char.IsNumber(c))
+                    {
+                        color = "blue";
+                    }
+
+                    passwordWithColor += appendColor(c.ToString(), color);
+
+                }
+
+                ComputerModel.Result = "<code>" + passwordWithColor + "</code><br /> Password will expire in 8 hours";
+            }
+
+            ComputerModel.ShowResultGetPassword = false;
+        }
+
+        protected void buttonEnableBitlockerEncryption_Click(object sender, EventArgs e)
+        {
+            EnableBitlockerEncryption(adpath);
         }
 
         internal bool computerIsInRightOU(string dn)

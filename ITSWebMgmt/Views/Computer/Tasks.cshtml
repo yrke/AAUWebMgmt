@@ -1,0 +1,21 @@
+﻿@model ITSWebMgmt.Models.ComputerModel
+@using ITSWebMgmt.Helpers
+@{
+
+}
+
+<h2>Tasks</h2>
+<br />
+@if (Model.ShowResultGetPassword)
+{
+    <asp:Button ID="ResultGetPassword" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click" CssClass="ui button" />
+}
+<br />
+
+<asp:Button ID="buttonEnableBitlockerEncryption" runat="server" value="" Text="Enable Bitlocker Encryption" OnClick="buttonEnableBitlockerEncryption_Click" CssClass="ui button" />
+<br />
+@if (Model.ShowMoveComputerOUdiv)
+{
+    <asp:Button ID="MoveComputerOU" runat="server" value="" Text="Move computer to OU Clients" OnClick="MoveOU_Click" CssClass="ui button" />
+    <p>Only do this if you know what you are doing!</p>
+}

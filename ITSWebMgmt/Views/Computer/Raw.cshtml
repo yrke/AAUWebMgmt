@@ -1,4 +1,8 @@
 ﻿@model ITSWebMgmt.Models.ComputerModel
+@using ITSWebMgmt.Helpers
+@{
+    Model.Raw = TableGenerator.buildRawTable(Model.ADcache.getAllProperties());
+}
 
 <div>
     @Html.Raw(Model.Raw)
