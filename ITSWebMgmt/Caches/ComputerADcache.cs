@@ -6,7 +6,7 @@ namespace ITSWebMgmt.Caches
 {
     public class ComputerADcache : ADcache
     {
-        public string ComputerName = "ITS\\AAU804396";
+        public string ComputerName;
         public bool ComputerFound = false;
         public string Domain;
         public object AdmPwdExpirationTime;

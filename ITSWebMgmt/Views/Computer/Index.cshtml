@@ -1,4 +1,4 @@
-﻿@model ITSWebMgmt.Models.Computer
+﻿@model ITSWebMgmt.Models.ComputerModel
 @{
     ViewData["Title"] = "Index";
 }
@@ -19,7 +19,7 @@
             Computername:
             <div class="ui action input">
 
-                <input name="computername" class="ui input focus" value=@Html.DisplayFor(model => model.ComputerName) />
+                <input name="computername" id="computername" class="ui input focus" value=@Html.DisplayFor(model => model.ComputerName) />
 
                 <input type="submit" value="Search" onclick='$("#loader > div").show("fast");'>
             </div>
@@ -37,10 +37,10 @@
                             type: "GET",
                             url: '@Url.Action("LoadTab", "Computer")',
                             contentType: "application/html; charset=utf-8",
-                            data: { tabName: dataTabName},
+                            data: { tabName: dataTabName, computername: document.getElementById('computername').value },
                             success: function (returnedData) {
                                 //document.getElementById(dataTabName).html(returnedData);
-                                $("#rawdata").html(returnedData);
+                                $("#" + dataTabName).html(returnedData);
                             },
                             error: function (response) {
                                 alert('error');
@@ -176,9 +176,7 @@
                         @Html.DisplayFor(model => model.SCCMAV)
                     </div>
 
-                    <div id="sccmHW" class="ui tab segment" data-tab="sccmHW">
-
-                    </div>
+                    <div id="sccmHW" class="ui tab segment" data-tab="sccmHW"></div>
 
                     <div class="ui tab segment" data-tab="groups">
                         <h2>Groups</h2>

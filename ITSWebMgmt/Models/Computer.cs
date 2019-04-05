@@ -7,14 +7,40 @@ using ITSWebMgmt.WebMgmtErrors;
 using System.Management;
 using System.Threading;
 using System.Web;
+using ITSWebMgmt.Caches;
 
 namespace ITSWebMgmt.Models
 {
-    public class Computer
+    public class ComputerModel
     {
+        //SCCMcache
+        private SCCMcache SCCMcache;
+        public ManagementObjectCollection RAM { get => SCCMcache.RAM; private set { } }
+        public ManagementObjectCollection LogicalDisk { get => SCCMcache.LogicalDisk; private set { } }
+        public ManagementObjectCollection BIOS { get => SCCMcache.BIOS; private set { } }
+        public ManagementObjectCollection VideoController { get => SCCMcache.VideoController; private set { } }
+        public ManagementObjectCollection Processor { get => SCCMcache.Processor; private set { } }
+        public ManagementObjectCollection Disk { get => SCCMcache.Disk; private set { } }
+        public ManagementObjectCollection Software { get => SCCMcache.Software; private set { } }
+        public ManagementObjectCollection Computer { get => SCCMcache.Computer; private set { } }
+        public ManagementObjectCollection Antivirus { get => SCCMcache.Antivirus; private set { } }
+        public ManagementObjectCollection System { get => SCCMcache.System; private set { } }
+        public ManagementObjectCollection Collection { get => SCCMcache.Collection; private set { } }
+
+
+        //ADcache
+        private ComputerADcache ADcache;
+        public string ComputerNameAD { get => ADcache.ComputerName; }
+        public string Domain { get => ADcache.Domain; }
+        public bool ComputerFound { get => ADcache.ComputerFound; }
+        public string AdminPasswordExpirationTime { get => ADcache.getProperty("ms-Mcs-AdmPwdExpirationTime"); }
+        public string ManagedByAD { get => ADcache.getProperty("managedBy"); set => ADcache.saveProperty("managedBy", value); }
+        public string DistinguishedName { get => ADcache.getProperty("distinguishedName"); }
+        public string adpath { get => ADcache.adpath; }
+
+        //Display
         public ComputerController computer;
-        public string ComputerName = "ITS\\AAU114811"; //Test computer
-        public string Domain;
+        public string ComputerName = "ITS\\AAU804396";
         public string ManagedBy;
         public string Raw;
         public string Result;
@@ -46,9 +72,31 @@ namespace ITSWebMgmt.Models
         public bool ShowResultGetPassword2 = false;
         public bool ShowMoveComputerOUdiv = false;
 
-        public Computer(ComputerController controller)
+        public ComputerModel(ComputerController controller, string computername)
         {
-            computer = controller;
+            if (computername != null)
+            {
+                computer = controller;
+                computer.ComputerModel = this;
+                ADcache = new ComputerADcache(computername, computer.ControllerContext.HttpContext.User.Identity.Name);
+                SCCMcache = new SCCMcache();
+                SCCMcache.ResourceID = getSCCMResourceIDFromComputerName(ComputerNameAD);
+                ComputerName = computername;
+                buildlookupComputer();
+            }
+        }
+
+        public string getSCCMResourceIDFromComputerName(string computername)
+        {
+            string resourceID = "";
+            //XXX use ad path to get right object in sccm, also dont get obsolite
+            foreach (ManagementObject o in SCCMcache.getResourceIDFromComputerName(computername))
+            {
+                resourceID = o.Properties["ResourceID"].Value.ToString();
+                break;
+            }
+
+            return resourceID;
         }
 
         private void addIfNotContained(string tabName)
@@ -63,17 +111,15 @@ namespace ITSWebMgmt.Models
         {
             Result = "";
 
-            if (!computer.ComputerFound)
+            if (!ComputerFound)
             {
                 Result = "Computer Not Found";
                 return;
             }
 
-            Domain = computer.Domain;
-
-            if (computer.AdminPasswordExpirationTime != null)
+            if (AdminPasswordExpirationTime != null)
             {
-                PasswordExpireDate = computer.AdminPasswordExpirationTime;
+                PasswordExpireDate = AdminPasswordExpirationTime;
             }
             else
             {
@@ -100,20 +146,20 @@ namespace ITSWebMgmt.Models
             //Load data into ADcache in the background
             ThreadPool.QueueUserWorkItem(_ =>
             {
-                computer.getGroups("memberOf");
-                computer.getGroupsTransitive("memberOf");
-                computer.getAllProperties();
+                ADcache.getGroups("memberOf");
+                ADcache.getGroupsTransitive("memberOf");
+                ADcache.getAllProperties();
             }, null);
 
             //Load data into SCCMcache in the background
             ThreadPool.QueueUserWorkItem(_ =>
             {
-                computer.LoadIntoSCCMcache();
+                SCCMcache.LoadAllIntoCache();
             }, null);
 
             ShowResultDiv = true;
 
-            if (!computer.checkComputerOU())
+            if (!computer.checkComputerOU(adpath))
             {
                 ShowMoveComputerOUdiv = true;
             }
@@ -162,9 +208,9 @@ namespace ITSWebMgmt.Models
 
         protected void buildBasicInfo()
         {
-            if (computer.AdminPasswordExpirationTime != null)
+            if (AdminPasswordExpirationTime != null)
             {
-                PasswordExpireDate = computer.AdminPasswordExpirationTime;
+                PasswordExpireDate = AdminPasswordExpirationTime;
             }
             else
             {
@@ -174,9 +220,9 @@ namespace ITSWebMgmt.Models
             //Managed By
             ManagedBy = "none";
 
-            if (computer.ManagedBy != null)
+            if (ManagedByAD != null)
             {
-                string managerVal = computer.ManagedBy;
+                string managerVal = ManagedByAD;
 
                 if (!string.IsNullOrWhiteSpace(managerVal))
                 {
@@ -185,7 +231,7 @@ namespace ITSWebMgmt.Models
                 }
             }
 
-            if (computer.AdminPasswordExpirationTime != null)
+            if (AdminPasswordExpirationTime != null)
             {
                 ShowResultGetPassword = true;
                 ShowResultGetPassword2 = true;
@@ -194,7 +240,7 @@ namespace ITSWebMgmt.Models
 
         protected void MoveOU_Click(object sender, EventArgs e)
         {
-            computer.moveOU(computer.ControllerContext.HttpContext.User.Identity.Name);
+            computer.moveOU(computer.ControllerContext.HttpContext.User.Identity.Name, adpath);
         }
         
         protected void ResultGetPassword_Click(object sender, EventArgs e)
@@ -233,15 +279,15 @@ namespace ITSWebMgmt.Models
         public void buildGroupsSegments()
         {
             //XXX is memeber of an attribute
-            GroupSegment = TableGenerator.BuildgroupssegmentLabel(computer.getGroups("memberOf"));
-            GroupsAllSegment = TableGenerator.BuildgroupssegmentLabel(computer.getGroupsTransitive("memberOf"));
+            GroupSegment = TableGenerator.BuildgroupssegmentLabel(ADcache.getGroups("memberOf"));
+            GroupsAllSegment = TableGenerator.BuildgroupssegmentLabel(ADcache.getGroupsTransitive("memberOf"));
         }
 
         public void buildSCCMInventory()
         {
-            var tableAndList = TableGenerator.CreateTableAndRawFromDatabase(computer.Computer, new List<string>() { "Manufacturer", "Model", "SystemType", "Roles" }, "No inventory data");
+            var tableAndList = TableGenerator.CreateTableAndRawFromDatabase(Computer, new List<string>() { "Manufacturer", "Model", "SystemType", "Roles" }, "No inventory data");
             SSCMInventoryTable = tableAndList.Item1; //Table
-            SCCMCollecionsSoftware = TableGenerator.CreateTableFromDatabase(computer.Software,
+            SCCMCollecionsSoftware = TableGenerator.CreateTableFromDatabase(Software,
                 new List<string>() { "SoftwareCode", "ProductName", "ProductVersion", "TimeStamp" },
                 new List<string>() { "Product ID", "Name", "Version", "Install date" },
                 "Software information not found");
@@ -264,7 +310,7 @@ namespace ITSWebMgmt.Models
             //XXX: remeber to filter out computers that are obsolite in sccm (not active)
             string error = "";
             HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Collection Name" });
-            var names = computer.setConfig();
+            var names = computer.setConfig(Collection);
 
             if (names != null)
             {
@@ -282,7 +328,7 @@ namespace ITSWebMgmt.Models
             BasicInfoExtraConfig = computer.ConfigExtra;
 
             //Basal Info
-            var tableAndList = TableGenerator.CreateTableAndRawFromDatabase(computer.System, new List<string>() { "LastLogonUserName", "IPAddresses", "MACAddresses", "Build", "Config" }, "Computer not found i SCCM");
+            var tableAndList = TableGenerator.CreateTableAndRawFromDatabase(System, new List<string>() { "LastLogonUserName", "IPAddresses", "MACAddresses", "Build", "Config" }, "Computer not found i SCCM");
 
             SCCMComputers = error + groupTableHelper.GetTable();
             SCCMCollectionsTable = tableAndList.Item1; //Table
@@ -293,24 +339,24 @@ namespace ITSWebMgmt.Models
         {
             //DetectionID is required for UserName (SELECT * FROM SMS_G_System_Threats WHERE DetectionID='{04155F79-EB84-4828-9CEC-AC0749C4EDA6}' AND ResourceID=16787705)
             //Only few computers with data, one them is AAU112782
-            SCCMAV = TableGenerator.CreateTableFromDatabase(computer.Antivirus,
+            SCCMAV = TableGenerator.CreateTableFromDatabase(Antivirus,
                 new List<string>() { "ThreatName", "PendingActions", "Process", "SeverityID", "Path" },
                 "Antivirus information not found");
         }
 
         public void biuldSCCMHardware()
         {
-            SCCMLD = TableGenerator.CreateVerticalTableFromDatabase(computer.LogicalDisk,
+            SCCMLD = TableGenerator.CreateVerticalTableFromDatabase(LogicalDisk,
                 new List<string>() { "DeviceID", "FileSystem", "Size", "FreeSpace" },
                 new List<string>() { "DeviceID", "File system", "Size (GB)", "FreeSpace (GB)" },
                 "Disk information not found");
 
-            if (Database.HasValues(computer.RAM))
+            if (Database.HasValues(RAM))
             {
                 int total = 0;
                 int count = 0;
 
-                foreach (ManagementObject o in computer.RAM) //Has one!
+                foreach (ManagementObject o in RAM) //Has one!
                 {
                     total += int.Parse(o.Properties["Capacity"].Value.ToString()) / 1024;
                     count++;
@@ -323,19 +369,19 @@ namespace ITSWebMgmt.Models
                 SCCMRAM = "RAM information not found";
             }
 
-            SCCMBIOS = TableGenerator.CreateVerticalTableFromDatabase(computer.BIOS,
+            SCCMBIOS = TableGenerator.CreateVerticalTableFromDatabase(BIOS,
                 new List<string>() { "BIOSVersion", "Description", "Manufacturer", "Name", "SMBIOSBIOSVersion" },
                 "BIOS information not found");
 
-            SCCMVC = TableGenerator.CreateVerticalTableFromDatabase(computer.VideoController,
+            SCCMVC = TableGenerator.CreateVerticalTableFromDatabase(VideoController,
                 new List<string>() { "AdapterRAM", "CurrentHorizontalResolution", "CurrentVerticalResolution", "DriverDate", "DriverVersion", "Name" },
                 "Video controller information not found");
 
-            SCCMProcessor = TableGenerator.CreateVerticalTableFromDatabase(computer.Processor,
+            SCCMProcessor = TableGenerator.CreateVerticalTableFromDatabase(Processor,
                 new List<string>() { "Is64Bit", "IsMobile", "IsVitualizationCapable", "Manufacturer", "MaxClockSpeed", "Name", "NumberOfCores", "NumberOfLogicalProcessors" },
                 "Processor information not found");
 
-            SCCMDisk = TableGenerator.CreateVerticalTableFromDatabase(computer.Disk,
+            SCCMDisk = TableGenerator.CreateVerticalTableFromDatabase(Disk,
                 new List<string>() { "Caption", "Model", "Partitions", "Size", "Name" },
                 "Video controller information not found");
 
@@ -343,12 +389,12 @@ namespace ITSWebMgmt.Models
 
         public void buildRaw()
         {
-            Raw = TableGenerator.buildRawTable(computer.getAllProperties());
+            Raw = TableGenerator.buildRawTable(ADcache.getAllProperties());
         }
         
         protected void buttonEnableBitlockerEncryption_Click(object sender, EventArgs e)
         {
-            computer.EnableBitlockerEncryption();
+            computer.EnableBitlockerEncryption(adpath);
         }
 
         private void buildWarningSegment()

@@ -4,9 +4,9 @@ using NLog;
 using System.Collections.Generic;
 using System.DirectoryServices;
 
-namespace ITSWebMgmt.Controllers
+namespace ITSWebMgmt.Models
 {
-    public abstract class WebMgmtController<T> : Controller where T : ADcache
+    public abstract class WebMgmtModel<T> where T : ADcache
     {
         public T ADcache;
         public string Path { get => ADcache.Path; }

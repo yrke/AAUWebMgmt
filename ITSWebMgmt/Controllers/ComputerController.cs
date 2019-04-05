@@ -9,6 +9,7 @@ using ITSWebMgmt.Helpers;
 using ITSWebMgmt.Models;
 using System.Net;
 using ITSWebMgmt.Functions;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace ITSWebMgmt.Controllers
 {
@@ -16,56 +17,38 @@ namespace ITSWebMgmt.Controllers
     {
         public IActionResult Index(string computername)
         {
-            Computer ComputerModel = new Computer(this);
-
             if (computername != null)
             {
-                //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
-                ADcache = new ComputerADcache(computername, ControllerContext.HttpContext.User.Identity.Name);
-                SCCMcache = new SCCMcache();
-                ResourceID = getSCCMResourceIDFromComputerName();
-                SCCMcache.ResourceID = ResourceID;
-                ComputerModel.buildlookupComputer();
-                TempData.Put("test", ADcache);
-                //TempData.Put("sccmtest", SCCMcache); //Not working
+                if (!_cache.TryGetValue(computername, out ComputerModel))
+                {
+                    ComputerModel = new ComputerModel(this, computername);
+                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
+                    _cache.Set(computername, ComputerModel, cacheEntryOptions);
+                }
+            }
+            else
+            {
+                ComputerModel = new ComputerModel(this, computername);
             }
 
             return View(ComputerModel);
         }
 
+        private IMemoryCache _cache;
+        public ComputerModel ComputerModel;
         public string ResourceID;
-        private SCCMcache SCCMcache;
         public string ConfigPC = "Unknown";
         public string ConfigExtra = "False";
-        //TODO getsTestUpdates not used
 
-        //SCCMcache
-        public ManagementObjectCollection RAM { get => SCCMcache.RAM; private set { } }
-        public ManagementObjectCollection LogicalDisk { get => SCCMcache.LogicalDisk; private set { } }
-        public ManagementObjectCollection BIOS { get => SCCMcache.BIOS; private set { } }
-        public ManagementObjectCollection VideoController { get => SCCMcache.VideoController; private set { } }
-        public ManagementObjectCollection Processor { get => SCCMcache.Processor; private set { } }
-        public ManagementObjectCollection Disk { get => SCCMcache.Disk; private set { } }
-        public ManagementObjectCollection Software { get => SCCMcache.Software; private set { } }
-        public ManagementObjectCollection Computer { get => SCCMcache.Computer; private set { } }
-        public ManagementObjectCollection Antivirus { get => SCCMcache.Antivirus; private set { } }
-        public ManagementObjectCollection System { get => SCCMcache.System; private set { } }
-        public ManagementObjectCollection Collection { get => SCCMcache.Collection; private set { } }
-
-
-        //ADcache
-        public string ComputerName { get => ADcache.ComputerName; }
-        public string Domain { get => ADcache.Domain; }
-        public bool ComputerFound { get => ADcache.ComputerFound; }
-        public string AdminPasswordExpirationTime { get => ADcache.getProperty("ms-Mcs-AdmPwdExpirationTime"); }
-        public string ManagedBy { get => ADcache.getProperty("managedBy"); set => ADcache.saveProperty("managedBy", value); }
-        public string DistinguishedName { get => ADcache.getProperty("distinguishedName"); }
+        public ComputerController(IMemoryCache cache)
+        {
+            _cache = cache;
+        }
 
         [HttpGet]
-        public ActionResult LoadTab(string tabName)
+        public ActionResult LoadTab(string tabName, string computername)
         {
-            //TODO get computername as argument to avoid naming colitions
-            Computer ComputerModel = TempData.Get<Computer>("Controller");
+            ComputerModel = _cache.Get<ComputerModel>(computername);
             switch (tabName)
             {
                 case "groups":
@@ -87,14 +70,8 @@ namespace ITSWebMgmt.Controllers
             return PartialView(tabName, ComputerModel);
         }
 
-        public void LoadIntoSCCMcache()
+        internal bool computerIsInRightOU(string dn)
         {
-            SCCMcache.LoadAllIntoCache();
-        }
-
-        internal bool computerIsInRightOU()
-        {
-            string dn = DistinguishedName;
             string[] dnarray = dn.Split(',');
 
             string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray();
@@ -111,20 +88,7 @@ namespace ITSWebMgmt.Controllers
             return false;
         }
 
-        public string getSCCMResourceIDFromComputerName()
-        {
-            string resourceID = "";
-            //XXX use ad path to get right object in sccm, also dont get obsolite
-            foreach (ManagementObject o in SCCMcache.getResourceIDFromComputerName(ComputerName))
-            {
-                resourceID = o.Properties["ResourceID"].Value.ToString();
-                break;
-            }
-
-            return resourceID;
-        }
-
-        public static string getLocalAdminPassword(String adpath)
+        public static string getLocalAdminPassword(string adpath)
         {
             if (string.IsNullOrEmpty(adpath))
             { //Error no session
@@ -171,9 +135,9 @@ namespace ITSWebMgmt.Controllers
             //}
         }
 
-        public void moveOU(string user)
+        public void moveOU(string user, string adpath)
         {
-            if (!checkComputerOU())
+            if (!checkComputerOU(adpath))
             {
                 //OU is wrong lets calulate the right one
                 string[] adpathsplit = adpath.ToLower().Replace("ldap://", "").Split('/');
@@ -204,7 +168,7 @@ namespace ITSWebMgmt.Controllers
             newLocaltion.Close();
         }
 
-        public bool checkComputerOU()
+        public bool checkComputerOU(string adpath)
         {
             //Check OU and fix it if wrong (only for clients sub folders or new clients)
             //Return true if in right ou (or we think its the right ou, or dont know)
@@ -249,12 +213,12 @@ namespace ITSWebMgmt.Controllers
 
         }
 
-        public List<string> setConfig()
+        public List<string> setConfig(ManagementObjectCollection Collection)
         {
-            if (Database.HasValues(this.Collection))
+            if (Database.HasValues(Collection))
             {
                 List<string> namesInCollection = new List<string>();
-                foreach (ManagementObject o in this.Collection)
+                foreach (ManagementObject o in Collection)
                 {
                     //o.Properties["ResourceID"].Value.ToString();
                     var collectionID = o.Properties["CollectionID"].Value.ToString();
@@ -332,7 +296,7 @@ namespace ITSWebMgmt.Controllers
             obj.InvokeMethod("AddMembershipRule", new object[] { rule });
         }
 
-        public void EnableBitlockerEncryption()
+        public void EnableBitlockerEncryption(string adpath)
         {
             string[] adpathsplit = adpath.Split('/');
             string computerName = (adpathsplit[adpathsplit.Length - 1].Split(','))[0].Replace("CN=", "");

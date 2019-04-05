@@ -50,9 +50,9 @@ namespace ITSWebMgmt.WebMgmtErrors
 
         public override bool HaveError()
         {
-            int space = computer.LogicalDisk.GetPropertyInGB("FreeSpace");
+            int space = computer.ComputerModel.LogicalDisk.GetPropertyInGB("FreeSpace");
             if (space == 0) return false;
-            return computer.LogicalDisk.GetPropertyInGB("FreeSpace") <= 5;
+            return computer.ComputerModel.LogicalDisk.GetPropertyInGB("FreeSpace") <= 5;
         }
     }
 
@@ -77,7 +77,7 @@ namespace ITSWebMgmt.WebMgmtErrors
             Severeness = Severity.Error;
         }
 
-        public override bool HaveError() => !computer.computerIsInRightOU();
+        public override bool HaveError() => !computer.computerIsInRightOU(computer.ComputerModel.DistinguishedName);
     }
 
     public class MissingAAUAttr : UserWebMgmtError
