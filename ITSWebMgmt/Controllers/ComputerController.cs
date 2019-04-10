@@ -86,11 +86,13 @@ namespace ITSWebMgmt.Controllers
         }
 
         //TODO fix buttons
+        //Tasks view
         protected void MoveOU_Click(object sender, EventArgs e)
         {
             moveOU(ControllerContext.HttpContext.User.Identity.Name, adpath);
         }
 
+        //Tasks and basic Info view
         protected void ResultGetPassword_Click(object sender, EventArgs e)
         {
             logger.Info("User {0} requesed localadmin password for computer {1}", ControllerContext.HttpContext.User.Identity.Name, adpath);
@@ -123,7 +125,8 @@ namespace ITSWebMgmt.Controllers
 
             ComputerModel.ShowResultGetPassword = false;
         }
-
+        
+        //Tasks view
         protected void buttonEnableBitlockerEncryption_Click(object sender, EventArgs e)
         {
             EnableBitlockerEncryption(adpath);

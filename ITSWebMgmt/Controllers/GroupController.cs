@@ -46,24 +46,6 @@ namespace ITSWebMgmt.Controllers
             return ((count == 3 && oupath[count - 1].Equals("OU=Groups") && oupath[count - 2].Equals("OU=Resource Access")));
         }
 
-        [HttpPost]
-        public ActionResult SaveEditManagedBy([FromBody]string email)
-        {
-            ManagedByChanger managedByChanger = new ManagedByChanger(ADcache);
-            managedByChanger.SaveEditManagedBy(email);
-            
-            if (managedByChanger.ErrorMessage == "")
-            {
-                Response.StatusCode = (int)HttpStatusCode.OK;
-                return Json(new { success = true});
-            }
-            else
-            {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                return Json(new { success = false, errorMessage = managedByChanger.ErrorMessage });
-            }
-        }
-
         public string[] GetFileshareTables()
         {
             //TODO Things to show in basic info: Type fileshare/department and Domain plan/its/adm

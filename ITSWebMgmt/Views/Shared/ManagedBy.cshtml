@@ -1,0 +1,42 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<td>Managed By:</td>
+<td>
+    <div id="editDiv">
+        <label id="managedBy">@Model.ManagedBy</label>
+        <button id="btnEdit" style="float:right">Edit</button>
+    </div>
+    <div id="saveDiv" style="display:none;">
+        <input type="text" id="inputText" />
+        <button id="btnSave" style="float:right">Save</button>
+    </div>
+
+    <script>
+        $("#btnEdit").click(function () {
+            document.getElementById('editDiv').style.display = "none";
+            document.getElementById('saveDiv').style.display = "block";
+            document.getElementById('inputText').value = document.getElementById('managedBy').textContent;
+        });
+        $("#btnSave").click(function() {
+            var email = $('#inputText').val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveEditManagedBy", "ManagedBy")',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(email),
+                dataType: "json",
+                success: function () {
+                    document.getElementById('editDiv').style.display = "block";
+                    document.getElementById('saveDiv').style.display = "none";
+                    document.getElementById('managedBy').textContent = email;
+                    alert('Managed by changed succesfully to ' + email)
+                },
+                error: function(response) {
+                    var r = JSON.parse(response.responseText)
+                    alert(r.errorMessage);
+                }
+            });
+        });
+    </script>
+</td>
