@@ -8,6 +8,7 @@ using System.Management;
 using ITSWebMgmt.Helpers;
 using ITSWebMgmt.Models;
 using Microsoft.Extensions.Caching.Memory;
+using System.Net;
 
 namespace ITSWebMgmt.Controllers
 {
@@ -89,19 +90,29 @@ namespace ITSWebMgmt.Controllers
         //Tasks view
         protected void MoveOU_Click(object sender, EventArgs e)
         {
-            moveOU(ControllerContext.HttpContext.User.Identity.Name, adpath);
+            moveOU(ControllerContext.HttpContext.User.Identity.Name, ComputerModel.adpath);
+        }
+
+        public void TestButton()
+        {
+            Console.WriteLine("Test button is in basic info");
         }
 
         //Tasks and basic Info view
-        protected void ResultGetPassword_Click(object sender, EventArgs e)
+        [HttpPost]
+        public ActionResult ResultGetPassword([FromBody]string computername)
         {
-            logger.Info("User {0} requesed localadmin password for computer {1}", ControllerContext.HttpContext.User.Identity.Name, adpath);
+            //ComputerModel.ShowResultGetPassword = false;
+            ComputerModel = _cache.Get<ComputerModel>(computername);
+            logger.Info("User {0} requesed localadmin password for computer {1}", ControllerContext.HttpContext.User.Identity.Name, ComputerModel.adpath);
 
-            var passwordRetuned = getLocalAdminPassword(adpath);
+            var passwordRetuned = getLocalAdminPassword(ComputerModel.adpath);
 
             if (string.IsNullOrEmpty(passwordRetuned))
             {
                 ComputerModel.Result = "Not found";
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(new { success = false, errorMessage = ComputerModel.Result });
             }
             else
             {
@@ -121,15 +132,15 @@ namespace ITSWebMgmt.Controllers
                 }
 
                 ComputerModel.Result = "<code>" + passwordWithColor + "</code><br /> Password will expire in 8 hours";
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                return Json(new { success = true, message = ComputerModel.Result});
             }
-
-            ComputerModel.ShowResultGetPassword = false;
         }
         
         //Tasks view
         protected void buttonEnableBitlockerEncryption_Click(object sender, EventArgs e)
         {
-            EnableBitlockerEncryption(adpath);
+            EnableBitlockerEncryption(ComputerModel.adpath);
         }
 
         internal bool computerIsInRightOU(string dn)

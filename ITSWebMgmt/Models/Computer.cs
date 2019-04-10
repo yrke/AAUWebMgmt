@@ -62,7 +62,6 @@ namespace ITSWebMgmt.Models
         private List<string> build = new List<string>();
         public bool ShowResultDiv = false;
         public bool ShowResultGetPassword = false;
-        public bool ShowResultGetPassword2 = false;
         public bool ShowMoveComputerOUdiv = false;
 
         public ComputerModel(ComputerController controller, string computername)

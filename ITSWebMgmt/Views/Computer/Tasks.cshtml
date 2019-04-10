@@ -1,15 +1,39 @@
 ﻿@model ITSWebMgmt.Models.ComputerModel
-@using ITSWebMgmt.Helpers
-@{
-
-}
+@using System.Web;
 
 <h2>Tasks</h2>
 <br />
-@if (Model.ShowResultGetPassword)
-{
-    <asp:Button ID="ResultGetPassword" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click" CssClass="ui button" />
-}
+<!--TODO dublicated code from Basic Info"-->
+<div id="password2"></div>
+<div id="passworddiv2">
+    @if (Model.ShowResultGetPassword)
+    {
+        <button id="btnPassword2">Get Local Admin Password</button>
+    }
+</div>
+<script>
+        $("#btnPassword2").click(function ()
+        {
+            var computername = '@Html.Raw(HttpUtility.JavaScriptStringEncode(Model.ComputerName))';
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ResultGetPassword", "Computer")',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(computername),
+                dataType: "json",
+                success: function (response) {
+                    var r = JSON.parse(response.responseText)
+                    document.getElementById('passworddiv2').style.display = "none";
+                    document.getElementById('password2').textContent = r.message;
+                },
+                error: function(response) {
+                    var r = JSON.parse(response.responseText)
+                    document.getElementById('passworddiv2').style.display = "none";
+                    document.getElementById('password2').innerHTML = r.errorMessage;
+                }
+            });
+        });
+</script>
 <br />
 
 <asp:Button ID="buttonEnableBitlockerEncryption" runat="server" value="" Text="Enable Bitlocker Encryption" OnClick="buttonEnableBitlockerEncryption_Click" CssClass="ui button" />

@@ -1,4 +1,5 @@
 ﻿@model ITSWebMgmt.Models.ComputerModel
+@using System.Web;
 @using ITSWebMgmt.Connectors.Active_Directory
 @{
     if (Model.AdminPasswordExpirationTime != null)
@@ -27,7 +28,6 @@
     if (Model.AdminPasswordExpirationTime != null)
     {
         Model.ShowResultGetPassword = true;
-        Model.ShowResultGetPassword2 = true;
     }
 }
 
@@ -63,7 +63,35 @@
     </tbody>
 </table>
 <br />
-@if (Model.ShowResultGetPassword2)
-{
-    <asp:Button ID="ResultGetPassword2" runat="server" value="" Text="Get Local Admin Password" OnClick="ResultGetPassword_Click" CssClass="ui button" />
-}
+<div id="password"></div>
+<div id="passworddiv">
+    @if (Model.ShowResultGetPassword)
+    {
+        <button id="btnPassword">Get Local Admin Password</button>
+
+        <!--<input type="button" value="Get Local Admin Password" onclick="location.href='@Url.Action("ResultGetPassword", "Computer", new { computername = Model.ComputerName })'" />-->
+    }
+</div>
+<script>
+        $("#btnPassword").click(function ()
+        {
+            var computername = '@Html.Raw(HttpUtility.JavaScriptStringEncode(Model.ComputerName))';
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ResultGetPassword", "Computer")',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(computername),
+                dataType: "json",
+                success: function (response) {
+                    var r = JSON.parse(response.responseText)
+                    document.getElementById('passworddiv').style.display = "none";
+                    document.getElementById('password').textContent = r.message;
+                },
+                error: function(response) {
+                    var r = JSON.parse(response.responseText)
+                    document.getElementById('passworddiv').style.display = "none";
+                    document.getElementById('password').innerHTML = r.errorMessage;
+                }
+            });
+        });
+</script>
