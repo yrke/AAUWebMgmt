@@ -35,9 +35,6 @@ namespace ITSWebMgmt.Controllers
 
         private IMemoryCache _cache;
         public ComputerModel ComputerModel;
-        public string ResourceID;
-        public string ConfigPC = "Unknown";
-        public string ConfigExtra = "False";
 
         public ComputerController(IMemoryCache cache)
         {
@@ -86,11 +83,13 @@ namespace ITSWebMgmt.Controllers
             return PartialView(viewName, ComputerModel);
         }
 
-        //TODO fix buttons
-        //Tasks view
-        protected void MoveOU_Click(object sender, EventArgs e)
+        [HttpPost]
+        public ActionResult MoveOU_Click([FromBody]string computername)
         {
+            ComputerModel = _cache.Get<ComputerModel>(computername);
             moveOU(ControllerContext.HttpContext.User.Identity.Name, ComputerModel.adpath);
+            Response.StatusCode = (int)HttpStatusCode.OK;
+            return Json(new { success = true, message = "OU moved for" + computername });
         }
 
         public void TestButton()
@@ -98,7 +97,6 @@ namespace ITSWebMgmt.Controllers
             Console.WriteLine("Test button is in basic info");
         }
 
-        //Tasks and basic Info view
         [HttpPost]
         public ActionResult ResultGetPassword([FromBody]string computername)
         {
@@ -137,12 +135,7 @@ namespace ITSWebMgmt.Controllers
             }
         }
         
-        //Tasks view
-        protected void buttonEnableBitlockerEncryption_Click(object sender, EventArgs e)
-        {
-            EnableBitlockerEncryption(ComputerModel.adpath);
-        }
-
+        
         internal bool computerIsInRightOU(string dn)
         {
             string[] dnarray = dn.Split(',');
@@ -298,34 +291,34 @@ namespace ITSWebMgmt.Controllers
 
                     if (collectionID.Equals("AA100015"))
                     {
-                        ConfigPC = "AAU7 PC";
+                        ComputerModel.ConfigPC = "AAU7 PC";
                     }
                     else if (collectionID.Equals("AA100087"))
                     {
-                        ConfigPC = "AAU8 PC";
+                        ComputerModel.ConfigPC = "AAU8 PC";
                     }
                     else if (collectionID.Equals("AA1000BC"))
                     {
-                        ConfigPC = "AAU10 PC";
-                        ConfigExtra = "True"; // Hardcode AAU10 is bitlocker enabled
+                        ComputerModel.ConfigPC = "AAU10 PC";
+                        ComputerModel.ConfigExtra = "True"; // Hardcode AAU10 is bitlocker enabled
                     }
                     else if (collectionID.Equals("AA100027"))
                     {
-                        ConfigPC = "Administrativ7 PC";
+                        ComputerModel.ConfigPC = "Administrativ7 PC";
                     }
                     else if (collectionID.Equals("AA1001BD"))
                     {
-                        ConfigPC = "Administrativ10 PC";
-                        ConfigExtra = "True"; // Hardcode AAU10 is bitlocker enabled
+                        ComputerModel.ConfigPC = "Administrativ10 PC";
+                        ComputerModel.ConfigExtra = "True"; // Hardcode AAU10 is bitlocker enabled
                     }
                     else if (collectionID.Equals("AA10009C"))
                     {
-                        ConfigPC = "Imported";
+                        ComputerModel.ConfigPC = "Imported";
                     }
 
                     if (collectionID.Equals("AA1000B8"))
                     {
-                        ConfigExtra = "True";
+                        ComputerModel.ConfigExtra = "True";
                     }
 
                     var pathString = "\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1" + ":SMS_Collection.CollectionID=\"" + collectionID + "\"";
@@ -369,13 +362,18 @@ namespace ITSWebMgmt.Controllers
             obj.InvokeMethod("AddMembershipRule", new object[] { rule });
         }
 
-        public void EnableBitlockerEncryption(string adpath)
+
+        [HttpPost]
+        public ActionResult EnableBitlockerEncryption([FromBody]string computername)
         {
-            string[] adpathsplit = adpath.Split('/');
+            ComputerModel = _cache.Get<ComputerModel>(computername);
+            string[] adpathsplit = ComputerModel.adpath.Split('/');
             string computerName = (adpathsplit[adpathsplit.Length - 1].Split(','))[0].Replace("CN=", "");
 
             var collectionID = "AA1000B8"; //Enabled Bitlocker Encryption Collection ID
-            addComputerToCollection(ResourceID, collectionID);
+            addComputerToCollection(ComputerModel.SCCMcache.ResourceID, collectionID);
+            Response.StatusCode = (int)HttpStatusCode.OK;
+            return Json(new { success = true, message = "Bitlocker enabled for" + computername });
         }
     }
 }

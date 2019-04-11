@@ -48,13 +48,13 @@
         <tr>
             <td>PC Config:</td>
             <td>
-                @Html.DisplayFor(model => model.BasicInfoPCConfig)
+                @Html.DisplayFor(model => model.ConfigPC)
             </td>
         </tr>
         <tr>
             <td>Bitlocker Enabled:</td>
             <td>
-                @Html.DisplayFor(model => model.BasicInfoExtraConfig)
+                @Html.DisplayFor(model => model.ConfigExtra)
             </td>
         </tr>
         <tr>
@@ -73,25 +73,29 @@
     }
 </div>
 <script>
-        $("#btnPassword").click(function ()
-        {
-            var computername = '@Html.Raw(HttpUtility.JavaScriptStringEncode(Model.ComputerName))';
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("ResultGetPassword", "Computer")',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(computername),
-                dataType: "json",
-                success: function (response) {
-                    var r = JSON.parse(response.responseText)
-                    document.getElementById('passworddiv').style.display = "none";
-                    document.getElementById('password').textContent = r.message;
-                },
-                error: function(response) {
-                    var r = JSON.parse(response.responseText)
-                    document.getElementById('passworddiv').style.display = "none";
-                    document.getElementById('password').innerHTML = r.errorMessage;
-                }
-            });
+    $("#btnPassword").click(function ()
+    {
+        getPassword('');
+    });
+    function getPassword(buttonNumber)
+    {
+        var computername = '@Html.Raw(HttpUtility.JavaScriptStringEncode(Model.ComputerName))';
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ResultGetPassword", "Computer")',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(computername),
+            dataType: "json",
+            success: function (response) {
+                var r = JSON.parse(response.responseText)
+                document.getElementById('passworddiv' + buttonNumber).style.display = "none";
+                document.getElementById('password' + buttonNumber).textContent = r.message;
+            },
+            error: function(response) {
+                var r = JSON.parse(response.responseText)
+                document.getElementById('passworddiv' + buttonNumber).style.display = "none";
+                document.getElementById('password' + buttonNumber).innerHTML = r.errorMessage;
+            }
         });
+    }
 </script>

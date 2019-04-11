@@ -29,9 +29,6 @@
         error = "Computer not found i SCCM";
     }
 
-    Model.BasicInfoPCConfig = Model.computer.ConfigPC;
-    Model.BasicInfoExtraConfig = Model.computer.ConfigExtra;
-
     //Basal Info
     var tableAndList = TableGenerator.CreateTableAndRawFromDatabase(Model.System, new List<string>() { "LastLogonUserName", "IPAddresses", "MACAddresses", "Build", "Config" }, "Computer not found i SCCM");
 

@@ -3,7 +3,6 @@
 
 <h2>Tasks</h2>
 <br />
-<!--TODO dublicated code from Basic Info"-->
 <div id="password2"></div>
 <div id="passworddiv2">
     @if (Model.ShowResultGetPassword)
@@ -11,35 +10,37 @@
         <button id="btnPassword2">Get Local Admin Password</button>
     }
 </div>
-<script>
-        $("#btnPassword2").click(function ()
-        {
-            var computername = '@Html.Raw(HttpUtility.JavaScriptStringEncode(Model.ComputerName))';
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("ResultGetPassword", "Computer")',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(computername),
-                dataType: "json",
-                success: function (response) {
-                    var r = JSON.parse(response.responseText)
-                    document.getElementById('passworddiv2').style.display = "none";
-                    document.getElementById('password2').textContent = r.message;
-                },
-                error: function(response) {
-                    var r = JSON.parse(response.responseText)
-                    document.getElementById('passworddiv2').style.display = "none";
-                    document.getElementById('password2').innerHTML = r.errorMessage;
-                }
-            });
-        });
-</script>
 <br />
-
-<asp:Button ID="buttonEnableBitlockerEncryption" runat="server" value="" Text="Enable Bitlocker Encryption" OnClick="buttonEnableBitlockerEncryption_Click" CssClass="ui button" />
+<button id="buttonEnableBitlockerEncryption">Enable Bitlocker Encryption</button>
 <br />
 @if (Model.ShowMoveComputerOUdiv)
 {
-    <asp:Button ID="MoveComputerOU" runat="server" value="" Text="Move computer to OU Clients" OnClick="MoveOU_Click" CssClass="ui button" />
+    <button id="MoveComputerOU">Move computer to OU Clients</button>
     <p>Only do this if you know what you are doing!</p>
 }
+
+<script>
+    $("#buttonEnableBitlockerEncryption").click(function ()
+    {
+        sendPostRequest("EnableBitlockerEncryption")
+    });
+
+    $("#MoveComputerOU").click(function ()
+    {
+        sendPostRequest("MoveOU_Click")
+    });
+
+    function sendPostRequest(Action) {
+        var computername = '@Html.Raw(HttpUtility.JavaScriptStringEncode(Model.ComputerName))';
+        $.ajax({
+            type: "POST",
+            url: 'Computer/' + Action,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(computername),
+            dataType: "json",
+            success: function (response) {
+                alert(JSON.parse(response.responseText).message);
+            }
+        });
+    }
+</script>

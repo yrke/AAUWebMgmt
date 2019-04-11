@@ -9,7 +9,7 @@ namespace ITSWebMgmt.Models
     public class ComputerModel
     {
         //SCCMcache
-        private SCCMcache SCCMcache;
+        public SCCMcache SCCMcache;
         public ManagementObjectCollection RAM { get => SCCMcache.RAM; private set { } }
         public ManagementObjectCollection LogicalDisk { get => SCCMcache.LogicalDisk; private set { } }
         public ManagementObjectCollection BIOS { get => SCCMcache.BIOS; private set { } }
@@ -34,6 +34,8 @@ namespace ITSWebMgmt.Models
 
         //Display
         public ComputerController computer;
+        public string ConfigPC = "Unknown";
+        public string ConfigExtra = "False";
         public string ComputerName = "ITS\\AAU804396";
         public string ManagedBy;
         public string Raw;
@@ -42,8 +44,6 @@ namespace ITSWebMgmt.Models
         public string SSCMInventoryTable;
         public string SCCMCollecionsSoftware;
         public string SCCMInventory;
-        public string BasicInfoPCConfig;
-        public string BasicInfoExtraConfig;
         public string SCCMComputers;
         public string SCCMCollectionsTable;
         public string SCCMCollections;
