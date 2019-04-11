@@ -68,6 +68,9 @@ namespace ITSWebMgmt
                 routes.MapRoute(
                     name: "computer",
                     template: "{controller=Computer}/{action=Index}/{id?}");
+                routes.MapRoute(
+                    name: "user",
+                    template: "{controller=User}/{action=Index}/{id?}");
             });
         }
     }

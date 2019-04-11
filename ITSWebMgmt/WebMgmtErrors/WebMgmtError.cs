@@ -89,7 +89,7 @@ namespace ITSWebMgmt.WebMgmtErrors
             Severeness = Severity.Error;
         }
 
-        public override bool HaveError() => user.AAUUserClassification == null || user.AAUUserStatus == null || (user.AAUStaffID == null && user.AAUStudentID == null);
+        public override bool HaveError() => user.UserModel.AAUUserClassification == null || user.UserModel.AAUUserStatus == null || (user.UserModel.AAUStaffID == null && user.UserModel.AAUStudentID == null);
     }
 
     public class PasswordExpired : UserWebMgmtError
@@ -105,7 +105,7 @@ namespace ITSWebMgmt.WebMgmtErrors
         {
             const int UF_LOCKOUT = 0x0010;
 
-            int userFlags = (int)user.UserAccountControlComputed;
+            int userFlags = (int)user.UserModel.UserAccountControlComputed;
 
             return (userFlags & UF_LOCKOUT) == UF_LOCKOUT;
         }
@@ -120,7 +120,7 @@ namespace ITSWebMgmt.WebMgmtErrors
             Severeness = Severity.Error;
         }
 
-        public override bool HaveError() => user.IsAccountLocked == true;
+        public override bool HaveError() => user.UserModel.IsAccountLocked == true;
     }
 
 
@@ -136,7 +136,7 @@ namespace ITSWebMgmt.WebMgmtErrors
         public override bool HaveError()
         {
             const int ufAccountDisable = 0x0002;
-            return (user.UserAccountControl & ufAccountDisable) == ufAccountDisable;
+            return (user.UserModel.UserAccountControl & ufAccountDisable) == ufAccountDisable;
         }
     }
 }

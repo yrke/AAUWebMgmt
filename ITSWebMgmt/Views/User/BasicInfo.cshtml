@@ -1,0 +1,38 @@
+﻿@model ITSWebMgmt.Models.UserModel
+@{
+    ViewData["Title"] = "BasicInfo";
+}
+
+<table class="ui definition table">
+    <tbody>
+        <tr>
+            <td>Name</td>
+            <td>@Html.DisplayFor(model => model.DisplayName)</td>
+        </tr>
+        <tr>
+            <td>ADMdb Expire Date</td>
+            <td>@Html.DisplayFor(model => model.InfoAdmDBExpireDate)</td>
+        </tr>
+        <tr>
+            <td>Department (PDS)</td>
+            <td>@Html.DisplayFor(model => model.BasicInfoDepartmentPDS)</td>
+        </tr>
+        <tr>
+            <td>Office (PDS)</td>
+            <td>@Html.DisplayFor(model => model.BasicInfoOfficePDS)</td>
+        </tr>
+        <tr>
+            <td>Password Expired</td>
+            <td>@Html.DisplayFor(model => model.InfoAdmDBExpireDate)</td>
+        </tr>
+        <tr>
+            <td>Password Expire Date</td>
+            <td>@Html.DisplayFor(model => model.BasicInfoPasswordExpireDate)</td>
+        </tr>
+        @Html.DisplayFor(model => model.BasicInfoTable)
+        <tr>
+            <td>Romaing Profile</td>
+            <td>@Html.DisplayFor(model => model.BasicInfoRomaing)</td>
+        </tr>
+    </tbody>
+</table>

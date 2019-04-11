@@ -30,11 +30,11 @@ namespace ITSWebMgmt.Controllers
         {
             try
             {
-                UserController uc = new UserController();
+                UserController uc = new UserController(null);//TODO Test if it still works after update on usercontroller
                 uc.adpath = uc.globalSearch(email);
-                if (uc.DistinguishedName.Contains("CN="))
+                if (uc.UserModel.DistinguishedName.Contains("CN="))
                 {
-                    new GroupADcache(uc.adpath).saveProperty("managedBy", uc.DistinguishedName);
+                    new GroupADcache(uc.adpath).saveProperty("managedBy", uc.UserModel.DistinguishedName);
                     ErrorMessage = "";
                 }
                 else

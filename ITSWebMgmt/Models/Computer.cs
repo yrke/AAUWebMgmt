@@ -58,8 +58,6 @@ namespace ITSWebMgmt.Models
         public string ErrorMessages;
         public string GroupSegment;
         public string GroupsAllSegment;
-
-        private List<string> build = new List<string>();
         public bool ShowResultDiv = false;
         public bool ShowResultGetPassword = false;
         public bool ShowMoveComputerOUdiv = false;
