@@ -1,0 +1,39 @@
+﻿@model ITSWebMgmt.Models.UserModel
+@using System.Text
+@using Microsoft.Exchange.WebServices.Data
+@{
+    var sb = new StringBuilder();
+    // Display available meeting times.
+
+    var temp = await Model.user.getFreeBusyResultsAsync();
+
+    DateTime now = DateTime.Now;
+    foreach (AttendeeAvailability availability in temp.AttendeesAvailability)
+    {
+
+        foreach (CalendarEvent calendarItem in availability.CalendarEvents)
+        {
+            if (calendarItem.FreeBusyStatus != LegacyFreeBusyStatus.Free)
+            {
+
+                bool isNow = false;
+                if (now > calendarItem.StartTime && calendarItem.EndTime > now)
+                {
+                    sb.Append("<b>");
+                    isNow = true;
+                }
+                sb.Append(string.Format("{0}-{1}: {2}<br/>", calendarItem.StartTime.ToString("HH:mm"), calendarItem.EndTime.ToString("HH:mm"), calendarItem.FreeBusyStatus));
+
+                if (isNow)
+                {
+                    sb.Append("</b>");
+                }
+            }
+        }
+    }
+
+    Model.CalAgenda = sb.ToString();
+}
+
+<h2>Calendar Agenda (today)</h2>
+@Html.Raw(Model.CalAgenda)

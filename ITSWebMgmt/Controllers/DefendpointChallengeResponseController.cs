@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ITSWebMgmt.Controllers
 {
-    public class DefendpointChallengeResponseController : WebMgmtController<GroupADcache>
+    public class DefendpointChallengeResponseController : WebMgmtController
     {
         public IActionResult Index(string challanageInput, string reasonInput)
         {

@@ -12,7 +12,7 @@ using System.Net;
 
 namespace ITSWebMgmt.Controllers
 {
-    public class ComputerController : WebMgmtController<ComputerADcache>
+    public class ComputerController : WebMgmtController
     {
         public IActionResult Index(string computername)
         {

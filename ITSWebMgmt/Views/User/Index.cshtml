@@ -75,7 +75,6 @@
                     <a class="item" data-tab="groups">Groups</a>
                     <a class="item" data-tab="fileshares">Fileshares</a>
                     <a class="item" data-tab="exchange">Exchange Resources</a>
-                    <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
                     @if (Model.ShowLoginScript)
                     {
                         <a class="item" data-tab="loginscript" runat="server" id="menuLoginScript">Loginscript</a>
@@ -84,6 +83,7 @@
                     <a class="item" data-tab="rawdata">Raw Data</a>
                     <a class="item" data-tab="tasks">Tasks</a>
                     <a class="item" data-tab="warnings">Warnings</a>
+                    <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
                     <!--<a class="item" data-tab="statustest">Statustest</a> -->
                 </div>
             </div>
@@ -92,89 +92,24 @@
                     none<!-- spacer as the fist elemen else is placed differencet -->
                 </div>
                 <div class="ui active tab segment" data-tab="basicinfo">@Html.Partial("BasicInfo", Model)</div>
-                <div class="ui tab segment" data-tab="advancedinfo">
-                    advanced
-                </div>
-                <div class="ui tab segment" data-tab="print">
-                    <h2>Print</h2>
-                    @Html.DisplayFor(model => model.Print)
-                </div>
-                <div class="ui tab segment" data-tab="groups">
-                    <h2>Groups</h2>
-                    <div class="ui two item menu">
-                        <a data-tab="groups-direct" class="item">Direct Groups</a>
-                        <a data-tab="groups-all" class="item">Recursive groups</a>
-                    </div>
-                    <div class="ui active tab segment" data-tab="groups-direct">
-                        @Html.Raw(Model.GroupSegment)
-                    </div>
-                    <div class="ui tab segment" data-tab="groups-all">
-                        @Html.Raw(Model.GroupsAllSegment)
-                    </div>
-                </div>
-                <div class="ui tab segment" data-tab="fileshares">
-                    <h2>Fileshares</h2>
-                    @Html.Raw(Model.Filesharessegment)
-                </div>
-                <div class="ui tab segment" data-tab="calAgenda">
-                    <h2>Calendar Agenda (today)</h2>
-                    @Html.Raw(Model.CalAgenda)
-                </div>
-                <div class="ui tab segment" data-tab="exchange">
-                    <h2>Exchange</h2>
-                    @Html.Raw(Model.Exchange)
-                </div>
-
+                <div class="ui tab segment" data-tab="advancedinfo">advanced</div>
+                <div class="ui tab segment" data-tab="print">@Html.Partial("Print", Model)</div>
+                <div class="ui tab segment" data-tab="groups">@Html.Partial("Groups", Model)</div>
+                <div class="ui tab segment" data-tab="fileshares">@Html.Partial("Fileshares", Model)</div>
+                <div class="ui tab segment" data-tab="calAgenda">@Html.Partial("CalendarAgenda", Model)</div>
+                <div class="ui tab segment" data-tab="exchange">@Html.Partial("Exchange", Model)</div>
+                <div class="ui tab segment" data-tab="servicemanager">@Html.Partial("ServiceManager", Model)</div>
+                <div class="ui tab segment" data-tab="computerInformation">@Html.Partial("ComputerInformation", Model)</div>
+                <div class="ui tab segment" data-tab="loginscript" id="divLoginscript">@Html.Partial("Loginscript", Model)</div>
+                <div class="ui tab segment" data-tab="rawdata">@Html.Partial("Raw", Model)</div>
+                <div class="ui tab segment" data-tab="tasks">@Html.Partial("Tasks", Model)</div>
+                <div class="ui tab segment" data-tab="warnings">@Html.Partial("Warnings", Model)</div>
                 <div class="ui tab segment" data-tab="networkdrives">
                     <h2>networkdrives</h2>
                     <h3>GPO mounted</h3>
                     not inplemented
                     <h3>Logonscript</h3>
                     not inplemented
-                </div>
-                <div class="ui tab segment" data-tab="servicemanager">
-                    <h2>SCSM Information</h2>
-                    @Html.DisplayFor(model => model.ServiceManager)
-                </div>
-
-                <div class="ui tab segment" data-tab="computerInformation">
-                    <h2>Computer Information</h2>
-                    <!-- Information from managerOf computers and logon machines from SCCM -->
-                    @Html.Raw(Model.ComputerInformation)
-                </div>
-
-                <div class="ui tab segment" data-tab="loginscript" id="divLoginscript">
-                    <h2>Loginscript</h2>
-                    @Html.DisplayFor(model => model.Loginscript)
-                </div>
-
-                <div class="ui tab segment" data-tab="rawdata">
-                    <h2>Raw Data</h2>
-                    @Html.Raw(Model.Rawdata)
-                </div>
-                <div class="ui tab segment" data-tab="tasks">
-                    <h2>Tasks</h2>
-                    <br />
-                    Unlock Account (if locked by wrong password):
-                    <asp:Button runat="server" CssClass="ui button" ID="unlockUserAccountButton" Text="Unlock Account" OnClick="unlockUserAccountButton_Click" /><br />
-                    <br />
-                    <br />
-                    Roaming Profile (enable/disable):
-                    <asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" /><br />
-                    <br />
-                    <br />
-                    @if (Model.ShowFixUserOU)
-                    {
-                        <div runat="server" id="divFixuserOU">
-                            Move user to default OU:
-                            <asp:Button runat="server" OnClick="fixUserOUButton" Text="Move user to default OU" ID="btnPostbackfixUserOUButton" Style="display: none" />
-                            <button type="button" class="ui button" id="btnFixOUShowModal" onclick="$('#modalConfirmOUmove').modal('show');">Move user to default OU</button><br />
-                        </div>
-                    }
-                </div>
-                <div class="ui tab segment" data-tab="warnings">
-                    <h2>Warnings</h2>
-                    @Html.Raw(Model.ErrorMessages)
                 </div>
             </div>
         </div>

@@ -1,0 +1,8 @@
+﻿@model ITSWebMgmt.Models.UserModel
+@using ITSWebMgmt.Connectors
+@{
+    PrintConnector printConnector = new PrintConnector(Model.Guid.ToString());
+    Model.Print = printConnector.doStuff();
+}
+<h2>Print</h2>
+@Html.DisplayFor(model => model.Print)

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ITSWebMgmt.Models
@@ -85,22 +86,29 @@ namespace ITSWebMgmt.Models
         public bool ShowErrorDiv = false;
         public bool ShowFixUserOU = false;
         public bool ShowLoginScript = false;
+        public List<string> GroupList;
+        public List<string> GroupListAll;
 
         public UserModel(UserController controller, string username, string adpath)
         {
             user = controller;
             user.UserModel = this;
-            UserName = username;
-
+            if (username != null)
+            {
+                UserName = username;
+            }
             if (adpath != null)
             {
                 ADcache = new UserADcache(adpath);
                 SCCMcache = new SCCMcache();
-                user.buildUserLookup(adpath);
+                ShowResultDiv = true;
+                ShowErrorDiv = false;
             }
             else
             {
-                user.buildUserNotFound();
+                ResultError = "User Not found";
+                ShowResultDiv = false;
+                ShowErrorDiv = true;
             }
         }
     }

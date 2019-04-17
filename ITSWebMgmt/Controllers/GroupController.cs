@@ -12,29 +12,23 @@ using System.Net;
 
 namespace ITSWebMgmt.Controllers
 {
-    public class GroupController : WebMgmtController<GroupADcache>
+    public class GroupController : WebMgmtController
     {
         //https://localhost:44322/group/index?grouppath=LDAP:%2f%2fCN%3dcm12_config_AAU10%2cOU%3dConfigMgr%2cOU%3dGroups%2cDC%3dsrv%2cDC%3daau%2cDC%3ddk
         public IActionResult Index(string grouppath)
         {
-            ADcache = new GroupADcache(grouppath);
             Group = new Group(this);
+            Group.ADcache = new GroupADcache(grouppath);
             Group.buildResult();
             return View(Group);
         }
 
         public Group Group;
-        public string Description { get => ADcache.getProperty("description"); }
-        public string Info { get => ADcache.getProperty("info"); }
-        public string Name { get => ADcache.getProperty("name"); }
-        public string ManagedBy { get => ADcache.getProperty("managedBy"); }
-        public string GroupType { get => ADcache.getProperty("groupType").ToString(); }
-        public string DistinguishedName { get => ADcache.getProperty("distinguishedName").ToString(); }
 
         public bool isGroup()
         {
             ///XXX we expect a group check its a group
-            return ADcache.DE.SchemaEntry.Name.Equals("group", StringComparison.CurrentCultureIgnoreCase);
+            return Group.ADcache.DE.SchemaEntry.Name.Equals("group", StringComparison.CurrentCultureIgnoreCase);
         }
 
         public static bool isFileShare(string value)
@@ -59,7 +53,7 @@ namespace ITSWebMgmt.Controllers
             List<string> accessNames = new List<string> { "Full", "Modify", "Read", "Edit", "Contribute" };
             foreach (string accessName in accessNames)
             {
-                string temp = Regex.Replace(adpath, @"_[a-zA-Z]*,OU", $"_{accessName},OU");
+                string temp = Regex.Replace(Group.adpath, @"_[a-zA-Z]*,OU", $"_{accessName},OU");
                 ADcache group = null;
                 try
                 {

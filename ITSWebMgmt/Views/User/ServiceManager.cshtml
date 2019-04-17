@@ -1,0 +1,11 @@
+﻿@model ITSWebMgmt.Models.UserModel
+@using ITSWebMgmt.Connectors
+@{
+    var scsmtest = new SCSMConnector();
+    Model.ServiceManager = await scsmtest.getActiveIncidents(Model.UserPrincipalName, Model.DisplayName);
+    var userID = scsmtest.userID;
+    /*Session["scsmuserID"] = userID;
+    Session["scsmuserUPN"] = UserModel.UserPrincipalName;*/
+}
+<h2>SCSM Information</h2>
+@Html.DisplayFor(model => model.ServiceManager)

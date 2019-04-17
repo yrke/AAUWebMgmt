@@ -1,0 +1,7 @@
+﻿@model ITSWebMgmt.Models.UserModel
+@using ITSWebMgmt.Helpers
+@{
+    Model.Rawdata = TableGenerator.buildRawTable(Model.ADcache.getAllProperties());
+}
+<h2>Raw Data</h2>
+@Html.Raw(Model.Rawdata)

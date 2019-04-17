@@ -1,4 +1,5 @@
-﻿using ITSWebMgmt.Controllers;
+﻿using ITSWebMgmt.Caches;
+using ITSWebMgmt.Controllers;
 using ITSWebMgmt.Helpers;
 using System;
 using System.Linq;
@@ -7,8 +8,14 @@ using System.Web;
 
 namespace ITSWebMgmt.Models
 {
-    public class Group
+    public class Group : WebMgmtModel<GroupADcache>
     {
+        public string Description { get => ADcache.getProperty("description"); }
+        public string Info { get => ADcache.getProperty("info"); }
+        public string Name { get => ADcache.getProperty("name"); }
+        public string ADManagedBy { get => ADcache.getProperty("managedBy"); }
+        public string GroupType { get => ADcache.getProperty("groupType").ToString(); }
+        public string DistinguishedName { get => ADcache.getProperty("distinguishedName").ToString(); }
         public GroupController group;
         public string Title;
         public string FileshareInfo;
@@ -16,8 +23,6 @@ namespace ITSWebMgmt.Models
         public string ManagedBy;
         public string SecurityGroup;
         public string GroupScope;
-        public string Description;
-        public string Info;
         public string GroupSegment;
         public string GroupsAllSegment;
         public string GroupOfSegment;
@@ -34,7 +39,7 @@ namespace ITSWebMgmt.Models
             buildBasicInfo();
             buildRaw();
 
-            if (GroupController.isFileShare(group.DistinguishedName))
+            if (GroupController.isFileShare(DistinguishedName))
             {
                 string[] tables = group.GetFileshareTables();
                 GroupSegment = tables[0];
@@ -47,30 +52,30 @@ namespace ITSWebMgmt.Models
             }
             else
             {
-                GroupSegment = TableGenerator.BuildgroupssegmentLabel(group.getGroups("member"));
-                GroupsAllSegment = TableGenerator.BuildgroupssegmentLabel(group.getGroupsTransitive("member"));
-                GroupOfSegment = TableGenerator.BuildgroupssegmentLabel(group.getGroups("memberOf"));
-                GroupsOfAllSegment = TableGenerator.BuildgroupssegmentLabel(group.getGroupsTransitive("memberOf"));
+                GroupSegment = TableGenerator.BuildgroupssegmentLabel(getGroups("member"));
+                GroupsAllSegment = TableGenerator.BuildgroupssegmentLabel(getGroupsTransitive("member"));
+                GroupOfSegment = TableGenerator.BuildgroupssegmentLabel(getGroups("memberOf"));
+                GroupsOfAllSegment = TableGenerator.BuildgroupssegmentLabel(getGroupsTransitive("memberOf"));
                 Title = "Group Info";
             }
         }
 
         private void buildRaw()
         {
-            Raw = TableGenerator.buildRawTable(group.getAllProperties());
+            Raw = TableGenerator.buildRawTable(getAllProperties());
         }
 
         private void buildBasicInfo()
         {
             var sb = new StringBuilder();
 
-            var dom = group.Path.Split(',').Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
+            var dom = Path.Split(',').Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
             Domain = dom;
 
             string managedByString = "none";
-            if (group.ManagedBy != "")
+            if (ADManagedBy != "")
             {
-                var manager = group.ManagedBy;
+                var manager = ADManagedBy;
 
                 var ldapSplit = manager.Split(',');
                 var name = ldapSplit[0].Replace("CN=", "");
@@ -87,7 +92,7 @@ namespace ITSWebMgmt.Models
             var isDistgrp = false;
             string groupType = ""; //domain Local, Global, Universal 
 
-            var gt = group.GroupType;
+            var gt = GroupType;
             switch (gt)
             {
                 case "2":
@@ -115,17 +120,6 @@ namespace ITSWebMgmt.Models
 
             SecurityGroup = (!isDistgrp).ToString();
             GroupScope = groupType;
-
-            if (group.Description != null)
-            {
-                Description = group.Description;
-            }
-
-            //I found a object that had a attrib that was info not description?
-            if (group.Info != null)
-            {
-                Info = group.Info;
-            }
 
             //TODO: IsRequrceGroup (is exchange, fileshare or other resource type group?)
 

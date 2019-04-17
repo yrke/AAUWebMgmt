@@ -1,0 +1,19 @@
+﻿@model ITSWebMgmt.Models.UserModel
+<h2>Tasks</h2>
+<br />
+Unlock Account (if locked by wrong password):
+<asp:Button runat="server" CssClass="ui button" ID="unlockUserAccountButton" Text="Unlock Account" OnClick="unlockUserAccountButton_Click" /><br />
+<br />
+<br />
+ Roaming Profile (enable/disable):
+<asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" /><br />
+<br />
+<br />
+@if (Model.ShowFixUserOU)
+{
+    <div runat="server" id="divFixuserOU">
+        Move user to default OU:
+        <asp:Button runat="server" OnClick="fixUserOUButton" Text="Move user to default OU" ID="btnPostbackfixUserOUButton" Style="display: none" />
+        <button type="button" class="ui button" id="btnFixOUShowModal" onclick="$('#modalConfirmOUmove').modal('show');">Move user to default OU</button><br />
+    </div>
+}
