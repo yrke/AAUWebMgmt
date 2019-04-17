@@ -21,12 +21,12 @@ namespace ITSWebMgmt.Helpers
 
         public static string getGroupLink(string adpath, string name)
         {
-            return string.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), name);
+            return string.Format("<a href=\"/Group?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), name);
         }
 
         public static string getPersonLink(string domain, string name)
         {
-            return string.Format("<a href=\"UserInfo.aspx?search={0}%40{1}.aau.dk\">{0}</a><br/>", name, domain);
+            return string.Format("<a href=\"/User?username={0}%40{1}.aau.dk\">{0}</a><br/>", name, domain);
         }
 
         public static void createGroupTableRows(List<string> adpaths, HTMLTableHelper groupTableHelper, string accessName = null)

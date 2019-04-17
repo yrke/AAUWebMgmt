@@ -4,7 +4,7 @@
 <td>Managed By:</td>
 <td>
     <div id="editDiv">
-        <label id="managedBy">@Model.ManagedBy</label>
+        <label id="managedBy">@Html.Raw(Model.ManagedBy)</label>
         <button id="btnEdit" style="float:right">Edit</button>
     </div>
     <div id="saveDiv" style="display:none;">

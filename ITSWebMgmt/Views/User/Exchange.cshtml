@@ -17,7 +17,7 @@
     {
         var type = e.Type;
         var domain = e.Domain;
-        var nameFormated = string.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + e.RawValue), e.Name);
+        var nameFormated = string.Format("<a href=\"/Group?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + e.RawValue), e.Name);
         var access = e.Access;
         helper.AddRow(new string[] { type, domain, nameFormated, access });
     }

@@ -1,6 +1,7 @@
 ﻿using ITSWebMgmt.Caches;
 using ITSWebMgmt.Controllers;
 using ITSWebMgmt.Helpers;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Text;
@@ -81,7 +82,8 @@ namespace ITSWebMgmt.Models
                 var name = ldapSplit[0].Replace("CN=", "");
                 var domain = ldapSplit.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
 
-                managedByString = string.Format("<a href=\"/Redirector.aspx?adpath={0}\">{1}</a>", HttpUtility.HtmlEncode("LDAP://" + manager), domain + "\\" + name);
+                managedByString = string.Format("<a href=\"/Redirector?adpath={0}\">{1}</a>", HttpUtility.HtmlEncode("LDAP://" + manager), domain + "\\" + name);
+                //managedByString = "<a href=\"" + System.Web.UrlHelper.Action("Redirector", "Home") + "?adpath=" + HttpUtility.HtmlEncode("LDAP://" + manager) + "\">" + domain + "\\" + name + "</a>";
 
             }
             ManagedBy = managedByString;

@@ -44,24 +44,22 @@ namespace ITSWebMgmt.Controllers
 
 
                     string param = "?" + "username=" + de.Properties["userPrincipalName"].Value.ToString();
-                    Response.Redirect("~/UserInfo.aspx" + param);
+                    Response.Redirect("~/User" + param);
 
                 }
                 else if (type.Equals("computer"))
                 {
-                    //http://localhost:52430/computerInfo.aspx?computername=its\kyrke-l03
-
                     var ldapSplit = adpath.Replace("LDAP://", "").Split(',');
                     var name = ldapSplit[0].Replace("CN=", "");
                     var domain = ldapSplit.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
 
                     string param = "?" + "computername=" + domain + "\\" + name;
-                    Response.Redirect("~/ComputerInfo.aspx" + param);
+                    Response.Redirect("~/Computer" + param);
                 }
                 else if (type.Equals("group"))
                 {
                     string param = "?" + "grouppath=" + adpath;
-                    Response.Redirect("~/GroupsInfo.aspx" + param);
+                    Response.Redirect("~/Group" + param);
                 }
             }
         }

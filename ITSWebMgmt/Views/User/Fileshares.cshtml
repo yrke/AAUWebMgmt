@@ -18,7 +18,7 @@
 
     foreach (Fileshare f in fileshareList)
     {
-        var nameWithLink = string.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + f.Fileshareraw), f.Name);
+        var nameWithLink = string.Format("<a href=\"/Group?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + f.Fileshareraw), f.Name);
         helper.AddRow(new string[] { f.Type, f.Domain, nameWithLink, f.Access });
     }
 
