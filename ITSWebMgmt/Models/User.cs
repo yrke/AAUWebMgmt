@@ -86,12 +86,14 @@ namespace ITSWebMgmt.Models
         public bool ShowFixUserOU = false;
         public bool ShowLoginScript = false;
 
-        public UserModel(UserController controller, string adpath)
+        public UserModel(UserController controller, string username, string adpath)
         {
+            user = controller;
+            user.UserModel = this;
+            UserName = username;
+
             if (adpath != null)
             {
-                user = controller;
-                user.UserModel = this;
                 ADcache = new UserADcache(adpath);
                 SCCMcache = new SCCMcache();
                 user.buildUserLookup(adpath);

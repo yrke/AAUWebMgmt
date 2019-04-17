@@ -29,7 +29,7 @@
             <td>Password Expire Date</td>
             <td>@Html.DisplayFor(model => model.BasicInfoPasswordExpireDate)</td>
         </tr>
-        @Html.DisplayFor(model => model.BasicInfoTable)
+        @Html.Raw(Model.BasicInfoTable)
         <tr>
             <td>Romaing Profile</td>
             <td>@Html.DisplayFor(model => model.BasicInfoRomaing)</td>

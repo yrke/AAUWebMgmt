@@ -27,14 +27,14 @@ namespace ITSWebMgmt.Controllers
                 if (!_cache.TryGetValue(username, out UserModel))
                 {
                     username = username.Trim();
-                    UserModel = new UserModel(this, lookupUser(username));
+                    UserModel = new UserModel(this, username, lookupUser(username));
                     var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
                     _cache.Set(username, UserModel, cacheEntryOptions);
                 }
             }
             else
             {
-                UserModel = new UserModel(this, username);
+                UserModel = new UserModel(this, null, null);
             }
 
             return View(UserModel);
@@ -57,7 +57,6 @@ namespace ITSWebMgmt.Controllers
             }
             else
             {
-                UserModel.UserName = username;
                 return getADPathFromUsername(username);
             }
         }

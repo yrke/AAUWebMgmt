@@ -40,7 +40,7 @@
         Username
         <div class="ui action input">
 
-            <input name="search" class="ui input focus" value=@Html.DisplayFor(model => model.UserName) />
+            <input name="username" class="ui input focus" value=@Html.DisplayFor(model => model.UserName) />
 
             <input type="submit" value="Search" onclick='$("#loader > div").show("fast");' />
         </div>
@@ -63,126 +63,123 @@
     @if (Model.ShowResultDiv)
     {
         <div runat="server" id="warningsAndErrorDIV">
-            @Html.DisplayFor(model => model.ErrorCountMessage)
+            @Html.Raw(Model.ErrorCountMessage)
         </div>
-
-        <form runat="server">
-            @Html.DisplayFor(model => model.UserName)
-            <div class="ui grid">
-                <div class="four wide column">
-                    <div class="ui vertical fluid tabular menu">
-                        <a class="active item" data-tab="basicinfo">Basic Info</a>
-                        <a class="item" data-tab="servicemanager">Service Manager</a>
-                        <a class="item" data-tab="calAgenda">Calendar Agenda</a>
-                        <a class="item" data-tab="computerInformation">Computer Information</a>
-                        <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
-                        <a class="item" data-tab="groups">Groups</a>
-                        <a class="item" data-tab="fileshares">Fileshares</a>
-                        <a class="item" data-tab="exchange">Exchange Resources</a>
-                        <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
-                        @if (Model.ShowLoginScript)
-                        {
-                            <a class="item" data-tab="loginscript" runat="server" id="menuLoginScript">Loginscript</a>
-                        }
-                        <a class="item" data-tab="print" runat="server" id="menuPrint">Print</a>
-                        <a class="item" data-tab="rawdata">Raw Data</a>
-                        <a class="item" data-tab="tasks">Tasks</a>
-                        <a class="item" data-tab="warnings">Warnings</a>
-                        <!--<a class="item" data-tab="statustest">Statustest</a> -->
-                    </div>
-                </div>
-                <div class="twelve wide stretched column">
-                    <div class="ui tab segment">
-                        none<!-- spacer as the fist elemen else is placed differencet -->
-                    </div>
-                    <div class="ui active tab segment" data-tab="basicinfo">@Html.Partial("BasicInfo", Model)</div>
-                    <div class="ui tab segment" data-tab="advancedinfo">
-                        advanced
-                    </div>
-                    <div class="ui tab segment" data-tab="print">
-                        <h2>Print</h2>
-                        @Html.DisplayFor(model => model.Print)
-                    </div>
-                    <div class="ui tab segment" data-tab="groups">
-                        <h2>Groups</h2>
-                        <div class="ui two item menu">
-                            <a data-tab="groups-direct" class="item">Direct Groups</a>
-                            <a data-tab="groups-all" class="item">Recursive groups</a>
-                        </div>
-                        <div class="ui active tab segment" data-tab="groups-direct">
-                            @Html.DisplayFor(model => model.GroupSegment)
-                        </div>
-                        <div class="ui tab segment" data-tab="groups-all">
-                            @Html.DisplayFor(model => model.GroupsAllSegment)
-                        </div>
-                    </div>
-                    <div class="ui tab segment" data-tab="fileshares">
-                        <h2>Fileshares</h2>
-                        @Html.DisplayFor(model => model.Filesharessegment)
-                    </div>
-                    <div class="ui tab segment" data-tab="calAgenda">
-                        <h2>Calendar Agenda (today)</h2>
-                        @Html.DisplayFor(model => model.CalAgenda)
-                    </div>
-                    <div class="ui tab segment" data-tab="exchange">
-                        <h2>Exchange</h2>
-                        @Html.DisplayFor(model => model.Exchange)
-                    </div>
-
-                    <div class="ui tab segment" data-tab="networkdrives">
-                        <h2>networkdrives</h2>
-                        <h3>GPO mounted</h3>
-                        not inplemented
-                        <h3>Logonscript</h3>
-                        not inplemented
-                    </div>
-                    <div class="ui tab segment" data-tab="servicemanager">
-                        <h2>SCSM Information</h2>
-                        <asp:Button ID="buttonCreateIRSR" runat="server" OnClick="createNewIRSR_Click" Text="Create new IR/SR" />
-                        @Html.DisplayFor(model => model.ServiceManager)
-                    </div>
-
-                    <div class="ui tab segment" data-tab="computerInformation">
-                        <h2>Computer Information</h2>
-                        <!-- Information from managerOf computers and logon machines from SCCM -->
-                        @Html.Raw(Model.ComputerInformation)
-                    </div>
-
-                    <div class="ui tab segment" data-tab="loginscript" id="divLoginscript">
-                        <h2>Loginscript</h2>
-                        @Html.DisplayFor(model => model.Loginscript)
-                    </div>
-
-                    <div class="ui tab segment" data-tab="rawdata">
-                        <h2>Raw Data</h2>
-                        @Html.DisplayFor(model => model.Rawdata)
-                    </div>
-                    <div class="ui tab segment" data-tab="tasks">
-                        <h2>Tasks</h2>
-                        <br />
-                        Unlock Account (if locked by wrong password):
-                        <asp:Button runat="server" CssClass="ui button" ID="unlockUserAccountButton" Text="Unlock Account" OnClick="unlockUserAccountButton_Click" /><br />
-                        <br />
-                        <br />
-                        Roaming Profile (enable/disable):
-                        <asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" /><br />
-                        <br />
-                        <br />
-                        @if (Model.ShowFixUserOU)
-                        {
-                            <div runat="server" id="divFixuserOU">
-                                Move user to default OU:
-                                <asp:Button runat="server" OnClick="fixUserOUButton" Text="Move user to default OU" ID="btnPostbackfixUserOUButton" Style="display: none" />
-                                <button type="button" class="ui button" id="btnFixOUShowModal" onclick="$('#modalConfirmOUmove').modal('show');">Move user to default OU</button><br />
-                            </div>
-                        }
-                    </div>
-                    <div class="ui tab segment" data-tab="warnings">
-                        <h2>Warnings</h2>
-                        @Html.DisplayFor(model => model.ErrorMessages)
-                    </div>
+        <h2>@Html.DisplayFor(model => model.UserName)</h2>
+        <div class="ui grid">
+            <div class="four wide column">
+                <div class="ui vertical fluid tabular menu">
+                    <a class="active item" data-tab="basicinfo">Basic Info</a>
+                    <a class="item" data-tab="servicemanager">Service Manager</a>
+                    <a class="item" data-tab="calAgenda">Calendar Agenda</a>
+                    <a class="item" data-tab="computerInformation">Computer Information</a>
+                    <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
+                    <a class="item" data-tab="groups">Groups</a>
+                    <a class="item" data-tab="fileshares">Fileshares</a>
+                    <a class="item" data-tab="exchange">Exchange Resources</a>
+                    <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
+                    @if (Model.ShowLoginScript)
+                    {
+                        <a class="item" data-tab="loginscript" runat="server" id="menuLoginScript">Loginscript</a>
+                    }
+                    <a class="item" data-tab="print" runat="server" id="menuPrint">Print</a>
+                    <a class="item" data-tab="rawdata">Raw Data</a>
+                    <a class="item" data-tab="tasks">Tasks</a>
+                    <a class="item" data-tab="warnings">Warnings</a>
+                    <!--<a class="item" data-tab="statustest">Statustest</a> -->
                 </div>
             </div>
-        </form>
+            <div class="twelve wide stretched column">
+                <div class="ui tab segment">
+                    none<!-- spacer as the fist elemen else is placed differencet -->
+                </div>
+                <div class="ui active tab segment" data-tab="basicinfo">@Html.Partial("BasicInfo", Model)</div>
+                <div class="ui tab segment" data-tab="advancedinfo">
+                    advanced
+                </div>
+                <div class="ui tab segment" data-tab="print">
+                    <h2>Print</h2>
+                    @Html.DisplayFor(model => model.Print)
+                </div>
+                <div class="ui tab segment" data-tab="groups">
+                    <h2>Groups</h2>
+                    <div class="ui two item menu">
+                        <a data-tab="groups-direct" class="item">Direct Groups</a>
+                        <a data-tab="groups-all" class="item">Recursive groups</a>
+                    </div>
+                    <div class="ui active tab segment" data-tab="groups-direct">
+                        @Html.Raw(Model.GroupSegment)
+                    </div>
+                    <div class="ui tab segment" data-tab="groups-all">
+                        @Html.Raw(Model.GroupsAllSegment)
+                    </div>
+                </div>
+                <div class="ui tab segment" data-tab="fileshares">
+                    <h2>Fileshares</h2>
+                    @Html.Raw(Model.Filesharessegment)
+                </div>
+                <div class="ui tab segment" data-tab="calAgenda">
+                    <h2>Calendar Agenda (today)</h2>
+                    @Html.Raw(Model.CalAgenda)
+                </div>
+                <div class="ui tab segment" data-tab="exchange">
+                    <h2>Exchange</h2>
+                    @Html.Raw(Model.Exchange)
+                </div>
+
+                <div class="ui tab segment" data-tab="networkdrives">
+                    <h2>networkdrives</h2>
+                    <h3>GPO mounted</h3>
+                    not inplemented
+                    <h3>Logonscript</h3>
+                    not inplemented
+                </div>
+                <div class="ui tab segment" data-tab="servicemanager">
+                    <h2>SCSM Information</h2>
+                    <asp:Button ID="buttonCreateIRSR" runat="server" OnClick="createNewIRSR_Click" Text="Create new IR/SR" />
+                    @Html.DisplayFor(model => model.ServiceManager)
+                </div>
+
+                <div class="ui tab segment" data-tab="computerInformation">
+                    <h2>Computer Information</h2>
+                    <!-- Information from managerOf computers and logon machines from SCCM -->
+                    @Html.Raw(Model.ComputerInformation)
+                </div>
+
+                <div class="ui tab segment" data-tab="loginscript" id="divLoginscript">
+                    <h2>Loginscript</h2>
+                    @Html.DisplayFor(model => model.Loginscript)
+                </div>
+
+                <div class="ui tab segment" data-tab="rawdata">
+                    <h2>Raw Data</h2>
+                    @Html.Raw(Model.Rawdata)
+                </div>
+                <div class="ui tab segment" data-tab="tasks">
+                    <h2>Tasks</h2>
+                    <br />
+                    Unlock Account (if locked by wrong password):
+                    <asp:Button runat="server" CssClass="ui button" ID="unlockUserAccountButton" Text="Unlock Account" OnClick="unlockUserAccountButton_Click" /><br />
+                    <br />
+                    <br />
+                    Roaming Profile (enable/disable):
+                    <asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" /><br />
+                    <br />
+                    <br />
+                    @if (Model.ShowFixUserOU)
+                    {
+                        <div runat="server" id="divFixuserOU">
+                            Move user to default OU:
+                            <asp:Button runat="server" OnClick="fixUserOUButton" Text="Move user to default OU" ID="btnPostbackfixUserOUButton" Style="display: none" />
+                            <button type="button" class="ui button" id="btnFixOUShowModal" onclick="$('#modalConfirmOUmove').modal('show');">Move user to default OU</button><br />
+                        </div>
+                    }
+                </div>
+                <div class="ui tab segment" data-tab="warnings">
+                    <h2>Warnings</h2>
+                    @Html.Raw(Model.ErrorMessages)
+                </div>
+            </div>
+        </div>
     }
 </div>
