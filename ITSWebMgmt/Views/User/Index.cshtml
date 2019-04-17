@@ -58,8 +58,6 @@
         @Html.DisplayFor(model => model.ResultError)
     }
 
-    <!-- <uc:Changes ID="changes" runat="server" /> -->
-
     @if (Model.ShowResultDiv)
     {
         <div runat="server" id="warningsAndErrorDIV">
@@ -136,7 +134,6 @@
                 </div>
                 <div class="ui tab segment" data-tab="servicemanager">
                     <h2>SCSM Information</h2>
-                    <asp:Button ID="buttonCreateIRSR" runat="server" OnClick="createNewIRSR_Click" Text="Create new IR/SR" />
                     @Html.DisplayFor(model => model.ServiceManager)
                 </div>
 

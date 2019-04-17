@@ -657,14 +657,6 @@ namespace ITSWebMgmt.Controllers
             unlockUserAccount();
         }
 
-        protected void createNewIRSR_Click(object sender, EventArgs e)
-        {
-            /*string userID = (string)Session["scsmuserID"];
-            string upn = (string)Session["scsmuserUPN"];
-
-            Response.Redirect("/CreateWorkItem.aspx?userID=" + userID + "&userDisplayName=" + upn);*/
-        }
-
         protected void buildPrint()
         {
             PrintConnector printConnector = new PrintConnector(UserModel.Guid.ToString());

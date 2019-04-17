@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ITSWebMgmt.Models;
+using System.DirectoryServices;
 
 namespace ITSWebMgmt.Controllers
 {
@@ -24,6 +25,45 @@ namespace ITSWebMgmt.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public void Redirector(string adpath)
+        {
+            if (adpath != null)
+            {
+                if (!adpath.StartsWith("LDAP://"))
+                {
+                    adpath = "LDAP://" + adpath;
+                }
+                DirectoryEntry de = new DirectoryEntry(adpath);
+
+                var type = de.SchemaEntry.Name;
+
+                if (type.Equals("user"))
+                {
+
+
+                    string param = "?" + "username=" + de.Properties["userPrincipalName"].Value.ToString();
+                    Response.Redirect("~/UserInfo.aspx" + param);
+
+                }
+                else if (type.Equals("computer"))
+                {
+                    //http://localhost:52430/computerInfo.aspx?computername=its\kyrke-l03
+
+                    var ldapSplit = adpath.Replace("LDAP://", "").Split(',');
+                    var name = ldapSplit[0].Replace("CN=", "");
+                    var domain = ldapSplit.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
+
+                    string param = "?" + "computername=" + domain + "\\" + name;
+                    Response.Redirect("~/ComputerInfo.aspx" + param);
+                }
+                else if (type.Equals("group"))
+                {
+                    string param = "?" + "grouppath=" + adpath;
+                    Response.Redirect("~/GroupsInfo.aspx" + param);
+                }
+            }
         }
     }
 }
