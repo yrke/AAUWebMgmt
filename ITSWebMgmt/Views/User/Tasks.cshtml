@@ -1,19 +1,52 @@
 ﻿@model ITSWebMgmt.Models.UserModel
+@using System.Web;
+
 <h2>Tasks</h2>
 <br />
 Unlock Account (if locked by wrong password):
-<asp:Button runat="server" CssClass="ui button" ID="unlockUserAccountButton" Text="Unlock Account" OnClick="unlockUserAccountButton_Click" /><br />
+<button id="unlockUserAccountButton">Unlock Account</button>
 <br />
 <br />
  Roaming Profile (enable/disable):
-<asp:Button runat="server" CssClass="ui button" ID="ToggleRoaming" Text="ToggleRoaming" OnClick="button_toggle_userprofile" /><br />
+<button id="ToggleRoaming">ToggleRoaming</button>
 <br />
 <br />
 @if (Model.ShowFixUserOU)
 {
     <div runat="server" id="divFixuserOU">
         Move user to default OU:
-        <asp:Button runat="server" OnClick="fixUserOUButton" Text="Move user to default OU" ID="btnPostbackfixUserOUButton" Style="display: none" />
+        <button id="fixUserOU" Style="display: none">Move user to default OU</button>
         <button type="button" class="ui button" id="btnFixOUShowModal" onclick="$('#modalConfirmOUmove').modal('show');">Move user to default OU</button><br />
     </div>
 }
+
+<script>
+    $("#fixUserOU").click(function () {
+        sendPostRequest("FixUserOu")
+    });
+
+    $("#ToggleRoaming").click(function () {
+        sendPostRequest("ToggleUserprofile")
+    });
+
+    $("#unlockUserAccountButton").click(function () {
+        sendPostRequest("UnlockUserAccount")
+    });
+
+    function sendPostRequest(Action) {
+        var username = '@Html.Raw(HttpUtility.JavaScriptStringEncode(Model.UserName))';
+        $.ajax({
+            type: "POST",
+            url: 'User/' + Action,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(username),
+            dataType: "json",
+            success: function (response) {
+                alert(JSON.parse(response.responseText).message);
+            },
+            error: function(response) {
+                alert(JSON.parse(response.responseText).errorMessage);
+            }
+        });
+    }
+</script>

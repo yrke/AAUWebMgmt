@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
 using System.Management;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -162,9 +163,10 @@ namespace ITSWebMgmt.Controllers
             return true;
         }
 
-        public bool fixUserOu()
+        public ActionResult FixUserOu([FromBody]string username)
         {
-            if (userIsInRightOU()) { return false; }
+            UserModel = _cache.Get<UserModel>(username);
+            if (userIsInRightOU()) { return Error(); }
 
             //See if it can be fixed!
             string dn = UserModel.DistinguishedName;
@@ -176,20 +178,17 @@ namespace ITSWebMgmt.Controllers
 
             if (count < 2)
             {
-                //This cant be in people/{staff,student,guest}
-                return false;
+                return Error("This cant be in people/{staff,student,guest}");
             }
             //Check root is people
             if (!(ou[count - 1]).Equals("ou=people", StringComparison.CurrentCultureIgnoreCase))
             {
-                //Error user is not placed in people!!!!! Cant move the user (might not be a real user or admin or computer)
-                return false;
+                return Error("Error user is not placed in people!!!!! Cant move the user (might not be a real user or admin or computer)");
             }
             string[] okplaces = new string[3] { "ou=staff", "ou=guests", "ou=students" };
             if (!okplaces.Contains(ou[count - 2], StringComparer.OrdinalIgnoreCase))
             {
-                //Error user is not in out staff, people or student, what is gowing on here?
-                return false;
+                return Error("Error user is not in out staff, people or student, what is gowing on here?");
             }
             if (count > 2)
             {
@@ -212,12 +211,13 @@ namespace ITSWebMgmt.Controllers
                 var newLocaltion = new DirectoryEntry(newPath);
                 UserModel.ADcache.DE.MoveTo(newLocaltion);
 
-                return true;
+                return Success();
             }
             //We don't need to do anything, user is placed in the right ou! (we think, can still be in wrong ou fx a guest changed to staff, we cant check that here) 
             logger.Debug("no need to change user {0} out, all is good", UserModel.adpath);
-            return true;
+            return Success();
         }
+
 
         public string getADPathFromUsername(string username)
         {
@@ -251,13 +251,24 @@ namespace ITSWebMgmt.Controllers
             }
         }
 
-        public void unlockUserAccount()
+
+        public ActionResult UnlockUserAccount([FromBody]string username)
         {
+            UserModel = _cache.Get<UserModel>(username);
             logger.Info("User {0} unlocked useraccont {1}", ControllerContext.HttpContext.User.Identity.Name, UserModel.adpath);
 
-            UserModel.ADcache.DE.Properties["LockOutTime"].Value = 0; //unlock account
-            UserModel.ADcache.DE.CommitChanges(); //may not be needed but adding it anyways
-            UserModel.ADcache.DE.Close();
+            try
+            {
+                UserModel.ADcache.DE.Properties["LockOutTime"].Value = 0; //unlock account
+                UserModel.ADcache.DE.CommitChanges(); //may not be needed but adding it anyways
+                UserModel.ADcache.DE.Close();
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                return Error(e.Message);
+            }
+
+            return Success();
         }
 
         public async Task<GetUserAvailabilityResults> getFreeBusyResultsAsync()
@@ -288,56 +299,62 @@ namespace ITSWebMgmt.Controllers
             return await service.GetUserAvailability(attendees, window, AvailabilityData.FreeBusy, myOptions);
         }
 
-        public void toggle_userprofile()
+        public ActionResult ToggleUserprofile([FromBody]string username)
         {
+            UserModel = _cache.Get<UserModel>(username);
             //XXX log what the new value of profile is :)
             logger.Info("User {0} toggled romaing profile for user  {1}", ControllerContext.HttpContext.User.Identity.Name, UserModel.adpath);
 
             //string profilepath = (string)(ADcache.DE.Properties["profilePath"])[0];
 
-            if (UserModel.ADcache.DE.Properties.Contains("profilepath"))
+            try
             {
-                UserModel.ADcache.DE.Properties["profilePath"].Clear();
-                UserModel.ADcache.DE.CommitChanges();
+                if (UserModel.ADcache.DE.Properties.Contains("profilepath"))
+                {
+                    UserModel.ADcache.DE.Properties["profilePath"].Clear();
+                    UserModel.ADcache.DE.CommitChanges();
+                }
+                else
+                {
+                    string upn = UserModel.UserPrincipalName;
+                    var tmp = upn.Split('@');
+
+                    string path = string.Format("\\\\{0}\\profiles\\{1}", tmp[1], tmp[0]);
+
+                    UserModel.ADcache.DE.Properties["profilePath"].Add(path);
+                    UserModel.ADcache.DE.CommitChanges();
+                }
             }
-            else
+            catch (UnauthorizedAccessException e)
             {
-                string upn = UserModel.UserPrincipalName;
-                var tmp = upn.Split('@');
-
-                string path = string.Format("\\\\{0}\\profiles\\{1}", tmp[1], tmp[0]);
-
-                UserModel.ADcache.DE.Properties["profilePath"].Add(path);
-                UserModel.ADcache.DE.CommitChanges();
+                return Error(e.Message);
             }
-        }
-
-        protected void button_toggle_userprofile(object sender, EventArgs e)
-        {
-
-            toggle_userprofile();
 
             //Set value
             //DirectoryEntry de = result.GetDirectoryEntry();
             //de.Properties["TelephoneNumber"].Clear();
             //de.Properties["employeeNumber"].Value = "123456789";
             //de.CommitChanges();
-        }
 
-        protected void fixUserOUButton(object sender, EventArgs e)
-        {
-            fixUserOu();
-        }
-
-        protected void unlockUserAccountButton_Click(object sender, EventArgs e)
-        {
-            unlockUserAccount();
+            return Success();
         }
 
         [HttpPost]
         public void CreateNewIRSR(string displayname)
         {
             Response.Redirect("/CreateWorkItem?userDisplayName=" + displayname);
+        }
+
+        public ActionResult Error(string message = "Error")
+        {
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { success = false, errorMessage = message });
+        }
+
+        public ActionResult Success(string Message = "Success")
+        {
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { success = true, message = Message });
         }
     }
 }
