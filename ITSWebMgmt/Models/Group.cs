@@ -82,9 +82,7 @@ namespace ITSWebMgmt.Models
                 var name = ldapSplit[0].Replace("CN=", "");
                 var domain = ldapSplit.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
 
-                managedByString = string.Format("<a href=\"/Redirector?adpath={0}\">{1}</a>", HttpUtility.HtmlEncode("LDAP://" + manager), domain + "\\" + name);
-                //managedByString = "<a href=\"" + System.Web.UrlHelper.Action("Redirector", "Home") + "?adpath=" + HttpUtility.HtmlEncode("LDAP://" + manager) + "\">" + domain + "\\" + name + "</a>";
-
+                managedByString = string.Format("<a href=\"/Home/Redirector?adpath={0}\">{1}</a>", HttpUtility.HtmlEncode("LDAP://" + manager), domain + "\\" + name);
             }
             ManagedBy = managedByString;
 

@@ -22,7 +22,6 @@ namespace ITSWebMgmt.Controllers
     {
         public IActionResult Index(string username)
         {
-            AttendeeAvailability test;
             if (username != null)
             {
                 if (!_cache.TryGetValue(username, out UserModel))
@@ -32,6 +31,7 @@ namespace ITSWebMgmt.Controllers
                     var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
                     _cache.Set(username, UserModel, cacheEntryOptions);
                 }
+                UserModel.ShowResultDiv = true;
             }
             else
             {

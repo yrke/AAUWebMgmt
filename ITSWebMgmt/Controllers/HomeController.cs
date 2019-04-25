@@ -41,11 +41,8 @@ namespace ITSWebMgmt.Controllers
 
                 if (type.Equals("user"))
                 {
-
-
                     string param = "?" + "username=" + de.Properties["userPrincipalName"].Value.ToString();
-                    Response.Redirect("~/User" + param);
-
+                    Response.Redirect("/User" + param);
                 }
                 else if (type.Equals("computer"))
                 {
@@ -54,12 +51,12 @@ namespace ITSWebMgmt.Controllers
                     var domain = ldapSplit.Where<string>(s => s.StartsWith("DC=")).ToArray<string>()[0].Replace("DC=", "");
 
                     string param = "?" + "computername=" + domain + "\\" + name;
-                    Response.Redirect("~/Computer" + param);
+                    Response.Redirect("/Computer" + param);
                 }
                 else if (type.Equals("group"))
                 {
                     string param = "?" + "grouppath=" + adpath;
-                    Response.Redirect("~/Group" + param);
+                    Response.Redirect("/Group" + param);
                 }
             }
         }

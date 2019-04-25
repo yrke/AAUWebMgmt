@@ -14,7 +14,7 @@
         foreach (ManagementObject o in Model.getUserMachineRelationshipFromUserName(userName))
         {
             var machinename = o.Properties["ResourceName"].Value.ToString();
-            var name = "<a href=\"/computerInfo.aspx?computername=" + machinename + "\">" + machinename + "</a><br />";
+            var name = "<a href=\"/Computer?computername=" + machinename + "\">" + machinename + "</a><br />";
             var fjernsupport = "<a href=\"https://support.its.aau.dk/api/client_script?type=rep&operation=generate&action=start_pinned_client_session&client.hostname=" + machinename + "\">Start</a>";
             helper.AddRow(new string[] { name, fjernsupport });
         }
