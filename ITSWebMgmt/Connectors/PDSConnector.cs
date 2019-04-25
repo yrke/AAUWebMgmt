@@ -40,7 +40,7 @@ namespace ITSWebMgmt.Connectors
         }
         public PDSConnector(string empID)
         {
-
+            return; //The webside is down and the service is will be closed after april 2019. Do not try to connect to it
             //string empID = "115928";
             string url = "http://personprofil.aau.dk/" + empID + "?lang=en";
 
