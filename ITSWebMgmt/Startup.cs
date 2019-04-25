@@ -74,6 +74,9 @@ namespace ITSWebMgmt
                 routes.MapRoute(
                     name: "defendpointchallengeresponse",
                     template: "{controller=DefendpointChallengeResponse}/{action=Index}/{id?}");
+                routes.MapRoute(
+                    name: "createworkitem",
+                    template: "{controller=CreateWorkItem}/{action=Index}/{id?}");
             });
         }
     }

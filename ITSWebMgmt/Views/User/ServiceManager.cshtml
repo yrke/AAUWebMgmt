@@ -4,8 +4,11 @@
     var scsmtest = new SCSMConnector();
     Model.ServiceManager = await scsmtest.getActiveIncidents(Model.UserPrincipalName, Model.DisplayName);
     var userID = scsmtest.userID;
-    /*Session["scsmuserID"] = userID;
-    Session["scsmuserUPN"] = UserModel.UserPrincipalName;*/
 }
 <h2>SCSM Information</h2>
+@using (Html.BeginForm("CreateNewIRSR", "User", FormMethod.Post))
+{
+    @Html.HiddenFor(m => m.DisplayName)
+    <input type="submit" value="Create bew IR/SR" />
+}
 @Html.DisplayFor(model => model.ServiceManager)

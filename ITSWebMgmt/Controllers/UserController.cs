@@ -333,5 +333,11 @@ namespace ITSWebMgmt.Controllers
         {
             unlockUserAccount();
         }
+
+        [HttpPost]
+        public void CreateNewIRSR(string displayname)
+        {
+            Response.Redirect("/CreateWorkItem?userDisplayName=" + displayname);
+        }
     }
 }
