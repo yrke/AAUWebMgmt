@@ -1,68 +1,66 @@
 ﻿using ITSWebMgmt.Caches;
+using ITSWebMgmt.Connectors;
+using ITSWebMgmt.Functions;
+using ITSWebMgmt.Helpers;
+using ITSWebMgmt.Models;
+using ITSWebMgmt.WebMgmtErrors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Exchange.WebServices.Data;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Linq;
 using System.Management;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace ITSWebMgmt.Controllers
 {
-    public class UserController : Controller<UserADcache>
+    public class UserController : WebMgmtController
     {
-        private SCCMcache SCCMcache;
-
-        public UserController()
+        public IActionResult Index(string username)
         {
-            //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
-            SCCMcache = new SCCMcache();
-        }
-
-        public override string adpath { get => ADcache.adpath; set { ADcache = new UserADcache(value); ADcache.adpath = value; } }
-        public string Guid { get => new Guid((byte[]) (ADcache.getProperty("objectGUID"))).ToString(); }
-        public string UserPrincipalName { get => ADcache.getProperty("userPrincipalName"); }
-        public string DisplayName { get => ADcache.getProperty("displayName"); }
-        public string[] ProxyAddresses
-        {
-            get
+            if (username != null)
             {
-                var temp = ADcache.getProperty("proxyAddresses");
-                return temp.GetType().Equals(typeof(string)) ? (new string[] { temp }) : temp;
+                if (!_cache.TryGetValue(username, out UserModel))
+                {
+                    username = username.Trim();
+                    UserModel = new UserModel(this, username, lookupUser(username));
+                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
+                    _cache.Set(username, UserModel, cacheEntryOptions);
+                }
+                UserModel.ShowResultDiv = true;
             }
-        }
-        public int UserAccountControlComputed { get => ADcache.getProperty("msDS-User-Account-Control-Computed");}
-        public int UserAccountControl { get => ADcache.getProperty("userAccountControl"); }
-        public string UserPasswordExpiryTimeComputed{ get => ADcache.getProperty("msDS-UserPasswordExpiryTimeComputed"); }
-        public string GivenName { get => ADcache.getProperty("givenName"); }
-        public string SN { get => ADcache.getProperty("sn"); }
-        public string AAUStaffID { get => ADcache.getProperty("aauStaffID").ToString(); }
-        public string AAUStudentID { get => ADcache.getProperty("aauStudentID").ToString(); }
-        public object Profilepath { get => ADcache.getProperty("profilepath"); }
-        public string AAUUserClassification { get => ADcache.getProperty("aauUserClassification"); }
-        public string AAUUserStatus { get => ADcache.getProperty("aauUserStatus").ToString(); }
-        public string ScriptPath { get => ADcache.getProperty("scriptPath"); }
-        public bool IsAccountLocked { get => ADcache.getProperty("IsAccountLocked"); }
-        public string AAUAAUID { get => ADcache.getProperty("aauAAUID"); }
-        public string AAUUUID { get => ADcache.getProperty("aauUUID"); }
-        public string TelephoneNumber { get => ADcache.getProperty("telephoneNumber"); set => ADcache.saveProperty("telephoneNumber", value); }
-        public string LastLogon { get => ADcache.getProperty("lastLogon"); }
-        public string DistinguishedName { get => ADcache.getProperty("distinguishedName"); }
-        public ManagementObjectCollection getUserMachineRelationshipFromUserName(string userName) => SCCMcache.getUserMachineRelationshipFromUserName(userName);
-
-        public string[] getUserInfo()
-        {
-            return new string[]
+            else
             {
-                UserPrincipalName,
-                AAUAAUID,
-                AAUUUID,
-                AAUUserStatus,
-                AAUStaffID,
-                AAUStudentID,
-                AAUUserClassification,
-                TelephoneNumber,
-                LastLogon
-            };
+                UserModel = new UserModel(this, null, null);
+            }
+
+            return View(UserModel);
+        }
+
+        private IMemoryCache _cache;
+        public UserModel UserModel;
+
+        public UserController(IMemoryCache cache)
+        {
+            _cache = cache;
+        }
+
+        protected string lookupUser(string username)
+        {
+            int val;
+            if (username.Length == 4 && int.TryParse(username, out val))
+            {
+                return doPhoneSearch(username);
+            }
+            else
+            {
+                return getADPathFromUsername(username);
+            }
         }
 
         public string globalSearch(string email)
@@ -136,7 +134,7 @@ namespace ITSWebMgmt.Controllers
 
         public bool userIsInRightOU()
         {
-            string dn = DistinguishedName;
+            string dn = UserModel.DistinguishedName;
             string[] dnarray = dn.Split(',');
 
             string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray();
@@ -165,12 +163,13 @@ namespace ITSWebMgmt.Controllers
             return true;
         }
 
-        public bool fixUserOu()
+        public ActionResult FixUserOu([FromBody]string username)
         {
-            if (userIsInRightOU()) { return false; }
+            UserModel = _cache.Get<UserModel>(username);
+            if (userIsInRightOU()) { return Error(); }
 
             //See if it can be fixed!
-            string dn = DistinguishedName;
+            string dn = UserModel.DistinguishedName;
             string[] dnarray = dn.Split(',');
 
             string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray();
@@ -179,20 +178,17 @@ namespace ITSWebMgmt.Controllers
 
             if (count < 2)
             {
-                //This cant be in people/{staff,student,guest}
-                return false;
+                return Error("This cant be in people/{staff,student,guest}");
             }
             //Check root is people
             if (!(ou[count - 1]).Equals("ou=people", StringComparison.CurrentCultureIgnoreCase))
             {
-                //Error user is not placed in people!!!!! Cant move the user (might not be a real user or admin or computer)
-                return false;
+                return Error("Error user is not placed in people!!!!! Cant move the user (might not be a real user or admin or computer)");
             }
             string[] okplaces = new string[3] { "ou=staff", "ou=guests", "ou=students" };
             if (!okplaces.Contains(ou[count - 2], StringComparer.OrdinalIgnoreCase))
             {
-                //Error user is not in out staff, people or student, what is gowing on here?
-                return false;
+                return Error("Error user is not in out staff, people or student, what is gowing on here?");
             }
             if (count > 2)
             {
@@ -202,7 +198,7 @@ namespace ITSWebMgmt.Controllers
                 //Format ldap://DOMAIN/pathtoOU
                 //return false; //XX Return false here?
 
-                string[] adpathsplit = adpath.ToLower().Replace("ldap://", "").Split('/');
+                string[] adpathsplit = UserModel.adpath.ToLower().Replace("ldap://", "").Split('/');
                 string protocol = "LDAP://";
                 string domain = adpathsplit[0];
                 string[] dcpath = (adpathsplit[0].Split(',')).Where<string>(s => s.StartsWith("dc=", StringComparison.CurrentCultureIgnoreCase)).ToArray<string>();
@@ -210,22 +206,23 @@ namespace ITSWebMgmt.Controllers
                 string newOU = string.Format("{0},{1}", ou[count - 2], ou[count - 1]);
                 string newPath = string.Format("{0}{1}/{2},{3}", protocol, string.Join(".", dcpath).Replace("dc=", ""), newOU, string.Join(",", dcpath));
 
-                logger.Info("user " + System.Web.HttpContext.Current.User.Identity.Name + " changed OU on user to: " + newPath + " from " + adpath + ".");
+                logger.Info("user " + ControllerContext.HttpContext.User.Identity.Name + " changed OU on user to: " + newPath + " from " + UserModel.adpath + ".");
 
                 var newLocaltion = new DirectoryEntry(newPath);
-                ADcache.DE.MoveTo(newLocaltion);
+                UserModel.ADcache.DE.MoveTo(newLocaltion);
 
-                return true;
+                return Success();
             }
             //We don't need to do anything, user is placed in the right ou! (we think, can still be in wrong ou fx a guest changed to staff, we cant check that here) 
-            logger.Debug("no need to change user {0} out, all is good", adpath);
-            return true;
+            logger.Debug("no need to change user {0} out, all is good", UserModel.adpath);
+            return Success();
         }
+
 
         public string getADPathFromUsername(string username)
         {
             //XXX, this is a use input, might not be save us use in log 
-            logger.Info("User {0} lookedup user {1}", System.Web.HttpContext.Current.User.Identity.Name, username);
+            logger.Info("User {0} lookedup user {1}", ControllerContext.HttpContext.User.Identity.Name, username);
 
             if (username.Contains("\\"))
             {
@@ -254,16 +251,27 @@ namespace ITSWebMgmt.Controllers
             }
         }
 
-        public void unlockUserAccount()
+
+        public ActionResult UnlockUserAccount([FromBody]string username)
         {
-            logger.Info("User {0} unlocked useraccont {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
-            
-            ADcache.DE.Properties["LockOutTime"].Value = 0; //unlock account
-            ADcache.DE.CommitChanges(); //may not be needed but adding it anyways
-            ADcache.DE.Close();
+            UserModel = _cache.Get<UserModel>(username);
+            logger.Info("User {0} unlocked useraccont {1}", ControllerContext.HttpContext.User.Identity.Name, UserModel.adpath);
+
+            try
+            {
+                UserModel.ADcache.DE.Properties["LockOutTime"].Value = 0; //unlock account
+                UserModel.ADcache.DE.CommitChanges(); //may not be needed but adding it anyways
+                UserModel.ADcache.DE.Close();
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                return Error(e.Message);
+            }
+
+            return Success();
         }
 
-        public GetUserAvailabilityResults getFreeBusyResults()
+        public async Task<GetUserAvailabilityResults> getFreeBusyResultsAsync()
         {
             ExchangeService service = new ExchangeService(ExchangeVersion.Exchange2010_SP2);
             service.UseDefaultCredentials = true; // Use domain account for connecting 
@@ -275,7 +283,7 @@ namespace ITSWebMgmt.Controllers
 
             attendees.Add(new AttendeeInfo()
             {
-                SmtpAddress = UserPrincipalName,
+                SmtpAddress = UserModel.UserPrincipalName,
                 AttendeeType = MeetingAttendeeType.Organizer
             });
 
@@ -288,31 +296,65 @@ namespace ITSWebMgmt.Controllers
             // Return a set of free/busy times.
             DateTime dayBegin = DateTime.Now.Date;
             var window = new TimeWindow(dayBegin, dayBegin.AddDays(1));
-            return service.GetUserAvailability(attendees, window, AvailabilityData.FreeBusy, myOptions);
+            return await service.GetUserAvailability(attendees, window, AvailabilityData.FreeBusy, myOptions);
         }
 
-        public void toggle_userprofile()
+        public ActionResult ToggleUserprofile([FromBody]string username)
         {
+            UserModel = _cache.Get<UserModel>(username);
             //XXX log what the new value of profile is :)
-            logger.Info("User {0} toggled romaing profile for user  {1}", System.Web.HttpContext.Current.User.Identity.Name, adpath);
+            logger.Info("User {0} toggled romaing profile for user  {1}", ControllerContext.HttpContext.User.Identity.Name, UserModel.adpath);
 
             //string profilepath = (string)(ADcache.DE.Properties["profilePath"])[0];
 
-            if (ADcache.DE.Properties.Contains("profilepath"))
+            try
             {
-                ADcache.DE.Properties["profilePath"].Clear();
-                ADcache.DE.CommitChanges();
+                if (UserModel.ADcache.DE.Properties.Contains("profilepath"))
+                {
+                    UserModel.ADcache.DE.Properties["profilePath"].Clear();
+                    UserModel.ADcache.DE.CommitChanges();
+                }
+                else
+                {
+                    string upn = UserModel.UserPrincipalName;
+                    var tmp = upn.Split('@');
+
+                    string path = string.Format("\\\\{0}\\profiles\\{1}", tmp[1], tmp[0]);
+
+                    UserModel.ADcache.DE.Properties["profilePath"].Add(path);
+                    UserModel.ADcache.DE.CommitChanges();
+                }
             }
-            else
+            catch (UnauthorizedAccessException e)
             {
-                string upn = UserPrincipalName;
-                var tmp = upn.Split('@');
-
-                string path = string.Format("\\\\{0}\\profiles\\{1}", tmp[1], tmp[0]);
-
-                ADcache.DE.Properties["profilePath"].Add(path);
-                ADcache.DE.CommitChanges();
+                return Error(e.Message);
             }
+
+            //Set value
+            //DirectoryEntry de = result.GetDirectoryEntry();
+            //de.Properties["TelephoneNumber"].Clear();
+            //de.Properties["employeeNumber"].Value = "123456789";
+            //de.CommitChanges();
+
+            return Success();
+        }
+
+        [HttpPost]
+        public void CreateNewIRSR(string displayname)
+        {
+            Response.Redirect("/CreateWorkItem?userDisplayName=" + displayname);
+        }
+
+        public ActionResult Error(string message = "Error")
+        {
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { success = false, errorMessage = message });
+        }
+
+        public ActionResult Success(string Message = "Success")
+        {
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json(new { success = true, message = Message });
         }
     }
 }

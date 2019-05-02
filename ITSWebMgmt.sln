@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.489
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITSWebMgmt", "ITSWebMgmt\ITSWebMgmt.csproj", "{0F7452DC-56DA-42E8-A9F3-42BBC3A26523}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITSWebMgmt", "ITSWebMgmt\ITSWebMgmt.csproj", "{0699EDA1-A4E6-4E3C-8D92-3064601830E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0F7452DC-56DA-42E8-A9F3-42BBC3A26523}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F7452DC-56DA-42E8-A9F3-42BBC3A26523}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F7452DC-56DA-42E8-A9F3-42BBC3A26523}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F7452DC-56DA-42E8-A9F3-42BBC3A26523}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0699EDA1-A4E6-4E3C-8D92-3064601830E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0699EDA1-A4E6-4E3C-8D92-3064601830E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0699EDA1-A4E6-4E3C-8D92-3064601830E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0699EDA1-A4E6-4E3C-8D92-3064601830E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D8B14949-CC73-4429-9DFA-DD4CA4896761}
 	EndGlobalSection
 EndGlobal

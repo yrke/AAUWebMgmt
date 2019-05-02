@@ -1,0 +1,17 @@
+﻿@model ITSWebMgmt.Models.ComputerModel
+@using ITSWebMgmt.WebMgmtErrors
+@{
+    List<WebMgmtError> errors = new List<WebMgmtError>
+            {
+                new DriveAlmostFull(Model.computer),
+                new NotStandardComputerOU(Model.computer),
+            };
+
+    var errorList = new WebMgmtErrorList(errors);
+    Model.ErrorCountMessage = errorList.getErrorCountMessage();
+    Model.ErrorMessages = errorList.ErrorMessages;
+
+    //Password is expired and warning before expire (same timeline as windows displays warning)
+}
+<h2>Warnings</h2>
+@Html.DisplayFor(model => model.ErrorMessages)

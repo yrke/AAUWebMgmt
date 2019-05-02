@@ -1,0 +1,21 @@
+﻿@model ITSWebMgmt.Models.CreateWorkItemModel
+@using (Html.BeginForm(FormMethod.Post))
+{
+    <div class="ui form">
+        <div class="field">
+            <label>Affected User</label>
+            @Html.TextBoxFor(m => m.AffectedUser)
+        </div>
+        <div class="field">
+            <label>Title</label>
+            @Html.TextBoxFor(m => m.Title)
+        </div>
+        <div class="field">
+            <label>Desription</label>
+            @Html.TextAreaFor(m => m.Desription, 10, 55, null)
+        </div>
+
+        <input type="submit" value="Create SR" formaction="CreateWorkItem/CreateSR" class="btn btn-primary" />
+        <input type="submit" value="Create IR" formaction="CreateWorkItem/CreateIR" class="btn btn-primary" />
+    </div>
+}

@@ -1,0 +1,25 @@
+﻿@model ITSWebMgmt.Models.UserModel
+@using ITSWebMgmt.WebMgmtErrors
+@{
+    List<WebMgmtError> errors = new List<WebMgmtError>
+{
+        new UserDisabled(Model.user),
+        new UserLockedDiv(Model.user),
+        new PasswordExpired(Model.user),
+        new MissingAAUAttr(Model.user),
+        new NotStandardOU(Model.user)
+    };
+
+    var errorList = new WebMgmtErrorList(errors);
+    Model.ErrorCountMessage = errorList.getErrorCountMessage();
+    Model.ErrorMessages = errorList.ErrorMessages;
+
+    if (Model.user.userIsInRightOU())
+    {
+        Model.ShowFixUserOU = false;
+    }
+    //Password is expired and warning before expire (same timeline as windows displays warning)
+}
+
+<h2>Warnings</h2>
+@Html.Raw(Model.ErrorMessages)

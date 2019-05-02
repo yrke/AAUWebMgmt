@@ -40,7 +40,7 @@ namespace ITSWebMgmt.Connectors
         }
         public PDSConnector(string empID)
         {
-
+            return; //The webside is down and the service is will be closed after april 2019. Do not try to connect to it
             //string empID = "115928";
             string url = "http://personprofil.aau.dk/" + empID + "?lang=en";
 
@@ -78,7 +78,7 @@ namespace ITSWebMgmt.Connectors
                     locality = adr.SelectSingleNode("span[5]").InnerText;
                     countryName = adr.SelectSingleNode("span[6]").InnerText;
                 }
-                catch (NullReferenceException e)
+                catch (NullReferenceException)
                 {
                     //Do nothing, just value missing, default value empty
                 }

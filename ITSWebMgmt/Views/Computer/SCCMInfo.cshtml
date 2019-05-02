@@ -1,0 +1,48 @@
+﻿@model ITSWebMgmt.Models.ComputerModel
+@using ITSWebMgmt.Helpers
+@{
+    /*
+     *     strQuery = "SELECT * FROM SMS_FullCollectionMembership WHERE ResourceID="& computerID
+            for each fc in foundCollections
+               Set collection = SWbemServices.Get ("SMS_Collection.CollectionID=""" & fc.CollectionID &"""")
+               stringResult = stringResult & "<li> "  & collection.Name & "<br />"
+        Next
+
+     * SMS_Collection.CollectionID =
+     *
+     */
+
+    //XXX: remeber to filter out computers that are obsolite in sccm (not active)
+    string error = "";
+    HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Collection Name" });
+    var names = Model.computer.setConfig(Model.Collection);
+
+    if (names != null)
+    {
+        foreach (var name in names)
+        {
+            groupTableHelper.AddRow(new string[] { name });
+        }
+    }
+    else
+    {
+        error = "Computer not found i SCCM";
+    }
+
+    //Basal Info
+    var tableAndList = TableGenerator.CreateTableAndRawFromDatabase(Model.System, new List<string>() { "LastLogonUserName", "IPAddresses", "MACAddresses", "Build", "Config" }, "Computer not found i SCCM");
+
+    Model.SCCMComputers = error + groupTableHelper.GetTable();
+    Model.SCCMCollectionsTable = tableAndList.Item1; //Table
+    Model.SCCMCollections = tableAndList.Item2; //List
+}
+
+<h2>SCCM Info</h2>
+<h3>Computer Details</h3>
+@Html.Raw(Model.SCCMCollectionsTable)
+
+<h3>Collections</h3>
+@Html.Raw(Model.SCCMComputers)
+
+<h3>Raw data</h3>
+@Html.Raw(Model.SCCMCollections)

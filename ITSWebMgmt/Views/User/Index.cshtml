@@ -1,0 +1,117 @@
+﻿@model ITSWebMgmt.Models.UserModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="ui dimmer modals page transition hidden" style="display: block !important;">
+    <div id="modalConfirmOUmove" class="ui small test modal transition hidden" style="margin-top: -92px; display: block !important;">
+        <div class="header">
+            Move user to Default OU
+        </div>
+        <div class="content">
+            <p>
+                The user is placed in a non standard OU, this means applied GPOs and settings might differ from the standard.
+                Run this task to move the user to the default configuration.
+                <br />
+                <br />
+                <b><i>Warning: This action will affect the user, only run this it in agreement with the user!</i></b>
+            </p>
+        </div>
+        <div class="actions">
+            <div class="ui negative button">
+                No
+            </div>
+            <div runat="server" class="ui positive right labeled icon button" onclick="$('#MainContent_btnPostbackfixUserOUButton').click()">
+                Yes <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loader">
+    <div class="ui active dimmer" style="display: none">
+        <div class="ui text loader">Loading</div>
+    </div>
+</div>
+
+<h1>User Info</h1>
+<div>
+    <form method="get">
+        Username
+        <div class="ui action input">
+
+            <input name="username" class="ui input focus" value=@Html.DisplayFor(model => model.UserName) />
+
+            <input type="submit" value="Search" onclick='$("#loader > div").show("fast");' />
+        </div>
+    </form>
+    <br />
+    <br />
+    <script>
+        $(document).ready(function () {
+            $('.menu .item').tab({ history: false });
+        });
+    </script>
+
+    @if (Model.ShowErrorDiv)
+    {
+        @Html.DisplayFor(model => model.ResultError)
+    }
+
+    @if (Model.ShowResultDiv)
+    {
+        <div runat="server" id="warningsAndErrorDIV">
+            @Html.Raw(Model.ErrorCountMessage)
+        </div>
+        <h2>@Html.DisplayFor(model => model.UserName)</h2>
+        <div class="ui grid">
+            <div class="four wide column">
+                <div class="ui vertical fluid tabular menu">
+                    <a class="active item" data-tab="basicinfo">Basic Info</a>
+                    <a class="item" data-tab="servicemanager">Service Manager</a>
+                    <a class="item" data-tab="calAgenda">Calendar Agenda</a>
+                    <a class="item" data-tab="computerInformation">Computer Information</a>
+                    <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
+                    <a class="item" data-tab="groups">Groups</a>
+                    <a class="item" data-tab="fileshares">Fileshares</a>
+                    <a class="item" data-tab="exchange">Exchange Resources</a>
+                    @if (Model.ShowLoginScript)
+                    {
+                        <a class="item" data-tab="loginscript" runat="server" id="menuLoginScript">Loginscript</a>
+                    }
+                    <a class="item" data-tab="print" runat="server" id="menuPrint">Print</a>
+                    <a class="item" data-tab="rawdata">Raw Data</a>
+                    <a class="item" data-tab="tasks">Tasks</a>
+                    <a class="item" data-tab="warnings">Warnings</a>
+                    <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
+                    <!--<a class="item" data-tab="statustest">Statustest</a> -->
+                </div>
+            </div>
+            <div class="twelve wide stretched column">
+                <div class="ui tab segment">
+                    none<!-- spacer as the fist elemen else is placed differencet -->
+                </div>
+                <div class="ui active tab segment" data-tab="basicinfo">@Html.Partial("BasicInfo", Model)</div>
+                <div class="ui tab segment" data-tab="advancedinfo">advanced</div>
+                <div class="ui tab segment" data-tab="print">@Html.Partial("Print", Model)</div>
+                <div class="ui tab segment" data-tab="groups">@Html.Partial("Groups", new PartialGroupModel(Model.ADcache, "memberOf"))</div>
+                <div class="ui tab segment" data-tab="fileshares">@Html.Partial("Fileshares", new PartialGroupModel(Model.ADcache, "memberOf"))</div>
+                <div class="ui tab segment" data-tab="calAgenda">@Html.Partial("CalendarAgenda", Model)</div>
+                <div class="ui tab segment" data-tab="exchange">@Html.Partial("Exchange", new PartialGroupModel(Model.ADcache, "memberOf"))</div>
+                <div class="ui tab segment" data-tab="servicemanager">@Html.Partial("ServiceManager", Model)</div>
+                <div class="ui tab segment" data-tab="computerInformation">@Html.Partial("ComputerInformation", Model)</div>
+                <div class="ui tab segment" data-tab="loginscript" id="divLoginscript">@Html.Partial("Loginscript", Model)</div>
+                <div class="ui tab segment" data-tab="rawdata">@Html.Partial("Raw", Model)</div>
+                <div class="ui tab segment" data-tab="tasks">@Html.Partial("Tasks", Model)</div>
+                <div class="ui tab segment" data-tab="warnings">@Html.Partial("Warnings", Model)</div>
+                <div class="ui tab segment" data-tab="networkdrives">
+                    <h2>networkdrives</h2>
+                    <h3>GPO mounted</h3>
+                    not inplemented
+                    <h3>Logonscript</h3>
+                    not inplemented
+                </div>
+            </div>
+        </div>
+    }
+</div>

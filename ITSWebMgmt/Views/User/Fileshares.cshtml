@@ -1,0 +1,28 @@
+﻿@model ITSWebMgmt.Models.PartialGroupModel
+@using ITSWebMgmt.Controllers
+@using System.Web
+@{
+    string transitiv = "";
+
+    if (Model.getGroupsTransitive(Model.AttributeName).Count == 0)
+    {
+        transitiv = "<h3>NB: Listen viser kun direkte medlemsskaber, kunne ikke finde fuld liste på denne Domain Controller eller domæne</h3>";
+    }
+
+    var helper = new HTMLTableHelper(new string[] { "Type", "Domain", "Name", "Access" });
+
+    //Filter fileshare groups and convert to Fileshare Objects
+    var fileshareList = Model.getGroups(Model.AttributeName).Where((string value) =>
+    {
+        return GroupController.isFileShare(value);
+    }).Select(x => new Fileshare(x));
+
+    foreach (Fileshare f in fileshareList)
+    {
+        var nameWithLink = string.Format("<a href=\"/Group?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + f.Fileshareraw), f.Name);
+        helper.AddRow(new string[] { f.Type, f.Domain, nameWithLink, f.Access });
+    }
+
+    <h2>Fileshares</h2>
+    @Html.Raw(transitiv + helper.GetTable());
+}

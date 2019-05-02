@@ -1,0 +1,20 @@
+﻿@model ITSWebMgmt.Models.DefendpointChallengeResponse
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Defendpoint Challenge/Response</h1>
+<div>
+    <form method="get">
+        Generate a response code:
+        <div class="ui fluid input">
+            <input name="reasonInput" type="text" placeholder="Reason">
+        </div>
+        <br />
+        <div class="ui fluid action input">
+            <input name="challanageInput" type="text" placeholder="Challenge  (XXXX XXXX)">
+            <input type="submit" value="Get Code" onclick='$("#loader > div").show("fast");' />
+        </div>
+    </form>
+    @Html.Raw(Model.Data)
+</div>

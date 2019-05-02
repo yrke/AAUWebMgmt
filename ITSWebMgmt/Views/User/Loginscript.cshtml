@@ -1,0 +1,17 @@
+﻿@model ITSWebMgmt.Models.UserModel
+@using ITSWebMgmt.Functions
+@{
+    Model.ShowResultDiv = false;
+
+    var loginscripthelper = new Loginscript();
+
+    var script = loginscripthelper.getLoginScript(Model.ScriptPath, Model.ADcache.Path);
+
+    if (script != null)
+    {
+        Model.ShowResultDiv = true;
+        Model.Loginscript = loginscripthelper.parseAndDisplayLoginScript(script);
+    }
+}
+<h2>Loginscript</h2>
+@Html.DisplayFor(model => model.Loginscript)

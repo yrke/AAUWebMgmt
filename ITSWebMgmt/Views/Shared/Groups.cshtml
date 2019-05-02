@@ -1,0 +1,20 @@
+﻿@model ITSWebMgmt.Models.PartialGroupModel
+
+@using ITSWebMgmt.Helpers
+@{
+    Model.GroupList = Model.ADcache.getGroups(Model.AttributeName);
+    Model.GroupListAll = Model.ADcache.getGroupsTransitive(Model.AttributeName);
+    Model.GroupSegment = TableGenerator.BuildgroupssegmentLabel(Model.GroupList);
+    Model.GroupsAllSegment = TableGenerator.BuildgroupssegmentLabel(Model.GroupListAll);
+}
+<h2>@Html.LabelFor(m => m.Title)</h2>
+<div class="ui two item menu">
+    <a data-tab="groups-direct" class="item">Direct Groups</a>
+    <a data-tab="groups-all" class="item">Recursive groups</a>
+</div>
+<div class="ui active tab segment" data-tab="groups-direct">
+    @Html.Raw(Model.GroupSegment)
+</div>
+<div class="ui tab segment" data-tab="groups-all">
+    @Html.Raw(Model.GroupsAllSegment)
+</div>

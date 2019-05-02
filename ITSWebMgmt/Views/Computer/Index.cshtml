@@ -1,0 +1,91 @@
+﻿@model ITSWebMgmt.Models.ComputerModel
+@{
+    ViewData["Title"] = "Index";
+}
+<script>
+    $(document).ready(function () {
+        $('.menu .item').tab({ history: false });
+    });
+</script>
+<div id="loader">
+    <div class="ui active dimmer" style="display: none">
+        <div class="ui text loader">Loading</div>
+    </div>
+</div>
+
+<h1>Computer Info</h1>
+<div>
+    <form method="get">
+        Computername:
+        <div class="ui action input">
+            <input name="computername" id="computername" class="ui input focus" value=@Html.DisplayFor(model => model.ComputerName) />
+            <input type="submit" value="Search" onclick='$("#loader > div").show("fast");'>
+        </div>
+    </form>
+    <br />
+</div>
+
+<div id="content">
+    <script>
+        $(document).ready(function () {
+            $('.menu .item').tab({
+                'onVisible': function () {
+                    var dataTabName = $(this).attr("data-tab");
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("LoadTab", "Computer")',
+                        contentType: "application/html; charset=utf-8",
+                        data: { tabName: dataTabName, computername: document.getElementById('computername').value },
+                        success: function (returnedData) {
+                            $("#" + dataTabName).html(returnedData);
+                        },
+                        error: function (response) {
+                            alert('error');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    @Html.DisplayFor(model => model.Result)
+    @if(Model.ShowResultDiv)
+    {
+        <div runat="server" id="warningsAndErrorDIV">
+            @Html.DisplayFor(model => model.ErrorCountMessage)
+        </div>
+        <div class="ui grid">
+            <div class="four wide column">
+                <div class="ui vertical fluid tabular menu">
+                    <a class="active item" data-tab="basicinfo">Basic Info</a>
+                    <!--<a class="item" data-tab="userInformation">User Information</a>-->
+                    <!--<a class="item" data-tab="advancedinfo">Advanced Info</a> -->
+                    <a class="item" data-tab="groups">Groups</a>
+                    <a class="item" data-tab="sccmInfo">SCCM Info</a>
+                    <a class="item" data-tab="sccmInventory">Inventory</a>
+                    <a class="item" data-tab="sccmAV">Antivirus</a>
+                    <a class="item" data-tab="sccmHW">Hardware inventory</a>
+                    <!--<a class="item" data-tab="networkdrives">Networkdrives</a>-->
+                    <a class="item" data-tab="rawdata">Raw Data</a>
+                    <a class="item" data-tab="tasks">Tasks</a>
+                    <a class="item" data-tab="warnings">Warnings</a>
+                    <!--<a class="item" data-tab="statustest">Statustest</a> -->
+                </div>
+            </div>
+            <div class="twelve wide stretched column">
+                <div class="ui tab segment">
+                    none<!-- spacer as the fist elemen else is placed differencet -->
+                </div>
+                <div id="sccmInfo" class="ui tab segment" data-tab="sccmInfo">@Html.Partial("SCCMInfo", Model)</div>
+                <div id="warnings" class="ui tab segment" data-tab="warnings">@Html.Partial("Warnings", Model)</div>
+                <div id="basicinfo" class="ui active tab segment" data-tab="basicinfo">@Html.Partial("BasicInfo", Model)</div>
+                <div id="userInformation" class="ui tab segment" data-tab="userInformation"></div>
+                <div id="rawdata" class="ui tab segment" data-tab="rawdata"></div>
+                <div id="tasks" class="ui tab segment" data-tab="tasks"></div>
+                <div id="sccmInventory" class="ui tab segment" data-tab="sccmInventory"></div>
+                <div id="sccmAV" class="ui tab segment" data-tab="sccmAV"></div>
+                <div id="sccmHW" class="ui tab segment" data-tab="sccmHW"></div>
+                <div id="groups" class="ui tab segment" data-tab="groups"></div>
+            </div>
+        </div>
+    }
+</div>

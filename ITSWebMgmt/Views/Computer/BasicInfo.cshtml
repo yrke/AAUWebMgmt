@@ -1,0 +1,101 @@
+﻿@model ITSWebMgmt.Models.ComputerModel
+@using System.Web;
+@using ITSWebMgmt.Connectors.Active_Directory
+@{
+    if (Model.AdminPasswordExpirationTime != null)
+    {
+        Model.PasswordExpireDate = Model.AdminPasswordExpirationTime;
+    }
+    else
+    {
+        Model.PasswordExpireDate = "LAPS not Enabled";
+    }
+
+    //Managed By
+    Model.ManagedBy = "none";
+
+    if (Model.ManagedByAD != null)
+    {
+        string managerVal = Model.ManagedByAD;
+
+        if (!string.IsNullOrWhiteSpace(managerVal))
+        {
+            string email = ADHelpers.DistinguishedNameToUPN(managerVal);
+            Model.ManagedBy = email;
+        }
+    }
+
+    if (Model.AdminPasswordExpirationTime != null)
+    {
+        Model.ShowResultGetPassword = true;
+    }
+}
+
+<table class="ui definition table">
+    <tbody>
+        <tr>
+            <td>Domain:</td>
+            <td>
+                @Html.DisplayFor(model => model.Domain)
+            </td>
+        </tr>
+        <tr>
+            <td>Admin Pwd Expire:</td>
+            <td>
+                @Html.DisplayFor(model => model.PasswordExpireDate)
+            </td>
+        </tr>
+        <tr>
+            <td>PC Config:</td>
+            <td>
+                @Html.DisplayFor(model => model.ConfigPC)
+            </td>
+        </tr>
+        <tr>
+            <td>Bitlocker Enabled:</td>
+            <td>
+                @Html.DisplayFor(model => model.ConfigExtra)
+            </td>
+        </tr>
+        <tr>
+            @Html.Partial("ManagedBy", Model)
+        </tr>
+    </tbody>
+</table>
+<br />
+<div id="password"></div>
+<div id="passworddiv">
+    @if (Model.ShowResultGetPassword)
+    {
+        <button id="btnPassword">Get Local Admin Password</button>
+
+        <!--<input type="button" value="Get Local Admin Password" onclick="location.href='@Url.Action("ResultGetPassword", "Computer", new { computername = Model.ComputerName })'" />-->
+    }
+</div>
+<script>
+    $("#btnPassword").click(function ()
+    {
+        getPassword('');
+    });
+    function getPassword(buttonNumber)
+    {
+        var computername = '@Html.Raw(HttpUtility.JavaScriptStringEncode(Model.ComputerName))';
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ResultGetPassword", "Computer")',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(computername),
+            dataType: "json",
+            success: function (response) {
+                var r = JSON.parse(response.responseText)
+                document.getElementById('passworddiv' + buttonNumber).style.display = "none";
+                document.getElementById('password' + buttonNumber).textContent = r.message;
+            },
+            error: function(response) {
+                var r = JSON.parse(response.responseText)
+                document.getElementById('passworddiv' + buttonNumber).style.display = "none";
+                document.getElementById('password' + buttonNumber).innerHTML = r.errorMessage;
+            }
+        });
+    }
+</script>

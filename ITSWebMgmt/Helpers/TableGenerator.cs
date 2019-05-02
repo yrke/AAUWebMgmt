@@ -5,29 +5,28 @@ using System.Linq;
 using System.Management;
 using System.Text;
 using System.Web;
-using System.Web.UI.WebControls;
 
 namespace ITSWebMgmt.Helpers
 {
     public class TableGenerator
     {
-        private static string CreateGroupTable(List<string> groups)
+        private static string CreateGroupTable(List<string> group)
         {
             HTMLTableHelper groupTableHelper = new HTMLTableHelper(new string[] { "Domain", "Name" });
 
-            createGroupTableRows(groups, groupTableHelper, null);
+            createGroupTableRows(group, groupTableHelper, null);
 
             return groupTableHelper.GetTable();
         }
 
         public static string getGroupLink(string adpath, string name)
         {
-            return string.Format("<a href=\"/GroupsInfo.aspx?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), name);
+            return string.Format("<a href=\"/Group?grouppath={0}\">{1}</a><br/>", HttpUtility.UrlEncode("LDAP://" + adpath), name);
         }
 
         public static string getPersonLink(string domain, string name)
         {
-            return string.Format("<a href=\"UserInfo.aspx?search={0}%40{1}.aau.dk\">{0}</a><br/>", name, domain);
+            return string.Format("<a href=\"/User?username={0}%40{1}.aau.dk\">{0}</a><br/>", name, domain);
         }
 
         public static void createGroupTableRows(List<string> adpaths, HTMLTableHelper groupTableHelper, string accessName = null)
@@ -93,7 +92,7 @@ namespace ITSWebMgmt.Helpers
             }
         }
 
-        private static string buildgroupssegmentLabel(List<string> groups)
+        public static string BuildgroupssegmentLabel(List<string> groupMembers)
         {
             /*Func<string[], string, bool> startsWith = delegate (string[] prefix, string value)
             {
@@ -107,7 +106,7 @@ namespace ITSWebMgmt.Helpers
             bool startsWithMBXorACL(string value) => StartsWith(prefixMBX_ACL, value);
 
             //Sort MBX and ACL Last
-            groups.Sort((a, b) =>
+            groupMembers.Sort((a, b) =>
             {
                 if (startsWithMBXorACL(a) && startsWithMBXorACL(b))
                 {
@@ -127,13 +126,7 @@ namespace ITSWebMgmt.Helpers
                 }
             });
 
-            return CreateGroupTable(groups);
-        }
-        
-        public static void BuildGroupsSegments(List<string> groups, List<string> groupsTransitive, Label groupssegmentLabel, Label groupsAllsegmentLabel)
-        {
-            groupssegmentLabel.Text = buildgroupssegmentLabel(groups);
-            groupsAllsegmentLabel.Text = buildgroupssegmentLabel(groupsTransitive);
+            return CreateGroupTable(groupMembers);
         }
 
         public static string buildRawTable(List<PropertyValueCollection> properties)

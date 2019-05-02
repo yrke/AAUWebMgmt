@@ -1,56 +1,143 @@
-﻿using ITSWebMgmt.Caches;
-using ITSWebMgmt.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.DirectoryServices;
 using System.Linq;
+using ITSWebMgmt.Caches;
+using Microsoft.AspNetCore.Mvc;
+using System.DirectoryServices;
 using System.Management;
+using ITSWebMgmt.Helpers;
+using ITSWebMgmt.Models;
+using Microsoft.Extensions.Caching.Memory;
+using System.Net;
 
 namespace ITSWebMgmt.Controllers
 {
-    public class ComputerController : Controller<ComputerADcache>
+    public class ComputerController : WebMgmtController
     {
-        public string ResourceID;
-        private SCCMcache SCCMcache;
-        public string ConfigPC = "Unknown";
-        public string ConfigExtra = "False";
-        //TODO getsTestUpdates not used
-
-        //SCCMcache
-        public ManagementObjectCollection RAM { get => SCCMcache.RAM; private set { } }
-        public ManagementObjectCollection LogicalDisk { get => SCCMcache.LogicalDisk; private set { } }
-        public ManagementObjectCollection BIOS { get => SCCMcache.BIOS; private set { } }
-        public ManagementObjectCollection VideoController { get => SCCMcache.VideoController; private set { } }
-        public ManagementObjectCollection Processor { get => SCCMcache.Processor; private set { } }
-        public ManagementObjectCollection Disk { get => SCCMcache.Disk; private set { } }
-        public ManagementObjectCollection Software { get => SCCMcache.Software; private set { } }
-        public ManagementObjectCollection Computer { get => SCCMcache.Computer; private set { } }
-        public ManagementObjectCollection Antivirus { get => SCCMcache.Antivirus; private set { } }
-        public ManagementObjectCollection System { get => SCCMcache.System; private set { } }
-        public ManagementObjectCollection Collection { get => SCCMcache.Collection; private set { } }
-
-
-        //ADcache
-        public string ComputerName { get => ADcache.ComputerName; }
-        public string Domain { get => ADcache.Domain; }
-        public bool ComputerFound { get => ADcache.ComputerFound; } 
-        public string AdminPasswordExpirationTime { get => ADcache.getProperty("ms-Mcs-AdmPwdExpirationTime"); }
-        public string ManagedBy { get => ADcache.getProperty("managedBy"); set => ADcache.saveProperty("managedBy", value); }
-        public string DistinguishedName { get => ADcache.getProperty("distinguishedName"); }
-
-
-        public ComputerController(string computername, string username)
+        public IActionResult Index(string computername)
         {
-            //XXX this is not safe computerName is a use attibute, they might be able to change the value of this
-            SCCMcache = new SCCMcache();
-            ADcache = new ComputerADcache(computername, username);
-            ResourceID = getSCCMResourceIDFromComputerName();
-            SCCMcache.ResourceID = ResourceID;
+            if (computername != null)
+            {
+                if (!_cache.TryGetValue(computername, out ComputerModel))
+                {
+                    ComputerModel = new ComputerModel(this, computername);
+                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
+                    _cache.Set(computername, ComputerModel, cacheEntryOptions);
+                }
+            }
+            else
+            {
+                ComputerModel = new ComputerModel(this, computername);
+            }
+
+            return View(ComputerModel);
         }
 
-        internal bool computerIsInRightOU()
+        private IMemoryCache _cache;
+        public ComputerModel ComputerModel;
+
+        public ComputerController(IMemoryCache cache)
         {
-            string dn = DistinguishedName;
+            _cache = cache;
+        }
+
+        [HttpGet]
+        public ActionResult LoadTab(string tabName, string computername)
+        {
+            ComputerModel = _cache.Get<ComputerModel>(computername);
+            if (tabName == "groups-all")
+            {
+                tabName = "groups";
+            }
+            string viewName = tabName;
+            switch (tabName)
+            {
+                case "basicinfo":
+                    viewName = "BasicInfo";
+                    break;
+                case "groups":
+                    viewName = "Groups";
+                    return PartialView(viewName, new PartialGroupModel(ComputerModel.ADcache, "memberOf"));
+                case "tasks":
+                    viewName = "Tasks";
+                    break;
+                case "warnings":
+                    viewName = "Warnings";
+                    break;
+                case "sccminfo":
+                    viewName = "SCCMInfo";
+                    break;
+                case "sccmInventory":
+                    viewName = "SCCMInventory";
+                    break;
+                case "sccmAV":
+                    viewName = "SCCMAV";
+                    break;
+                case "sccmHW":
+                    viewName = "SCCMHW";
+                    break;
+                case "rawdata":
+                    viewName = "Raw";
+                    break;
+            }
+            return PartialView(viewName, ComputerModel);
+        }
+
+        [HttpPost]
+        public ActionResult MoveOU_Click([FromBody]string computername)
+        {
+            ComputerModel = _cache.Get<ComputerModel>(computername);
+            moveOU(ControllerContext.HttpContext.User.Identity.Name, ComputerModel.adpath);
+            Response.StatusCode = (int)HttpStatusCode.OK;
+            return Json(new { success = true, message = "OU moved for" + computername });
+        }
+
+        public void TestButton()
+        {
+            Console.WriteLine("Test button is in basic info");
+        }
+
+        [HttpPost]
+        public ActionResult ResultGetPassword([FromBody]string computername)
+        {
+            //ComputerModel.ShowResultGetPassword = false;
+            ComputerModel = _cache.Get<ComputerModel>(computername);
+            logger.Info("User {0} requesed localadmin password for computer {1}", ControllerContext.HttpContext.User.Identity.Name, ComputerModel.adpath);
+
+            var passwordRetuned = getLocalAdminPassword(ComputerModel.adpath);
+
+            if (string.IsNullOrEmpty(passwordRetuned))
+            {
+                ComputerModel.Result = "Not found";
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(new { success = false, errorMessage = ComputerModel.Result });
+            }
+            else
+            {
+                Func<string, string, string> appendColor = (string x, string color) => { return "<font color=\"" + color + "\">" + x + "</font>"; };
+
+                string passwordWithColor = "";
+                foreach (char c in passwordRetuned)
+                {
+                    var color = "green";
+                    if (char.IsNumber(c))
+                    {
+                        color = "blue";
+                    }
+
+                    passwordWithColor += appendColor(c.ToString(), color);
+
+                }
+
+                ComputerModel.Result = "<code>" + passwordWithColor + "</code><br /> Password will expire in 8 hours";
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                return Json(new { success = true, message = ComputerModel.Result});
+            }
+        }
+        
+        
+        internal bool computerIsInRightOU(string dn)
+        {
             string[] dnarray = dn.Split(',');
 
             string[] ou = dnarray.Where(x => x.StartsWith("ou=", StringComparison.CurrentCultureIgnoreCase)).ToArray();
@@ -63,24 +150,11 @@ namespace ITSWebMgmt.Controllers
                 //Computer should be in OU Clients
                 return true;
             }
-            
+
             return false;
         }
 
-        public string getSCCMResourceIDFromComputerName()
-        {
-            string resourceID = "";
-            //XXX use ad path to get right object in sccm, also dont get obsolite
-            foreach (ManagementObject o in SCCMcache.getResourceIDFromComputerName(ComputerName))
-            {
-                resourceID = o.Properties["ResourceID"].Value.ToString();
-                break;
-            }
-
-            return resourceID;
-        }
-
-        public static string getLocalAdminPassword(String adpath)
+        public static string getLocalAdminPassword(string adpath)
         {
             if (string.IsNullOrEmpty(adpath))
             { //Error no session
@@ -127,9 +201,9 @@ namespace ITSWebMgmt.Controllers
             //}
         }
 
-        public void moveOU(string user)
+        public void moveOU(string user, string adpath)
         {
-            if (!checkComputerOU())
+            if (!checkComputerOU(adpath))
             {
                 //OU is wrong lets calulate the right one
                 string[] adpathsplit = adpath.ToLower().Replace("ldap://", "").Split('/');
@@ -160,7 +234,7 @@ namespace ITSWebMgmt.Controllers
             newLocaltion.Close();
         }
 
-        public bool checkComputerOU()
+        public bool checkComputerOU(string adpath)
         {
             //Check OU and fix it if wrong (only for clients sub folders or new clients)
             //Return true if in right ou (or we think its the right ou, or dont know)
@@ -205,46 +279,46 @@ namespace ITSWebMgmt.Controllers
 
         }
 
-        public List<string> setConfig()
+        public List<string> setConfig(ManagementObjectCollection Collection)
         {
-            if (Database.HasValues(this.Collection))
+            if (Database.HasValues(Collection))
             {
                 List<string> namesInCollection = new List<string>();
-                foreach (ManagementObject o in this.Collection)
+                foreach (ManagementObject o in Collection)
                 {
                     //o.Properties["ResourceID"].Value.ToString();
                     var collectionID = o.Properties["CollectionID"].Value.ToString();
 
                     if (collectionID.Equals("AA100015"))
                     {
-                        ConfigPC = "AAU7 PC";
+                        ComputerModel.ConfigPC = "AAU7 PC";
                     }
                     else if (collectionID.Equals("AA100087"))
                     {
-                        ConfigPC = "AAU8 PC";
+                        ComputerModel.ConfigPC = "AAU8 PC";
                     }
                     else if (collectionID.Equals("AA1000BC"))
                     {
-                        ConfigPC = "AAU10 PC";
-                        ConfigExtra = "True"; // Hardcode AAU10 is bitlocker enabled
+                        ComputerModel.ConfigPC = "AAU10 PC";
+                        ComputerModel.ConfigExtra = "True"; // Hardcode AAU10 is bitlocker enabled
                     }
                     else if (collectionID.Equals("AA100027"))
                     {
-                        ConfigPC = "Administrativ7 PC";
+                        ComputerModel.ConfigPC = "Administrativ7 PC";
                     }
                     else if (collectionID.Equals("AA1001BD"))
                     {
-                        ConfigPC = "Administrativ10 PC";
-                        ConfigExtra = "True"; // Hardcode AAU10 is bitlocker enabled
+                        ComputerModel.ConfigPC = "Administrativ10 PC";
+                        ComputerModel.ConfigExtra = "True"; // Hardcode AAU10 is bitlocker enabled
                     }
                     else if (collectionID.Equals("AA10009C"))
                     {
-                        ConfigPC = "Imported";
+                        ComputerModel.ConfigPC = "Imported";
                     }
 
                     if (collectionID.Equals("AA1000B8"))
                     {
-                        ConfigExtra = "True";
+                        ComputerModel.ConfigExtra = "True";
                     }
 
                     var pathString = "\\\\srv-cm12-p01.srv.aau.dk\\ROOT\\SMS\\site_AA1" + ":SMS_Collection.CollectionID=\"" + collectionID + "\"";
@@ -288,13 +362,18 @@ namespace ITSWebMgmt.Controllers
             obj.InvokeMethod("AddMembershipRule", new object[] { rule });
         }
 
-        public void EnableBitlockerEncryption()
+
+        [HttpPost]
+        public ActionResult EnableBitlockerEncryption([FromBody]string computername)
         {
-            string[] adpathsplit = adpath.Split('/');
+            ComputerModel = _cache.Get<ComputerModel>(computername);
+            string[] adpathsplit = ComputerModel.adpath.Split('/');
             string computerName = (adpathsplit[adpathsplit.Length - 1].Split(','))[0].Replace("CN=", "");
 
             var collectionID = "AA1000B8"; //Enabled Bitlocker Encryption Collection ID
-            addComputerToCollection(ResourceID, collectionID);
+            addComputerToCollection(ComputerModel.SCCMcache.ResourceID, collectionID);
+            Response.StatusCode = (int)HttpStatusCode.OK;
+            return Json(new { success = true, message = "Bitlocker enabled for" + computername });
         }
     }
 }

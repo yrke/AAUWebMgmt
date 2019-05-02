@@ -58,7 +58,7 @@ namespace ITSWebMgmt.Caches
         };
         */
         #endregion
-        public ManagementObjectCollection RAM { get => getQuery(0); private set {} }
+        public ManagementObjectCollection RAM { get => getQuery(0); private set { } }
         #region Logical Disk
         /*
          * [DisplayName("Logical Disk"), dynamic: ToInstance, provider("ExtnProv")]
@@ -342,7 +342,7 @@ namespace ITSWebMgmt.Caches
         };
         */
         #endregion
-        public ManagementObjectCollection Disk { get => getQuery(5); private set {} }
+        public ManagementObjectCollection Disk { get => getQuery(5); private set { } }
         #region Software
         /*
         [DisplayName("Installed Software"), dynamic: ToInstance, provider("ExtnProv")]
@@ -443,6 +443,14 @@ namespace ITSWebMgmt.Caches
             }
 
             return _cache[i];
+        }
+
+        public void LoadAllIntoCache()
+        {
+            for (int i = 0; i < DBEntry.Length; i++)
+            {
+                getQuery(i);
+            }
         }
     }
     

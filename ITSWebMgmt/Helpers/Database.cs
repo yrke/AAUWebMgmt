@@ -19,7 +19,7 @@ namespace ITSWebMgmt.Helpers
                 var t2 = results.Count;
                 return results.Count != 0;
             }
-            catch (ManagementException e) { }
+            catch (ManagementException) { }
 
             return false;
         }
