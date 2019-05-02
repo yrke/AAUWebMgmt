@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "GroupInfo";
 }
-
         <!-- Loader -->
         <div id="loader">
             <div class="ui active dimmer" style="display: none">
@@ -23,11 +22,7 @@
             -->
         </div>
 
-
-
         <!-- page content -->
-
-
         <script>
             $(document).ready(function () {
                 $('.menu .item').tab({ history: false });
@@ -37,10 +32,6 @@
         <br />
         <br />
         <div runat="server" id="ResultDiv">
-
-
-
-
             <div class="ui grid">
                 <div class="four wide column">
                     <div class="ui vertical fluid tabular menu">
@@ -103,36 +94,12 @@
                         </table>
                     </div>
                     <div class="ui tab segment" data-tab="members">
-                        <h2>Members</h2>
                         @Html.Raw(Model.FileshareInfo)
-                        <div class="ui two item menu">
-                            <a data-tab="groups-direct" class="item">Direct Groups</a>
-                            <a data-tab="groups-all" class="item"> Recursive groups</a>
-                        </div>
-
-                        <div class="ui active tab segment" data-tab="groups-direct">
-                            @Html.Raw(Model.GroupSegment)
-                        </div>
-
-                        <div class="ui tab segment" data-tab="groups-all">
-                            @Html.Raw(Model.GroupsAllSegment)
-                        </div>
+                        @Html.Partial("Groups", new PartialGroupModel(Model.ADcache, "member", "Members"))
                     </div>
                     <div class="ui tab segment" data-tab="memberOf">
-                        <h2>Member Of</h2>
                         @Html.Raw(Model.FileshareInfo)
-                        <div class="ui two item menu">
-                            <a data-tab="groups-direct" class="item">Direct Groups</a>
-                            <a data-tab="groups-all" class="item"> Recursive groups</a>
-                        </div>
-
-                        <div class="ui active tab segment" data-tab="groups-direct">
-                            @Html.Raw(Model.GroupOfSegment)
-                        </div>
-
-                        <div class="ui tab segment" data-tab="groups-all">
-                            @Html.Raw(Model.GroupsOfAllSegment)
-                        </div>
+                        @Html.Partial("Groups", new PartialGroupModel(Model.ADcache, "memberOf", "Members Of"))
                     </div>
                     <div class="ui tab segment" data-tab="rawData">
                         <h2>Raw Data</h2>

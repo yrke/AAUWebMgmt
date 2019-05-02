@@ -1,12 +1,13 @@
-﻿@model ITSWebMgmt.Models.UserModel
+﻿@model ITSWebMgmt.Models.PartialGroupModel
+
 @using ITSWebMgmt.Helpers
 @{
-    Model.GroupList = Model.ADcache.getGroups("memberOf");
-    Model.GroupListAll = Model.ADcache.getGroupsTransitive("memberOf");
+    Model.GroupList = Model.ADcache.getGroups(Model.AttributeName);
+    Model.GroupListAll = Model.ADcache.getGroupsTransitive(Model.AttributeName);
     Model.GroupSegment = TableGenerator.BuildgroupssegmentLabel(Model.GroupList);
     Model.GroupsAllSegment = TableGenerator.BuildgroupssegmentLabel(Model.GroupListAll);
 }
-<h2>Groups</h2>
+<h2>@Html.LabelFor(m => m.Title)</h2>
 <div class="ui two item menu">
     <a data-tab="groups-direct" class="item">Direct Groups</a>
     <a data-tab="groups-all" class="item">Recursive groups</a>

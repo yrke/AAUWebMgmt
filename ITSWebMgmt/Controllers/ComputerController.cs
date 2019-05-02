@@ -57,7 +57,7 @@ namespace ITSWebMgmt.Controllers
                     break;
                 case "groups":
                     viewName = "Groups";
-                    break;
+                    return PartialView(viewName, new PartialGroupModel(ComputerModel.ADcache, "memberOf"));
                 case "tasks":
                     viewName = "Tasks";
                     break;

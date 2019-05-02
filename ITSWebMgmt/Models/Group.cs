@@ -42,23 +42,17 @@ namespace ITSWebMgmt.Models
 
             if (GroupController.isFileShare(DistinguishedName))
             {
-                string[] tables = group.GetFileshareTables();
+                // TODO move to different view
+                /*string[] tables = group.GetFileshareTables();
                 GroupSegment = tables[0];
                 GroupsAllSegment = tables[1];
                 GroupOfSegment = tables[2];
                 GroupsOfAllSegment = tables[3];
 
                 FileshareInfo = "Contains information from the other fileshares with the other accesses<br>";
-                Title = "Fileshare Info";
+                Title = "Fileshare Info";*/
             }
-            else
-            {
-                GroupSegment = TableGenerator.BuildgroupssegmentLabel(getGroups("member"));
-                GroupsAllSegment = TableGenerator.BuildgroupssegmentLabel(getGroupsTransitive("member"));
-                GroupOfSegment = TableGenerator.BuildgroupssegmentLabel(getGroups("memberOf"));
-                GroupsOfAllSegment = TableGenerator.BuildgroupssegmentLabel(getGroupsTransitive("memberOf"));
-                Title = "Group Info";
-            }
+            Title = "Group Info";
         }
 
         private void buildRaw()

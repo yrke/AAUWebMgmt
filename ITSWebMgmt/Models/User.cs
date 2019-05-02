@@ -69,11 +69,7 @@ namespace ITSWebMgmt.Models
         public string BasicInfoTable;
         public string BasicInfoRomaing;
         public string Print;
-        public string GroupSegment;
-        public string GroupsAllSegment;
-        public string Filesharessegment;
         public string CalAgenda;
-        public string Exchange;
         public string ServiceManager;
         public string ComputerInformation;
         public string Loginscript;
@@ -86,8 +82,6 @@ namespace ITSWebMgmt.Models
         public bool ShowErrorDiv = false;
         public bool ShowFixUserOU = false;
         public bool ShowLoginScript = false;
-        public List<string> GroupList;
-        public List<string> GroupListAll;
 
         public UserModel(UserController controller, string username, string adpath)
         {

@@ -94,10 +94,10 @@
                 <div class="ui active tab segment" data-tab="basicinfo">@Html.Partial("BasicInfo", Model)</div>
                 <div class="ui tab segment" data-tab="advancedinfo">advanced</div>
                 <div class="ui tab segment" data-tab="print">@Html.Partial("Print", Model)</div>
-                <div class="ui tab segment" data-tab="groups">@Html.Partial("Groups", Model)</div>
-                <div class="ui tab segment" data-tab="fileshares">@Html.Partial("Fileshares", Model)</div>
+                <div class="ui tab segment" data-tab="groups">@Html.Partial("Groups", new PartialGroupModel(Model.ADcache, "memberOf"))</div>
+                <div class="ui tab segment" data-tab="fileshares">@Html.Partial("Fileshares", new PartialGroupModel(Model.ADcache, "memberOf"))</div>
                 <div class="ui tab segment" data-tab="calAgenda">@Html.Partial("CalendarAgenda", Model)</div>
-                <div class="ui tab segment" data-tab="exchange">@Html.Partial("Exchange", Model)</div>
+                <div class="ui tab segment" data-tab="exchange">@Html.Partial("Exchange", new PartialGroupModel(Model.ADcache, "memberOf"))</div>
                 <div class="ui tab segment" data-tab="servicemanager">@Html.Partial("ServiceManager", Model)</div>
                 <div class="ui tab segment" data-tab="computerInformation">@Html.Partial("ComputerInformation", Model)</div>
                 <div class="ui tab segment" data-tab="loginscript" id="divLoginscript">@Html.Partial("Loginscript", Model)</div>

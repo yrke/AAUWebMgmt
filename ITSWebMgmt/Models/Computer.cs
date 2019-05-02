@@ -56,8 +56,6 @@ namespace ITSWebMgmt.Models
         public string SCCMDisk;
         public string ErrorCountMessage;
         public string ErrorMessages;
-        public string GroupSegment;
-        public string GroupsAllSegment;
         public bool ShowResultDiv = false;
         public bool ShowResultGetPassword = false;
         public bool ShowMoveComputerOUdiv = false;
